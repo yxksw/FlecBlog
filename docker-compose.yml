@@ -1,0 +1,72 @@
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: flec_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - flec-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  server:
+    image: talen8/flec-server:latest
+    container_name: flec_server
+    restart: unless-stopped
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: postgres
+      DB_USER: postgres
+      DB_PASSWORD: ${DB_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+    ports:
+      - "8080:8080"
+    volumes:
+      - /srv/docker/flec_server:/app/data
+    networks:
+      - flec-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  blog:
+    image: talen8/flec-blog:latest
+    container_name: flec_blog
+    restart: unless-stopped
+    environment:
+      NUXT_PUBLIC_API_URL: ${API_URL}
+    ports:
+      - "3000:3000"
+    networks:
+      - flec-network
+    depends_on:
+      - server
+
+  admin:
+    image: talen8/flec-admin:latest
+    container_name: flec_admin
+    restart: unless-stopped
+    environment:
+      API_URL: ${API_URL}
+    ports:
+      - "4000:4000"
+    networks:
+      - flec-network
+    depends_on:
+      - server
+
+networks:
+  flec-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
