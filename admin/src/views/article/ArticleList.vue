@@ -172,16 +172,6 @@
 }
 
 .export-option:nth-child(2) .option-icon {
-  background: #fef0f0;
-  color: #f56c6c;
-}
-
-.export-option:nth-child(3) .option-icon {
-  background: #ecf5ff;
-  color: #409eff;
-}
-
-.export-option:nth-child(4) .option-icon {
   background: #f4f4f5;
   color: #909399;
 }
@@ -211,11 +201,10 @@ import { View, ChatDotRound, Upload, EditPen, Loading } from '@element-plus/icon
 import CommonList from '@/components/common/CommonList.vue'
 import type { Article } from '@/types/article'
 import type { PaginationQuery } from '@/types/request'
-import { getArticles, getArticle, deleteArticle, exportToWeChat, getWeChatHTML } from '@/api/article'
+import { getArticles, deleteArticle, exportToWeChat, downloadArticleZip } from '@/api/article'
 import CategoryManager from './components/CategoryManager.vue'
 import TagManager from './components/TagManager.vue'
 import { formatDateTime } from '@/utils/date'
-import { renderMarkdownWithStyles } from '@/utils/markdown'
 
 const router = useRouter()
 const loading = ref(false)
@@ -261,10 +250,8 @@ const exportDialogVisible = ref(false)
 const exportArticleId = ref<number>(0)
 
 const exportOptions = reactive([
-  { key: 'wechat', title: '导出到微信公众平台', desc: '直接推送到微信公众号草稿箱', icon: 'ri-wechat-line', loading: false },
-  { key: 'wechat-html', title: '复制为公众号图文', desc: '复制适配微信公众号的富文本', icon: 'ri-file-copy-line', loading: false },
-  { key: 'html', title: '复制为 HTML', desc: '复制与预览一致的富文本', icon: 'ri-html5-line', loading: false },
-  { key: 'markdown', title: '复制为 Markdown', desc: '非原生语法，包含特殊语法标记', icon: 'ri-markdown-line', loading: false }
+  { key: 'wechat', title: '导出到微信公众平台', desc: '推送到微信公众号草稿箱', icon: 'ri-wechat-line', loading: false },
+  { key: 'markdown', title: '下载为 Markdown', desc: '下载含图片资源的完整文章', icon: 'ri-markdown-line', loading: false }
 ])
 
 const openExportDialog = (id: number) => {
@@ -283,14 +270,8 @@ const handleExport = async (key: string) => {
       case 'wechat':
         await handleExportToWeChat()
         break
-      case 'wechat-html':
-        await handleCopyWeChatHTML()
-        break
-      case 'html':
-        await handleCopyHTML()
-        break
       case 'markdown':
-        await handleCopyMarkdown()
+        await handleDownloadMarkdown()
         break
     }
   } finally {
@@ -301,36 +282,61 @@ const handleExport = async (key: string) => {
 // 导出到微信公众平台
 const handleExportToWeChat = async () => {
   const result = await exportToWeChat(exportArticleId.value)
-  ElMessage.success('已导出到微信公众平台草稿箱')
+  
+  if (result.success) {
+    ElMessage.success('已导出到微信公众平台草稿箱')
+  } else if (result.html) {
+    await copyRichText(result.html)
+    ElMessage.warning('推送失败，已复制到剪贴板')
+  } else {
+    ElMessage.error('导出失败')
+  }
+  
   if (result.warnings?.length) {
     result.warnings.forEach(w => ElMessage.warning(w))
   }
   exportDialogVisible.value = false
 }
 
-// 复制为公众号格式（富文本）
-const handleCopyWeChatHTML = async () => {
-  const result = await getWeChatHTML(exportArticleId.value)
-  await copyRichText(result.html)
-  ElMessage.success('已复制公众号格式到剪贴板')
-  exportDialogVisible.value = false
+// 下载为 Markdown
+const handleDownloadMarkdown = async () => {
+  let waitingMessage: ReturnType<typeof ElMessage> | undefined
+  const waitingTimer = setTimeout(() => {
+    waitingMessage = ElMessage({
+      message: '网络较慢或文件资源较大，请耐心等待...',
+      type: 'info',
+      duration: 0
+    })
+  }, 10000)
+
+  try {
+    const blob = await downloadArticleZip(exportArticleId.value)
+    clearTimeout(waitingTimer)
+    waitingMessage?.close()
+
+    const article = articleList.value.find(a => a.id === exportArticleId.value)
+    const filename = article ? `${article.title}.zip` : `article-${exportArticleId.value}.zip`
+    downloadBlob(blob, filename)
+    ElMessage.success('下载完成')
+    exportDialogVisible.value = false
+  } catch (error) {
+    clearTimeout(waitingTimer)
+    waitingMessage?.close()
+    const errorMsg = error instanceof Error ? error.message : '下载失败，请稍后重试'
+    ElMessage.error(errorMsg)
+  }
 }
 
-// 复制为 HTML（与预览一致）
-const handleCopyHTML = async () => {
-  const article = await getArticle(exportArticleId.value)
-  const html = renderMarkdownWithStyles(article.content)
-  await copyRichText(html)
-  ElMessage.success('已复制 HTML 到剪贴板')
-  exportDialogVisible.value = false
-}
-
-// 复制为 Markdown（保留扩展语法）
-const handleCopyMarkdown = async () => {
-  const article = await getArticle(exportArticleId.value)
-  await copyToClipboard(article.content)
-  ElMessage.success('已复制 Markdown 到剪贴板')
-  exportDialogVisible.value = false
+// 下载 Blob 文件
+const downloadBlob = (blob: Blob, filename: string) => {
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = filename
+  document.body.appendChild(a)
+  a.click()
+  document.body.removeChild(a)
+  URL.revokeObjectURL(url)
 }
 
 // 复制到剪贴板（纯文本）

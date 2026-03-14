@@ -64,7 +64,7 @@ export function importArticles(formData: FormData): Promise<ImportArticlesResult
 // ==================== 微信公众号导出 ====================
 
 /**
- * 导出文章到微信公众号草稿箱
+ * 导出文章到微信公众号
  * @param id 文章ID
  * @returns Promise<WeChatExportResult>
  */
@@ -73,10 +73,13 @@ export function exportToWeChat(id: number): Promise<WeChatExportResult> {
 }
 
 /**
- * 获取文章的微信公众号 HTML 格式
+ * 下载文章为压缩包（包含文章、配图、封面图等）
  * @param id 文章ID
- * @returns Promise<{ html: string }>
+ * @returns Promise<Blob>
  */
-export function getWeChatHTML(id: number): Promise<{ html: string }> {
-  return request.get(`/admin/articles/${id}/wechat/html`);
+export function downloadArticleZip(id: number): Promise<Blob> {
+  return request.get(`/admin/articles/${id}/download/zip`, {
+    responseType: "blob",
+    timeout: 300000
+  });
 }

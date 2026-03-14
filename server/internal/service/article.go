@@ -1,12 +1,12 @@
 package service
 
 import (
+	"archive/zip"
 	"bytes"
 	"context"
 	"fmt"
 	"io"
 	"net/http"
-	"path"
 	"regexp"
 	"strings"
 	"time"
@@ -70,7 +70,14 @@ func NewArticleService(articleRepo *repository.ArticleRepository, tagRepo *repos
 		db:           db,
 		config:       cfg,
 		md:           md,
-		httpClient:   &http.Client{Timeout: 30 * time.Second},
+		httpClient: &http.Client{
+			Timeout: 60 * time.Second,
+			Transport: &http.Transport{
+				MaxIdleConns:        100,
+				MaxIdleConnsPerHost: 20,
+				IdleConnTimeout:     90 * time.Second,
+			},
+		},
 	}
 }
 
@@ -1123,17 +1130,33 @@ func generateSummary(content string, maxLen int) string {
 
 // ============ 微信公众号导出 ============
 
-// ExportToWeChatDraft 导出文章到微信公众号草稿箱
-func (s *ArticleService) ExportToWeChatDraft(ctx context.Context, id uint) (*dto.WeChatExportResult, error) {
-	// 检查微信配置
-	if s.config.WeChat.AppID == "" || s.config.WeChat.AppSecret == "" {
-		return nil, fmt.Errorf("微信公众号配置不完整，请先在设置中配置 AppID 和 AppSecret")
-	}
-
-	// 获取文章
+// ExportToWeChat 导出文章到微信公众号
+func (s *ArticleService) ExportToWeChat(ctx context.Context, id uint) *dto.WeChatExportResult {
 	article, err := s.articleRepo.Get(id)
 	if err != nil {
-		return nil, fmt.Errorf("文章不存在: %w", err)
+		return &dto.WeChatExportResult{Success: false}
+	}
+
+	// 预处理并渲染 Markdown
+	processed := wechatmp.ConvertCustomBlocks(article.Content)
+	processed = wechatmp.ConvertLinksToFootnotes(processed)
+	processed = wechatmp.PreprocessMarkdown(processed)
+
+	var htmlBuf bytes.Buffer
+	if err := s.md.Convert([]byte(processed), &htmlBuf); err != nil {
+		return &dto.WeChatExportResult{Success: false}
+	}
+
+	// 转换为公众号格式
+	result, err := wechatmp.ConvertMarkdownToWeChatHTML(htmlBuf.String())
+	if err != nil {
+		return &dto.WeChatExportResult{Success: false}
+	}
+	html := result.HTML
+
+	// 检查微信配置
+	if s.config.WeChat.AppID == "" || s.config.WeChat.AppSecret == "" {
+		return &dto.WeChatExportResult{Success: false, HTML: html}
 	}
 
 	// 创建微信客户端
@@ -1143,58 +1166,37 @@ func (s *ArticleService) ExportToWeChatDraft(ctx context.Context, id uint) (*dto
 		BaseURL:   s.config.WeChat.TokenURL,
 	})
 	if err != nil {
-		return nil, fmt.Errorf("创建微信客户端失败: %w", err)
+		return &dto.WeChatExportResult{Success: false, HTML: html}
 	}
 
-	// 预处理 Markdown 扩展语法
-	processedContent := wechatmp.ConvertCustomBlocks(article.Content)
-	processedContent = wechatmp.ConvertLinksToFootnotes(processedContent)
-	processedContent = wechatmp.PreprocessMarkdown(processedContent)
-
-	// 渲染 Markdown 为 HTML
-	var htmlBuf bytes.Buffer
-	if err := s.md.Convert([]byte(processedContent), &htmlBuf); err != nil {
-		return nil, fmt.Errorf("渲染 Markdown 失败: %w", err)
-	}
-
-	// 转换为微信兼容格式
-	result, err := wechatmp.ConvertMarkdownToWeChatHTML(htmlBuf.String())
-	if err != nil {
-		return nil, fmt.Errorf("转换 HTML 失败: %w", err)
-	}
-
+	// 上传图片
 	htmlContent := result.HTML
-
-	// 处理图片上传
-	var uploadErrors []string
+	var warnings []string
 	for _, img := range result.Images {
 		newURL, err := s.uploadImageToWeChat(ctx, client, img.OriginalURL)
 		if err != nil {
-			uploadErrors = append(uploadErrors, fmt.Sprintf("图片 %s 上传失败: %v", img.OriginalURL, err))
+			warnings = append(warnings, fmt.Sprintf("图片 %s 上传失败", img.OriginalURL))
 			continue
 		}
 		htmlContent = wechatmp.ReplaceImageURL(htmlContent, img.OriginalURL, newURL)
 	}
 
-	// 处理封面图（微信草稿必须有封面）
+	// 上传封面
 	coverURL := article.Cover
 	if coverURL == "" {
-		// 使用 Bing 每日一图作为默认封面
 		coverURL = "https://api.pearktrue.cn/api/bing/"
 	}
 	thumbMediaID, err := s.uploadCoverToWeChat(ctx, client, coverURL)
 	if err != nil {
-		return nil, fmt.Errorf("封面图上传失败: %w", err)
+		return &dto.WeChatExportResult{Success: false, HTML: html, Warnings: warnings}
 	}
 
-	// 获取作者名称（从基本配置）
+	// 创建草稿
 	author := s.config.Basic.Author
 	if author == "" {
 		author = s.config.Blog.Title
 	}
-
-	// 构建草稿
-	draftArticle := wechatmp.DraftArticle{
+	draftResult, err := client.CreateDraft(ctx, []wechatmp.DraftArticle{{
 		Title:            article.Title,
 		Author:           author,
 		Content:          htmlContent,
@@ -1202,56 +1204,22 @@ func (s *ArticleService) ExportToWeChatDraft(ctx context.Context, id uint) (*dto
 		ContentSourceURL: s.buildArticleURL(article),
 		ThumbMediaID:     thumbMediaID,
 		NeedOpenComment:  1,
-	}
-
-	// 创建草稿
-	draftResult, err := client.CreateDraft(ctx, []wechatmp.DraftArticle{draftArticle})
+	}})
 	if err != nil {
-		return nil, fmt.Errorf("创建草稿失败: %w", err)
+		return &dto.WeChatExportResult{Success: false, HTML: html, Warnings: warnings}
 	}
 
-	return &dto.WeChatExportResult{
-		MediaID:  draftResult.MediaID,
-		Warnings: uploadErrors,
-	}, nil
-}
-
-// GetWeChatHTML 获取文章的微信公众号 HTML 格式
-func (s *ArticleService) GetWeChatHTML(_ context.Context, id uint) (string, error) {
-	// 获取文章
-	article, err := s.articleRepo.Get(id)
-	if err != nil {
-		return "", fmt.Errorf("文章不存在: %w", err)
-	}
-
-	// 预处理 Markdown 扩展语法
-	// 处理顺序：自定义块 → 链接转脚注 → 其他扩展语法
-	processedContent := wechatmp.ConvertCustomBlocks(article.Content)
-	processedContent = wechatmp.ConvertLinksToFootnotes(processedContent)
-	processedContent = wechatmp.PreprocessMarkdown(processedContent)
-
-	// 渲染 Markdown 为 HTML
-	var htmlBuf bytes.Buffer
-	if err := s.md.Convert([]byte(processedContent), &htmlBuf); err != nil {
-		return "", fmt.Errorf("渲染 Markdown 失败: %w", err)
-	}
-
-	// 转换为微信兼容格式
-	result, err := wechatmp.ConvertMarkdownToWeChatHTML(htmlBuf.String())
-	if err != nil {
-		return "", fmt.Errorf("转换 HTML 失败: %w", err)
-	}
-
-	return result.HTML, nil
+	return &dto.WeChatExportResult{Success: true, MediaID: draftResult.MediaID, Warnings: warnings}
 }
 
 // uploadImageToWeChat 上传文章内图片到微信
 func (s *ArticleService) uploadImageToWeChat(ctx context.Context, client *wechatmp.Client, imgURL string) (string, error) {
-	data, filename, err := s.fetchImage(ctx, imgURL)
+	data, ext, err := s.fetchImage(ctx, imgURL)
 	if err != nil {
 		return "", err
 	}
 
+	filename := "image" + ext
 	result, err := client.UploadImage(ctx, filename, data)
 	if err != nil {
 		return "", err
@@ -1261,26 +1229,14 @@ func (s *ArticleService) uploadImageToWeChat(ctx context.Context, client *wechat
 
 // uploadCoverToWeChat 上传封面图到微信素材库
 func (s *ArticleService) uploadCoverToWeChat(ctx context.Context, client *wechatmp.Client, coverURL string) (string, error) {
-	data, contentType, err := s.fetchImage(ctx, coverURL)
+	data, ext, err := s.fetchImage(ctx, coverURL)
 	if err != nil {
 		return "", fmt.Errorf("下载封面图失败: %w", err)
 	}
 
-	// 微信 image 类型素材限制
-	const maxImageSize = 10 * 1024 * 1024 // 10MB
+	const maxImageSize = 10 * 1024 * 1024
 	if len(data) > maxImageSize {
 		return "", fmt.Errorf("封面图片过大（%d MB），微信限制最大 10MB", len(data)/1024/1024)
-	}
-
-	// 根据 Content-Type 确定文件扩展名
-	ext := ".jpg"
-	switch contentType {
-	case "image/png":
-		ext = ".png"
-	case "image/gif":
-		ext = ".gif"
-	case "image/jpeg", "image/jpg":
-		ext = ".jpg"
 	}
 
 	result, err := client.AddThumbMaterial(ctx, "cover"+ext, data)
@@ -1291,7 +1247,7 @@ func (s *ArticleService) uploadCoverToWeChat(ctx context.Context, client *wechat
 	return result.MediaID, nil
 }
 
-// fetchImage 下载图片
+// fetchImage 下载图片，返回数据和扩展名
 func (s *ArticleService) fetchImage(ctx context.Context, imgURL string) ([]byte, string, error) {
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, imgURL, nil)
 	if err != nil {
@@ -1313,12 +1269,24 @@ func (s *ArticleService) fetchImage(ctx context.Context, imgURL string) ([]byte,
 		return nil, "", err
 	}
 
-	filename := path.Base(imgURL)
-	if filename == "" || filename == "." || filename == "/" {
-		filename = "image.jpg"
+	// 从 URL 或 Content-Type 获取扩展名
+	ext := ".jpg"
+	if ct := resp.Header.Get("Content-Type"); ct != "" {
+		switch ct {
+		case "image/png":
+			ext = ".png"
+		case "image/gif":
+			ext = ".gif"
+		case "image/webp":
+			ext = ".webp"
+		}
+	} else if idx := strings.LastIndex(imgURL, "."); idx > 0 {
+		if e := imgURL[idx:]; len(e) <= 5 {
+			ext = e
+		}
 	}
 
-	return data, filename, nil
+	return data, ext, nil
 }
 
 // buildArticleURL 构建文章链接
@@ -1336,4 +1304,253 @@ func truncateString(str string, maxLen int) string {
 		return str
 	}
 	return string(runes[:maxLen-3]) + "..."
+}
+
+// ============ 文章下载导出 ============
+
+// imageDownloadResult 图片下载结果
+type imageDownloadResult struct {
+	url      string
+	data     []byte
+	ext      string
+	filename string
+	err      error
+}
+
+// extractFilenameFromURL 从 URL 中提取文件名并清理非法字符
+func extractFilenameFromURL(imgURL string) string {
+	// 移除查询参数
+	if idx := strings.Index(imgURL, "?"); idx > 0 {
+		imgURL = imgURL[:idx]
+	}
+	// 提取路径最后一部分
+	var filename string
+	if idx := strings.LastIndex(imgURL, "/"); idx >= 0 && idx < len(imgURL)-1 {
+		filename = imgURL[idx+1:]
+	}
+	if filename == "" {
+		return ""
+	}
+	// 清理文件名中的非法字符
+	filename = strings.Map(func(r rune) rune {
+		if strings.ContainsRune("<>:\"/\\|?*", r) {
+			return '_'
+		}
+		return r
+	}, filename)
+	return filename
+}
+
+// DownloadZip 下载文章为压缩包
+func (s *ArticleService) DownloadZip(ctx context.Context, id uint) ([]byte, string, error) {
+	article, err := s.articleRepo.Get(id)
+	if err != nil {
+		return nil, "", err
+	}
+
+	buf := new(bytes.Buffer)
+	zipWriter := zip.NewWriter(buf)
+	defer zipWriter.Close()
+
+	imageMap := make(map[string]string)
+
+	// 收集所有需要下载的图片 URL（封面 + 内容图片）
+	var imageURLs []string
+	if article.Cover != "" {
+		imageURLs = append(imageURLs, article.Cover)
+	}
+	imageURLs = append(imageURLs, s.extractImageURLs(article.Content)...)
+
+	// 去重
+	seen := make(map[string]bool)
+	var uniqueURLs []string
+	for _, url := range imageURLs {
+		if !seen[url] {
+			seen[url] = true
+			uniqueURLs = append(uniqueURLs, url)
+		}
+	}
+
+	// 如果没有图片，直接生成 Markdown 文件
+	if len(uniqueURLs) == 0 {
+		frontMatter := s.buildYAMLFrontMatter(article, imageMap)
+		mdContent := frontMatter + "\n" + article.Content
+		filename := s.sanitizeFilename(article.Title) + ".md"
+		if w, _ := zipWriter.Create(filename); w != nil {
+			w.Write([]byte(mdContent))
+		}
+		zipWriter.Close()
+		return buf.Bytes(), s.sanitizeFilename(article.Title) + ".zip", nil
+	}
+
+	// 并发下载图片（限制并发数为 10）
+	const maxConcurrency = 10
+	results := make(chan imageDownloadResult, len(uniqueURLs))
+	sem := make(chan struct{}, maxConcurrency)
+
+	// 预先为每个 URL 分配文件名（避免并发竞态）
+	filenameMap := make(map[string]string)
+	filenameCounter := make(map[string]int)
+	for _, url := range uniqueURLs {
+		// 从 URL 提取原始文件名
+		originalName := extractFilenameFromURL(url)
+		if originalName == "" {
+			// 从 fetchImage 获取扩展名（这里先使用默认）
+			originalName = "image.jpg"
+		}
+
+		// 处理文件名冲突
+		finalName := "assets/" + originalName
+		if count, exists := filenameCounter[originalName]; exists {
+			// 文件名冲突，添加序号
+			nameWithoutExt := originalName
+			ext := ""
+			if idx := strings.LastIndex(originalName, "."); idx > 0 {
+				nameWithoutExt = originalName[:idx]
+				ext = originalName[idx:]
+			}
+			finalName = fmt.Sprintf("assets/%s_%d%s", nameWithoutExt, count+1, ext)
+			filenameCounter[originalName] = count + 1
+		} else {
+			filenameCounter[originalName] = 1
+		}
+
+		// 封面图特殊处理
+		if url == article.Cover {
+			finalName = "assets/cover.jpg" // 默认扩展名，后续会根据实际类型调整
+		}
+
+		filenameMap[url] = finalName
+	}
+
+	// 并发下载
+	for _, url := range uniqueURLs {
+		go func(imgURL string) {
+			sem <- struct{}{}
+			defer func() { <-sem }()
+
+			result := imageDownloadResult{url: imgURL}
+			if data, ext, err := s.fetchImage(ctx, imgURL); err == nil {
+				result.data = data
+				result.ext = ext
+
+				// 获取预分配的文件名，并根据实际扩展名调整
+				filename := filenameMap[imgURL]
+				// 替换扩展名
+				if idx := strings.LastIndex(filename, "."); idx > 0 {
+					filename = filename[:idx] + ext
+				}
+				result.filename = filename
+			} else {
+				result.err = err
+			}
+			results <- result
+		}(url)
+	}
+
+	// 收集结果并写入 zip
+	for range uniqueURLs {
+		result := <-results
+		if result.err != nil {
+			continue
+		}
+		if w, _ := zipWriter.Create(result.filename); w != nil {
+			w.Write(result.data)
+			imageMap[result.url] = result.filename
+		}
+	}
+
+	// 替换图片链接
+	content := article.Content
+	for url, path := range imageMap {
+		content = strings.ReplaceAll(content, url, path)
+	}
+
+	// 写入 Markdown 文件
+	frontMatter := s.buildYAMLFrontMatter(article, imageMap)
+	mdContent := frontMatter + "\n" + content
+	filename := s.sanitizeFilename(article.Title) + ".md"
+	if w, _ := zipWriter.Create(filename); w != nil {
+		w.Write([]byte(mdContent))
+	}
+
+	zipWriter.Close()
+	return buf.Bytes(), s.sanitizeFilename(article.Title) + ".zip", nil
+}
+
+// buildYAMLFrontMatter 构建 YAML Front Matter
+func (s *ArticleService) buildYAMLFrontMatter(article *model.Article, imageMap map[string]string) string {
+	var b strings.Builder
+	b.WriteString("---\n")
+	fmt.Fprintf(&b, "title: %q\n", article.Title)
+	fmt.Fprintf(&b, "slug: %s\n", article.Slug)
+
+	if article.Summary != "" {
+		fmt.Fprintf(&b, "summary: %q\n", article.Summary)
+	}
+	if article.Cover != "" {
+		if path, ok := imageMap[article.Cover]; ok {
+			fmt.Fprintf(&b, "cover: %s\n", path)
+		} else {
+			fmt.Fprintf(&b, "cover: %s\n", article.Cover)
+		}
+	}
+	if article.Location != "" {
+		fmt.Fprintf(&b, "location: %q\n", article.Location)
+	}
+
+	fmt.Fprintf(&b, "published: %t\n", article.IsPublish)
+	fmt.Fprintf(&b, "top: %t\n", article.IsTop)
+	fmt.Fprintf(&b, "essence: %t\n", article.IsEssence)
+	fmt.Fprintf(&b, "outdated: %t\n", article.IsOutdated)
+
+	if article.Category.ID > 0 {
+		fmt.Fprintf(&b, "category: %q\n", article.Category.Name)
+	}
+	if len(article.Tags) > 0 {
+		b.WriteString("tags:\n")
+		for _, tag := range article.Tags {
+			fmt.Fprintf(&b, "  - %q\n", tag.Name)
+		}
+	}
+	if article.PublishTime != nil {
+		fmt.Fprintf(&b, "date: %s\n", article.PublishTime.Format("2006-01-02 15:04:05"))
+	}
+	if article.UpdateTime != nil {
+		fmt.Fprintf(&b, "updated: %s\n", article.UpdateTime.Format("2006-01-02 15:04:05"))
+	}
+
+	b.WriteString("---\n")
+	return b.String()
+}
+
+// extractImageURLs 提取 Markdown 中的图片 URL
+func (s *ArticleService) extractImageURLs(content string) []string {
+	re := regexp.MustCompile(`!\[.*?\]\((https?://[^)]+)\)`)
+	matches := re.FindAllStringSubmatch(content, -1)
+
+	seen := make(map[string]bool)
+	urls := make([]string, 0, len(matches))
+	for _, m := range matches {
+		if !seen[m[1]] {
+			seen[m[1]] = true
+			urls = append(urls, m[1])
+		}
+	}
+	return urls
+}
+
+// sanitizeFilename 清理文件名
+func (s *ArticleService) sanitizeFilename(name string) string {
+	result := strings.Map(func(r rune) rune {
+		if strings.ContainsRune("<>:\"/\\|?*", r) {
+			return '_'
+		}
+		return r
+	}, name)
+
+	if len([]rune(result)) > 100 {
+		result = string([]rune(result)[:100])
+	}
+	return result
 }

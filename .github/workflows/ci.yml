@@ -151,30 +151,26 @@ jobs:
           fi
 
           if [[ "$VERSION" =~ (alpha|beta|rc|pre) ]]; then
-            RELEASE_TYPE="⚠️ 预发布版本 (Pre-release)"
             IS_PRERELEASE="true"
           else
-            RELEASE_TYPE="✅ 正式版本 (Stable Release)"
             IS_PRERELEASE="false"
           fi
 
           cat > release_notes.md << EOF
           ## 🎉 版本 ${VERSION} 发布
-          
-          ${RELEASE_TYPE}
 
           ### 📋 构建信息
           - **版本**: v${VERSION}
           - **Commit**: ${GITHUB_SHA:0:7}
           - **构建时间**: $(date -u +"%Y-%m-%dT%H:%M:%SZ")
 
-          ### 📦 Docker 镜像
-          - \`flec-admin\`: \`${{ secrets.DOCKERHUB_USERNAME }}/flec-admin:${VERSION}\`
-          - \`flec-blog\`: \`${{ secrets.DOCKERHUB_USERNAME }}/flec-blog:${VERSION}\`
-          - \`flec-server\`: \`${{ secrets.DOCKERHUB_USERNAME }}/flec-server:${VERSION}\`
-
           ### 📝 更新内容
           ${COMMITS}
+
+          ### 📦 Docker 镜像
+          - 管理端: \`${{ secrets.DOCKERHUB_USERNAME }}/flec-admin:${VERSION}\`
+          - 博客端: \`${{ secrets.DOCKERHUB_USERNAME }}/flec-blog:${VERSION}\`
+          - 服务端: \`${{ secrets.DOCKERHUB_USERNAME }}/flec-server:${VERSION}\`
           EOF
 
           echo "version=${VERSION}" >> $GITHUB_OUTPUT

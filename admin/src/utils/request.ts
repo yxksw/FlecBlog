@@ -59,11 +59,26 @@ request.interceptors.request.use((config: InternalAxiosRequestConfig) => {
 // 响应拦截器
 request.interceptors.response.use(
   (response: AxiosResponse<ApiResponse>) => {
+    // blob 类型直接返回
+    if (response.config.responseType === 'blob') {
+      return response.data
+    }
     const { code, message, data } = response.data
     return code === 0 ? data : Promise.reject(new Error(message || '请求失败'))
   },
   async (error: AxiosError) => {
     const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean }
+    
+    // 处理 blob 请求的错误响应（后端返回 JSON 错误）
+    if (originalRequest.responseType === 'blob' && error.response?.data instanceof Blob) {
+      const text = await (error.response.data as Blob).text()
+      try {
+        const json = JSON.parse(text)
+        return Promise.reject(new Error(json.message || '请求失败'))
+      } catch {
+        return Promise.reject(error)
+      }
+    }
     
     // 处理401未授权 - 尝试刷新token
     if (error.response?.status === 401 && !originalRequest._retry) {

@@ -289,8 +289,10 @@ func InitRouter(db *database.Database, conf *config.Config) *gin.Engine {
 			articleManagement.POST("/import", articleController.ImportArticles) // 导入文章数据（Hexo等）
 
 			// 微信公众号导出
-			articleManagement.POST("/:id/wechat/export", articleController.ExportToWeChat) // 导出到微信草稿
-			articleManagement.GET("/:id/wechat/html", articleController.GetWeChatHTML)     // 获取微信公众号 HTML
+			articleManagement.POST("/:id/wechat/export", articleController.ExportToWeChat) // 导出到微信公众号
+
+			// 文章下载
+			articleManagement.GET("/:id/download/zip", articleController.DownloadZip) // 下载为 Markdown
 		}
 
 		// ==================== 标签管理 ====================

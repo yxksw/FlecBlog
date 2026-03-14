@@ -358,20 +358,19 @@ func isMarkdownFile(filename string) bool {
 
 // ============ 微信公众号导出接口 ============
 
-// ExportToWeChat 导出文章到微信公众号草稿箱
+// ExportToWeChat 导出文章到微信公众号
 //
-//	@Summary		导出到微信草稿
-//	@Description	将文章导出到微信公众号草稿箱，需要先在设置中配置微信公众号 AppID 和 AppSecret
+//	@Summary		导出到微信公众号
+//	@Description	尝试推送到公众号草稿箱，失败则返回 HTML 供复制
 //	@Tags			文章管理
 //	@Accept			json
 //	@Produce		json
 //	@Security		BearerAuth
-//	@Param			id		path		int		true	"文章 ID"
+//	@Param			id		path		int	true	"文章 ID"
 //	@Success		200		{object}	response.Response{data=dto.WeChatExportResult}
 //	@Failure		400		{object}	response.Response
 //	@Failure		401		{object}	response.Response
 //	@Failure		403		{object}	response.Response
-//	@Failure		500		{object}	response.Response
 //	@Router			/admin/articles/{id}/wechat/export [post]
 func (c *ArticleController) ExportToWeChat(ctx *gin.Context) {
 	id, err := strconv.ParseUint(ctx.Param("id"), 10, 64)
@@ -380,41 +379,37 @@ func (c *ArticleController) ExportToWeChat(ctx *gin.Context) {
 		return
 	}
 
-	result, err := c.articleService.ExportToWeChatDraft(ctx.Request.Context(), uint(id))
-	if err != nil {
-		response.Failed(ctx, err.Error())
-		return
-	}
-
+	result := c.articleService.ExportToWeChat(ctx.Request.Context(), uint(id))
 	response.Success(ctx, result)
 }
 
-// GetWeChatHTML 获取文章的微信公众号 HTML 格式
+// DownloadZip 下载文章为压缩包
 //
-//	@Summary		获取微信公众号 HTML
-//	@Description	将文章 Markdown 内容转换为微信公众号兼容的 HTML 格式
+//	@Summary		下载为 Markdown
+//	@Description	下载文章为压缩包，包含 Markdown 文件、配图、封面图等资源
 //	@Tags			文章管理
 //	@Accept			json
-//	@Produce		json
+//	@Produce		application/zip
 //	@Security		BearerAuth
-//	@Param			id		path		int		true	"文章 ID"
-//	@Success		200		{object}	response.Response{data=map[string]string}
-//	@Failure		400		{object}	response.Response
-//	@Failure		401		{object}	response.Response
-//	@Failure		404		{object}	response.Response
-//	@Router			/admin/articles/{id}/wechat/html [get]
-func (c *ArticleController) GetWeChatHTML(ctx *gin.Context) {
+//	@Param			id	path		int	true	"文章 ID"
+//	@Success		200	{file}		byte
+//	@Failure		400	{object}	response.Response
+//	@Failure		401	{object}	response.Response
+//	@Failure		404	{object}	response.Response
+//	@Router			/admin/articles/{id}/download/zip [get]
+func (c *ArticleController) DownloadZip(ctx *gin.Context) {
 	id, err := strconv.ParseUint(ctx.Param("id"), 10, 64)
 	if err != nil {
 		response.ValidateFailed(ctx, "无效的文章 ID")
 		return
 	}
 
-	html, err := c.articleService.GetWeChatHTML(ctx.Request.Context(), uint(id))
+	data, filename, err := c.articleService.DownloadZip(ctx.Request.Context(), uint(id))
 	if err != nil {
 		response.Failed(ctx, err.Error())
 		return
 	}
 
-	response.Success(ctx, map[string]string{"html": html})
+	ctx.Header("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s\"", filename))
+	ctx.Data(200, "application/zip", data)
 }

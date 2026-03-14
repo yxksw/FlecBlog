@@ -132,6 +132,7 @@ import { getSettingGroup } from '@/api/sysconfig'
 import {
   renderMarkdown,
   renderMarkdownWithSourceMap,
+  renderMarkdownWithStyles,
   countWords,
   extractToc,
   estimateReadingTime,
@@ -532,7 +533,7 @@ const unbindScrollEvents = () => {
 // 使用带行号映射的渲染函数（用于滚动同步）
 const renderedHtml = computed(() => {
   const html = viewMode.value === 'html'
-    ? renderMarkdown(props.modelValue)
+    ? renderMarkdownWithStyles(props.modelValue)
     : renderMarkdownWithSourceMap(props.modelValue)
 
   // 替换表情占位符为 img 标签
