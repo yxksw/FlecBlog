@@ -164,6 +164,31 @@
 
     <el-divider content-position="left">自定义代码</el-divider>
 
+    <el-form-item label="字体配置">
+      <el-input v-model="form.font" placeholder="字体文件URL|字体名称（https://hanzi.bluu.pl/fonts/986/result.css|LXGW WenKai）"
+        :disabled="loading">
+        <template #append>
+          <el-dropdown trigger="click" @command="handleFontSiteCommand">
+            <el-button>
+              查找字体
+            </el-button>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <el-dropdown-item command="https://hanzi.bluu.pl/">
+                  <i class="ri-global-line" style="margin-right: 8px;"></i>
+                  千字网
+                </el-dropdown-item>
+                <el-dropdown-item command="https://fonts.zeoseven.com/">
+                  <i class="ri-global-line" style="margin-right: 8px;"></i>
+                  ZSFT
+                </el-dropdown-item>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
+        </template>
+      </el-input>
+    </el-form-item>
+
     <el-form-item label="自定义 Head">
       <el-input v-model="form.custom_head" type="textarea" :rows="10" placeholder="输入要在 <head> 中插入的代码"
         :disabled="loading" />
@@ -183,7 +208,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref } from 'vue'
 import ImageUploader from '@/components/common/ImageUploader.vue'
 import JsonListEditor from '@/components/common/JsonListEditor.vue'
 import type { FieldConfig } from '@/components/common/JsonListEditor.vue'
@@ -223,6 +248,7 @@ interface BlogFormData {
   custom_head: string
   custom_body: string
   emojis: string
+  font: string
 }
 
 const form = defineModel<BlogFormData>('form', { required: true })
@@ -307,6 +333,11 @@ const versionsFields: FieldConfig[] = [
   { key: 'name', type: 'text', placeholder: '技术名称', style: 'width: 150px' },
   { key: 'version', type: 'text', placeholder: '版本号', style: 'flex: 1; margin: 0 8px' }
 ]
+
+// 处理字体网站跳转
+const handleFontSiteCommand = (url: string) => {
+  window.open(url, '_blank')
+}
 
 // 暴露上传器引用给父组件
 defineExpose({

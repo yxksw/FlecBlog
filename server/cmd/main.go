@@ -53,9 +53,9 @@ func main() {
 	defer logger.Close()
 	defer middleware.ClosePanicLogFile()
 
-	// 自动初始化数据库（第一次运行时创建表结构）
-	if err := database.InitDatabase(db.DB); err != nil {
-		log.Fatalf("Failed to initialize database: %v", err)
+	// 执行数据库迁移
+	if err := database.RunMigrations(db.DB); err != nil {
+		log.Fatalf("Failed to run migrations: %v", err)
 	}
 
 	// 从数据库加载运行时配置（邮箱、上传等）

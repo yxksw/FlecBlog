@@ -136,7 +136,8 @@ const blogForm = ref({
   about_story: '',
   custom_head: '',
   custom_body: '',
-  emojis: ''
+  emojis: '',
+  font: ''
 })
 
 // AI 配置表单
@@ -265,6 +266,7 @@ const loadBlogConfigs = async () => {
     blogForm.value.custom_head = configs.custom_head || ''
     blogForm.value.custom_body = configs.custom_body || ''
     blogForm.value.emojis = configs.emojis || ''
+    blogForm.value.font = configs.font || ''
   } catch {
     ElMessage.error('获取博客配置失败')
   }
@@ -450,7 +452,8 @@ const handleSave = async () => {
       'blog.about_story': blogForm.value.about_story,
       'blog.custom_head': blogForm.value.custom_head,
       'blog.custom_body': blogForm.value.custom_body,
-      'blog.emojis': blogForm.value.emojis
+      'blog.emojis': blogForm.value.emojis,
+      'blog.font': blogForm.value.font
     }
 
     // 通知配置

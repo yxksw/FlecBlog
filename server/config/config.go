@@ -69,6 +69,7 @@ type BlogConfig struct {
 	CustomHead      string // 自定义 Head 代码
 	CustomBody      string // 自定义 Body 代码
 	Emojis          string // 表情包配置
+	Font            string // 字体配置（URL|字体名称）
 }
 
 // NotificationConfig 通知配置（从数据库动态加载）

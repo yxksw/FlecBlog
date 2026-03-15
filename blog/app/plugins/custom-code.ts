@@ -75,7 +75,47 @@ export default defineNuxtPlugin({
       return headPayload
     }
 
-    useHead(computed(() => buildHeadPayload(blogConfig.value.custom_head || '') || {}))
+    const buildFontLink = (fontConfig: string) => {
+      if (!fontConfig) return { link: [], style: [] }
+
+      // 从配置中提取 URL 和字体名称
+      const parts = fontConfig.split('|')
+      const url = parts[0]?.trim() || ''
+      const fontFamily = parts[1]?.trim() || ''
+
+      if (!url) return { link: [], style: [] }
+
+      const result: any = {
+        link: [
+          {
+            rel: 'stylesheet',
+            href: url
+          }
+        ],
+        style: []
+      }
+
+      // 如果指定了字体名称，添加样式
+      if (fontFamily) {
+        result.style.push({
+          innerHTML: `body { font-family: "${fontFamily}", sans-serif !important; font-weight: normal; }`
+        })
+      }
+
+      return result
+    }
+
+    useHead(computed(() => {
+      const customHead = buildHeadPayload(blogConfig.value.custom_head || '')
+      const fontLink = buildFontLink(blogConfig.value.font || '')
+
+      return {
+        meta: customHead?.meta || [],
+        link: [...(customHead?.link || []), ...fontLink.link],
+        script: customHead?.script || [],
+        style: [...(customHead?.style || []), ...fontLink.style]
+      }
+    }))
 
     const injectBodyCode = () => {
       const bodyCode = blogConfig.value.custom_body || ''

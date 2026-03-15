@@ -60,6 +60,7 @@ const (
 	KeyBlogCustomHead        = "blog.custom_head"         // 自定义 Head 代码
 	KeyBlogCustomBody        = "blog.custom_body"         // 自定义 Body 代码
 	KeyBlogEmojis            = "blog.emojis"              // 表情包配置
+	KeyBlogFont              = "blog.font"                // 字体配置（URL|字体名称）
 )
 
 // 配置键常量 - Notification 相关
@@ -366,6 +367,9 @@ func (s *SettingService) ApplyDatabaseConfig(cfg *config.Config) error {
 		}
 		if v, ok := blogSettings[KeyBlogEmojis]; ok && v != "" {
 			cfg.Blog.Emojis = v
+		}
+		if v, ok := blogSettings[KeyBlogFont]; ok && v != "" {
+			cfg.Blog.Font = v
 		}
 	}
 

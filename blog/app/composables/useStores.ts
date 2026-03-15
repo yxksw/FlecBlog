@@ -340,7 +340,8 @@ export function useSysConfig() {
     'about_story': '',
     'custom_head': '',
     'custom_body': '',
-    'emojis': ''
+    'emojis': '',
+    'font': ''
   }))
 
   const oauthConfig = useState<Record<string, string>>('sysconfig-oauth', () => ({
