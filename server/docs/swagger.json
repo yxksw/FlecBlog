@@ -648,6 +648,61 @@
                 }
             }
         },
+        "/admin/articles/{id}/download/zip": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "下载文章为压缩包，包含 Markdown 文件、配图、封面图等资源",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/zip"
+                ],
+                "tags": [
+                    "文章管理"
+                ],
+                "summary": "下载为 Markdown",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "文章 ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "file"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/admin/articles/{id}/wechat/export": {
             "post": {
                 "security": [
@@ -655,7 +710,7 @@
                         "BearerAuth": []
                     }
                 ],
-                "description": "将文章导出到微信公众号草稿箱，需要先在设置中配置微信公众号 AppID 和 AppSecret",
+                "description": "尝试推送到公众号草稿箱，失败则返回 HTML 供复制",
                 "consumes": [
                     "application/json"
                 ],
@@ -665,7 +720,7 @@
                 "tags": [
                     "文章管理"
                 ],
-                "summary": "导出到微信草稿",
+                "summary": "导出到微信公众号",
                 "parameters": [
                     {
                         "type": "integer",
@@ -708,82 +763,6 @@
                     },
                     "403": {
                         "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/response.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/response.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/admin/articles/{id}/wechat/html": {
-            "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "将文章 Markdown 内容转换为微信公众号兼容的 HTML 格式",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "文章管理"
-                ],
-                "summary": "获取微信公众号 HTML",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "文章 ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object",
-                                            "additionalProperties": {
-                                                "type": "string"
-                                            }
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/response.Response"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/response.Response"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/response.Response"
                         }
@@ -6116,7 +6095,7 @@
         },
         "/stats/site": {
             "get": {
-                "description": "总字数、访客数、浏览量、在线人数、运行天数等",
+                "description": "获取博客前台公开统计数据，包含规模总览与访问数据",
                 "consumes": [
                     "application/json"
                 ],
@@ -8354,8 +8333,32 @@
                     "description": "今日访客",
                     "type": "integer"
                 },
+                "total_articles": {
+                    "description": "已发布文章数",
+                    "type": "integer"
+                },
+                "total_categories": {
+                    "description": "已发布文章分类数",
+                    "type": "integer"
+                },
+                "total_comments": {
+                    "description": "公开可见评论数",
+                    "type": "integer"
+                },
+                "total_friends": {
+                    "description": "友链数",
+                    "type": "integer"
+                },
+                "total_moments": {
+                    "description": "动态数",
+                    "type": "integer"
+                },
                 "total_page_views": {
                     "description": "本站总浏览量",
+                    "type": "integer"
+                },
+                "total_tags": {
+                    "description": "已发布文章标签数",
                     "type": "integer"
                 },
                 "total_visitors": {
@@ -8799,12 +8802,20 @@
         "dto.WeChatExportResult": {
             "type": "object",
             "properties": {
-                "media_id": {
-                    "description": "草稿 media_id",
+                "html": {
+                    "description": "公众号 HTML（失败时）",
                     "type": "string"
                 },
+                "media_id": {
+                    "description": "草稿 ID（成功时）",
+                    "type": "string"
+                },
+                "success": {
+                    "description": "是否成功推送",
+                    "type": "boolean"
+                },
                 "warnings": {
-                    "description": "警告信息（如部分图片上传失败）",
+                    "description": "警告信息",
                     "type": "array",
                     "items": {
                         "type": "string"

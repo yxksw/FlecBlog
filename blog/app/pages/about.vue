@@ -280,7 +280,7 @@ const formatWords = (words: string) => {
             <span class="tips">本月访问</span><span>{{ siteStats.month_pageviews || 0 }}</span>
           </div>
         </div>
-        <a class="T-btn" href="/archive">更多统计</a>
+        <a class="T-btn" href="/statistics">更多统计</a>
       </div>
       <div v-if="info.union.length > 0" class="about-layout union">
         <div class="tips">共创</div>

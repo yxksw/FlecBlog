@@ -121,6 +121,42 @@ func (s *StatsService) GetSiteStats() (*dto.SiteStatsResponse, error) {
 	}
 	stats.MonthPageviews = monthPageviews
 
+	totalArticles, err := s.statsRepo.GetTotalPublishedArticles()
+	if err != nil {
+		return nil, err
+	}
+	stats.TotalArticles = totalArticles
+
+	totalComments, err := s.statsRepo.GetTotalVisibleComments()
+	if err != nil {
+		return nil, err
+	}
+	stats.TotalComments = totalComments
+
+	totalFriends, err := s.statsRepo.GetTotalFriends()
+	if err != nil {
+		return nil, err
+	}
+	stats.TotalFriends = totalFriends
+
+	totalMoments, err := s.statsRepo.GetTotalMoments()
+	if err != nil {
+		return nil, err
+	}
+	stats.TotalMoments = totalMoments
+
+	totalCategories, err := s.statsRepo.GetPublishedCategoryCount()
+	if err != nil {
+		return nil, err
+	}
+	stats.TotalCategories = totalCategories
+
+	totalTags, err := s.statsRepo.GetPublishedTagCount()
+	if err != nil {
+		return nil, err
+	}
+	stats.TotalTags = totalTags
+
 	return stats, nil
 }
 

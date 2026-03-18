@@ -31,6 +31,12 @@ type SiteStatsResponse struct {
 	YesterdayVisitors  int64  `json:"yesterday_visitors"`  // 昨日访客
 	YesterdayPageviews int64  `json:"yesterday_pageviews"` // 昨日访问
 	MonthPageviews     int64  `json:"month_pageviews"`     // 本月访问
+	TotalArticles      int64  `json:"total_articles"`      // 已发布文章数
+	TotalComments      int64  `json:"total_comments"`      // 公开可见评论数
+	TotalFriends       int64  `json:"total_friends"`       // 友链数
+	TotalMoments       int64  `json:"total_moments"`       // 动态数
+	TotalCategories    int64  `json:"total_categories"`    // 已发布文章分类数
+	TotalTags          int64  `json:"total_tags"`          // 已发布文章标签数
 }
 
 // ArchiveItem 归档数据项

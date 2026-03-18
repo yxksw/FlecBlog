@@ -7,7 +7,7 @@ definePageMeta({
 })
 
 useSeoMeta({
-  title: '友情链接',
+  title: '友链',
   description: '浏览我的友情链接，发现更多优秀的博客和网站'
 })
 
@@ -58,7 +58,7 @@ const isEmpty = computed(() => {
 
 <template>
   <div id="friend-page">
-    <h1 class="page-title">友情链接</h1>
+    <h1 class="page-title">友链</h1>
 
     <div class="friend-sections">
       <!-- 友链分组 -->

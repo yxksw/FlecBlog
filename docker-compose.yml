@@ -31,7 +31,7 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - /srv/docker/flec_server:/app/data
+      - /srv/flecblog:/app/data
     networks:
       - flec-network
     depends_on:

@@ -149,6 +149,15 @@ func (r *StatsRepository) GetTotalComments() (int64, error) {
 	return count, err
 }
 
+// GetTotalVisibleComments 获取可见评论总数
+func (r *StatsRepository) GetTotalVisibleComments() (int64, error) {
+	var count int64
+	err := r.db.Model(&model.Comment{}).
+		Where("status = ? AND deleted_at IS NULL", 1).
+		Count(&count).Error
+	return count, err
+}
+
 // GetTodayComments 获取今日评论数
 func (r *StatsRepository) GetTodayComments() (int64, error) {
 	var count int64
@@ -254,6 +263,19 @@ func (r *StatsRepository) GetCategoryStats() ([]dto.CategoryStats, error) {
 	return results, err
 }
 
+// GetPublishedCategoryCount 获取有已发布文章的分类数量
+func (r *StatsRepository) GetPublishedCategoryCount() (int64, error) {
+	var count int64
+
+	err := r.db.Model(&model.Category{}).
+		Joins("LEFT JOIN articles ON articles.category_id = categories.id AND articles.is_publish = ?", true).
+		Group("categories.id").
+		Having("COUNT(articles.id) > 0").
+		Count(&count).Error
+
+	return count, err
+}
+
 // GetTagStats 获取标签统计数据
 func (r *StatsRepository) GetTagStats() ([]dto.TagStats, error) {
 	var results []dto.TagStats
@@ -269,6 +291,20 @@ func (r *StatsRepository) GetTagStats() ([]dto.TagStats, error) {
 		Scan(&results).Error
 
 	return results, err
+}
+
+// GetPublishedTagCount 获取有已发布文章的标签数量
+func (r *StatsRepository) GetPublishedTagCount() (int64, error) {
+	var count int64
+
+	err := r.db.Model(&model.Tag{}).
+		Joins("LEFT JOIN article_tags ON article_tags.tag_id = tags.id").
+		Joins("LEFT JOIN articles ON articles.id = article_tags.article_id AND articles.is_publish = ?", true).
+		Group("tags.id").
+		Having("COUNT(DISTINCT articles.id) > 0").
+		Count(&count).Error
+
+	return count, err
 }
 
 // ============================

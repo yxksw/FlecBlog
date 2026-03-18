@@ -101,7 +101,7 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - /srv/docker/flec_server:/app/data
+      - /srv/flecblog:/app/data
     networks:
       - flec-network
 
@@ -173,7 +173,7 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - /srv/docker/flec_server:/app/data
+      - /srv/flecblog:/app/data
     networks:
       - flec-network
     depends_on:
@@ -226,8 +226,8 @@ docker-compose up -d
 
 | 服务 | 地址 |
 |------|------|
-| 博客前端 | http://localhost:3000 |
-| 后台管理 | http://localhost:4000 |
+| 博客端 | http://localhost:3000 |
+| 管理端 | http://localhost:4000 |
 | API 文档 | http://localhost:8080/swagger/index.html |
 
 ## 从源码运行

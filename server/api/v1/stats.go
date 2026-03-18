@@ -54,7 +54,7 @@ func (h *StatsHandler) Collect(c *gin.Context) {
 // GetSiteStats 获取前台网站统计信息
 //
 //	@Summary		网站统计
-//	@Description	总字数、访客数、浏览量、在线人数、运行天数等
+//	@Description	获取博客前台公开统计数据，包含规模总览与访问数据
 //	@Tags			统计
 //	@Accept			json
 //	@Produce		json
