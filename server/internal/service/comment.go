@@ -553,16 +553,6 @@ func (s *CommentService) getTargetTitle(targetType, targetKey string) string {
 	}
 }
 
-// getArticleSlug 获取文章slug（用于通知跳转）
-func (s *CommentService) getArticleSlug(targetType, targetKey string) string {
-	if targetType != "article" {
-		return ""
-	}
-
-	// targetKey 本身就是 slug
-	return targetKey
-}
-
 // sendNotifications 发送评论通知
 func (s *CommentService) sendNotifications(ctx context.Context, comment *model.Comment, senderID uint) {
 	if s.notificationService == nil {
@@ -571,16 +561,14 @@ func (s *CommentService) sendNotifications(ctx context.Context, comment *model.C
 
 	// 获取目标标题
 	targetTitle := s.getTargetTitle(comment.TargetType, comment.TargetKey)
-	// 获取文章slug（用于前端跳转）
-	articleSlug := s.getArticleSlug(comment.TargetType, comment.TargetKey)
 
 	// 1. 如果是回复评论，通知被回复者
 	if comment.ReplyTo != nil {
-		_ = s.notificationService.NotifyCommentReply(ctx, senderID, *comment.ReplyTo, comment, targetTitle, articleSlug)
+		_ = s.notificationService.NotifyCommentReply(ctx, senderID, *comment.ReplyTo, comment, targetTitle)
 	}
 
 	// 2. 通知所有管理员（有新评论），排除发送者自己避免自通知
-	_ = s.notificationService.NotifyCommentToAdmins(ctx, senderID, comment, targetTitle, articleSlug, &senderID)
+	_ = s.notificationService.NotifyCommentToAdmins(ctx, senderID, comment, targetTitle, &senderID)
 }
 
 // markImagesAsUsed 标记评论内容中的图片为已使用

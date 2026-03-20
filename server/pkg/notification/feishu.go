@@ -53,7 +53,7 @@ func (f *FeishuNotifier) buildCommentCard(data Data) (string, error) {
 	return feishu.BuildCommentCard(
 		uint(getFloat64(data.Data, "comment_id")),
 		getString(data.Data, "page_title"),
-		getString(data.Data, "article_slug"),
+		getString(data.Data, "page_link"),
 		getString(data.Data, "sender_name"),
 		getString(data.Data, "comment_content"),
 		f.config.Basic.BlogURL,

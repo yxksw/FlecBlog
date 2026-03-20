@@ -187,12 +187,12 @@ func buildCard(title, template string, elements []interface{}) (string, error) {
 }
 
 // BuildCommentCard 构建评论通知卡片
-func BuildCommentCard(commentID uint, articleTitle, articleSlug, senderName, commentContent, blogURL, adminURL string) (string, error) {
-	content := fmt.Sprintf("来源：%s\n评论者：%s\n评论内容：%s", articleTitle, senderName, commentContent)
+func BuildCommentCard(commentID uint, pageTitle, pageLink, senderName, commentContent, blogURL, adminURL string) (string, error) {
+	content := fmt.Sprintf("来源：%s\n评论者：%s\n评论内容：%s", pageTitle, senderName, commentContent)
 	elements := []interface{}{
 		newMarkdownElement(content),
 		newInputElementWithAction("回复评论", map[string]interface{}{"action": "reply_comment", "comment_id": commentID}),
-		newButtonElementWithURL("查看", "primary", fmt.Sprintf("%s/posts/%s#comment-%d", blogURL, articleSlug, commentID)),
+		newButtonElementWithURL("查看", "primary", fmt.Sprintf("%s%s", blogURL, pageLink)),
 		newButtonElementWithURL("详情", "default", fmt.Sprintf("%s/comments", adminURL)),
 	}
 	return buildCard("📬 收到了新的评论通知", "blue", elements)
