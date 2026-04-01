@@ -155,6 +155,35 @@ function renderLinkCard(params: string[], lineNum?: number): string {
 }
 
 /**
+ * 渲染在线视频
+ * @param params - [平台或URL, 视频ID(可选)]
+ * @param lineNum - 源码行号（可选，用于滚动同步）
+ */
+function renderVideo(params: string[], lineNum?: number): string {
+  if (params.length === 0) return ''
+  const platformOrUrl = params[0] || ''
+  const videoId = params[1] || ''
+  const lineAttr = lineNum !== undefined ? ` data-source-line="${lineNum}"` : ''
+
+  // B站视频
+  if (platformOrUrl === 'bilibili' && videoId) {
+    return `<div class="custom-video"${lineAttr}><iframe src="//player.bilibili.com/player.html?bvid=${videoId}&autoplay=0" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true" sandbox="allow-scripts allow-same-origin allow-popups" referrerpolicy="strict-origin-when-cross-origin"></iframe></div>`
+  }
+
+  // YouTube视频
+  if (platformOrUrl === 'youtube' && videoId) {
+    return `<div class="custom-video"${lineAttr}><iframe src="https://www.youtube.com/embed/${videoId}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen sandbox="allow-scripts allow-same-origin allow-popups" referrerpolicy="strict-origin-when-cross-origin"></iframe></div>`
+  }
+
+  // 本地/在线视频URL
+  if (platformOrUrl.startsWith('http://') || platformOrUrl.startsWith('https://') || platformOrUrl.startsWith('/')) {
+    return `<div class="custom-video"${lineAttr}><video src="${platformOrUrl}" controls preload="metadata"></video></div>`
+  }
+
+  return ''
+}
+
+/**
  * 渲染照片展示墙
  * @param rows - 每行的图片数组
  * @param lineNum - 源码行号（可选，用于滚动同步）
@@ -299,6 +328,8 @@ function customBlocksPlugin(md: MarkdownIt) {
       let html = ''
       if (tag === 'link') {
         html = renderLinkCard(params, startLine)
+      } else if (tag === 'video') {
+        html = renderVideo(params, startLine)
       }
 
       if (html) {
@@ -490,7 +521,8 @@ const SANITIZE_CONFIG = {
     'a', 'img', 'table', 'thead', 'tbody', 'tr', 'th', 'td',
     'div', 'span', 'sup', 'sub', 'kbd', 'abbr',
     'input', 'label', 'button', 'i', 'section',
-    'svg', 'path', 'g', 'rect', 'circle', 'ellipse', 'line', 'polygon', 'polyline', 'text', 'foreignObject'
+    'svg', 'path', 'g', 'rect', 'circle', 'ellipse', 'line', 'polygon', 'polyline', 'text', 'foreignObject',
+    'video', 'iframe', 'audio', 'source'
   ],
   ALLOWED_ATTR: [
     'href', 'title', 'target', 'rel', 'src', 'alt', 'width', 'height',
@@ -499,10 +531,14 @@ const SANITIZE_CONFIG = {
     'data-source-line',
     'd', 'fill', 'stroke', 'stroke-width', 'x', 'y', 'cx', 'cy', 'r', 'rx', 'ry',
     'x1', 'y1', 'x2', 'y2', 'points', 'transform', 'viewBox', 'xmlns',
-    'text-anchor', 'font-size', 'font-family', 'dominant-baseline', 'data-processed'
+    'text-anchor', 'font-size', 'font-family', 'dominant-baseline', 'data-processed',
+    'controls', 'preload', 'autoplay', 'loop', 'muted', 'poster',
+    'allowfullscreen', 'scrolling', 'border', 'frameborder', 'framespacing', 'allow',
+    'sandbox', 'referrerpolicy',
+    'data-server', 'data-type', 'data-id'
   ],
   ALLOW_DATA_ATTR: true,
-  ADD_ATTR: ['target', 'onclick']
+  ADD_ATTR: ['target', 'onclick', 'allowfullscreen']
 }
 
 // 渲染 Markdown 为 HTML
@@ -730,6 +766,7 @@ export function extractToc(markdown: string): TocItem[] {
 
   // 处理单行自定义块
   cleanedMarkdown = cleanedMarkdown.replace(/^:::link\s+.*?:::$/gm, '')
+  cleanedMarkdown = cleanedMarkdown.replace(/^:::video\s+.*?:::$/gm, '')
   // 处理多行自定义块
   cleanedMarkdown = cleanedMarkdown.replace(/^:::note[\s\S]*?^:::endnote$/gm, '')
   cleanedMarkdown = cleanedMarkdown.replace(/^:::tabs[\s\S]*?^:::endtabs$/gm, '')

@@ -652,6 +652,7 @@ const toolbarItems: ToolbarItem[] = [
   { icon: 'ri-increase-decrease-line', title: '折叠面板', action: () => insertText('\n:::fold 点击展开\n', '\n:::endfold\n') },
   { icon: 'ri-external-link-line', title: '链接卡片', action: () => insertText('\n:::link 标题', ' https://example.com 描述信息 :::\n') },
   { icon: 'ri-multi-image-line', title: '照片墙', action: () => insertText('\n:::photo\n图片1\n图片2\n:::n\n图片3\n图片4\n:::endphoto\n') },
+  { icon: 'ri-video-line', title: '在线视频', action: () => insertText('\n:::video bilibili ', 'BV号 :::\n') },
 
   // 弹性空间，将后续按钮推到右侧
   { type: 'spacer' },
@@ -1226,6 +1227,28 @@ onBeforeUnmount(() => {
           background: #fef0f0;
           border-radius: 4px;
           border-left: 4px solid #f56c6c;
+        }
+
+        // 视频播放器样式
+        .custom-video {
+          margin: 1.5rem 0;
+          border-radius: 8px;
+          overflow: hidden;
+          background: #000;
+
+          video,
+          iframe {
+            width: 100%;
+            height: auto;
+            aspect-ratio: 16 / 9;
+            border: none;
+            display: block;
+          }
+        }
+
+        // 音乐播放器样式
+        .custom-music {
+          margin: 1.5rem 0;
         }
       }
     }

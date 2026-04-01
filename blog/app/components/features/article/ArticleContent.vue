@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import mediumZoom from 'medium-zoom'
 import mermaid from 'mermaid'
-import { loadEmojiMap, getEmojiMapSync } from '@/composables/useEmojis'
+import { loadEmojiMap } from '@/composables/useEmojis'
 import { useSysConfig } from '@/composables/useStores'
 
 const { blogConfig } = useSysConfig()
@@ -22,7 +22,7 @@ const initMermaid = () => {
 
 const renderMermaidDiagrams = async () => {
   const elements = document.querySelectorAll('.mermaid:not(:has(svg))')
-  
+
   for (const element of elements) {
     try {
       const { svg } = await mermaid.render(`mermaid-${Date.now()}`, element.textContent || '')
@@ -52,16 +52,8 @@ const initZoom = () => {
 
   const images = contentEl.querySelectorAll('img')
   if (images.length === 0) return
-
-  if (zoom) {
-    zoom.detach()
-  }
-
-  zoom = mediumZoom(images, {
-    margin: 24,
-    background: 'rgba(0, 0, 0, 0.9)',
-    scrollOffset: 48
-  })
+  if (zoom) zoom.detach()
+  zoom = mediumZoom(images, { margin: 24, background: 'rgba(0, 0, 0, 0.9)', scrollOffset: 48 })
 }
 
 watch(() => renderedContent.value, async () => {
@@ -72,15 +64,10 @@ watch(() => renderedContent.value, async () => {
 
 onMounted(() => {
   initMermaid()
-  
+
   // 加载表情数据
   const emojisUrl = blogConfig.value.emojis
-  if (emojisUrl) {
-    loadEmojiMap(emojisUrl).then(map => {
-      emojiMap.value = map
-    })
-  }
-  
+  if (emojisUrl) loadEmojiMap(emojisUrl).then(map => emojiMap.value = map)
   nextTick(async () => {
     initZoom()
     await renderMermaidDiagrams()
@@ -88,10 +75,7 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
-  if (zoom) {
-    zoom.detach()
-    zoom = null
-  }
+  if (zoom) { zoom.detach(); zoom = null }
 })
 </script>
 
@@ -168,6 +152,22 @@ onUnmounted(() => {
       background: #fef0f0;
       border-radius: 4px;
       border-left: 4px solid #f56c6c;
+    }
+
+    .custom-video {
+      margin: 1.5rem 0;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #000;
+
+      video,
+      iframe {
+        width: 100%;
+        height: auto;
+        aspect-ratio: 16 / 9;
+        border: none;
+        display: block;
+      }
     }
   }
 }

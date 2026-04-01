@@ -200,6 +200,60 @@ function renderLinkCard(params: string[]): string {
   </div>`
 }
 
+/**
+ * 渲染在线视频
+ * @param params - [平台或URL, 视频ID(可选)]
+ * 支持格式：
+ * - :::video bilibili BV1xxx :::
+ * - :::video youtube dQw4w9WgXcQ :::
+ * - :::video https://example.com/video.mp4 :::
+ */
+function renderVideo(params: string[]): string {
+  if (params.length === 0) return ''
+
+  const platformOrUrl = params[0] || ''
+  const videoId = params[1] || ''
+
+  // B站视频
+  if (platformOrUrl === 'bilibili' && videoId) {
+    return `<div class="custom-video">
+      <iframe 
+        src="//player.bilibili.com/player.html?bvid=${videoId}&autoplay=0" 
+        scrolling="no" 
+        border="0" 
+        frameborder="no" 
+        framespacing="0" 
+        allowfullscreen="true"
+        sandbox="allow-scripts allow-same-origin allow-popups"
+        referrerpolicy="strict-origin-when-cross-origin">
+      </iframe>
+    </div>`
+  }
+
+  // YouTube视频
+  if (platformOrUrl === 'youtube' && videoId) {
+    return `<div class="custom-video">
+      <iframe 
+        src="https://www.youtube.com/embed/${videoId}" 
+        frameborder="0" 
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+        allowfullscreen
+        sandbox="allow-scripts allow-same-origin allow-popups"
+        referrerpolicy="strict-origin-when-cross-origin">
+      </iframe>
+    </div>`
+  }
+
+  // 本地/在线视频URL
+  if (platformOrUrl.startsWith('http://') || platformOrUrl.startsWith('https://') || platformOrUrl.startsWith('/')) {
+    return `<div class="custom-video">
+      <video src="${platformOrUrl}" controls preload="metadata"></video>
+    </div>`
+  }
+
+  return ''
+}
+
 // 创建 markdown-it 实例
 const md = new MarkdownIt({
   html: false,
@@ -312,6 +366,8 @@ function customBlocksPlugin(md: MarkdownIt) {
       let html = ''
       if (tag === 'link') {
         html = renderLinkCard(params)
+      } else if (tag === 'video') {
+        html = renderVideo(params)
       }
 
       if (html) {
@@ -511,7 +567,8 @@ export function renderMarkdown(markdown: string): string {
       'a', 'img', 'table', 'thead', 'tbody', 'tr', 'th', 'td',
       'div', 'span', 'sup', 'sub', 'kbd', 'abbr',
       'input', 'label', 'button', 'i', 'section',
-      'svg', 'path', 'g', 'rect', 'circle', 'ellipse', 'line', 'polygon', 'polyline', 'text', 'foreignObject'
+      'svg', 'path', 'g', 'rect', 'circle', 'ellipse', 'line', 'polygon', 'polyline', 'text', 'foreignObject',
+      'video', 'iframe', 'audio', 'source'
     ],
     ALLOWED_ATTR: [
       'href', 'title', 'target', 'rel', 'src', 'alt', 'width', 'height',
@@ -519,10 +576,14 @@ export function renderMarkdown(markdown: string): string {
       'type', 'checked', 'disabled', 'for', 'onclick', 'start',
       'd', 'fill', 'stroke', 'stroke-width', 'x', 'y', 'cx', 'cy', 'r', 'rx', 'ry',
       'x1', 'y1', 'x2', 'y2', 'points', 'transform', 'viewBox', 'xmlns',
-      'text-anchor', 'font-size', 'font-family', 'dominant-baseline', 'data-processed'
+      'text-anchor', 'font-size', 'font-family', 'dominant-baseline', 'data-processed',
+      'controls', 'preload', 'autoplay', 'loop', 'muted', 'poster',
+      'allowfullscreen', 'scrolling', 'border', 'frameborder', 'framespacing', 'allow',
+      'sandbox', 'referrerpolicy',
+      'data-server', 'data-type', 'data-id'
     ],
     ALLOW_DATA_ATTR: true,
-    ADD_ATTR: ['target', 'onclick']
+    ADD_ATTR: ['target', 'onclick', 'allowfullscreen']
   })
 }
 
@@ -592,6 +653,8 @@ export function extractToc(markdown: string): TocItem[] {
   cleanedMarkdown = cleanedMarkdown.replace(/^:::tabs[\s\S]*?^:::endtabs$/gm, '')
   cleanedMarkdown = cleanedMarkdown.replace(/^:::fold[\s\S]*?^:::endfold$/gm, '')
   cleanedMarkdown = cleanedMarkdown.replace(/^:::photo[\s\S]*?^:::endphoto$/gm, '')
+  // 处理视频自定义块
+  cleanedMarkdown = cleanedMarkdown.replace(/^:::video\s+.*?:::$/gm, '')
 
   const headings: TocItem[] = []
 
