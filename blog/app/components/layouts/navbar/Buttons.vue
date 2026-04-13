@@ -79,15 +79,11 @@ const handleLogout = () => {
 <template>
   <div class="nav-button">
     <button class="brighten" @click="openSearch" aria-label="搜索"><i class="ri-search-line ri-xl"></i></button>
-    <!-- 主题切换按钮 - 客户端渲染避免 hydration mismatch -->
-    <ClientOnly>
-      <button class="brighten" @click="toggleTheme" :aria-label="isDark ? '切换到亮色模式' : '切换到暗色模式'">
-        <i class="ri-xl" :class="isDark ? 'ri-sun-line' : 'ri-moon-line'"></i>
-      </button>
-      <template #fallback>
-        <button class="brighten" aria-label="切换主题"><i class="ri-moon-line ri-xl"></i></button>
-      </template>
-    </ClientOnly>
+    <!-- 主题切换按钮 - 使用 CSS 控制图标显示，避免 SSR 闪烁 -->
+    <button class="brighten theme-toggle" @click="toggleTheme" aria-label="切换主题">
+      <i class="ri-moon-line ri-xl theme-icon-moon"></i>
+      <i class="ri-sun-line ri-xl theme-icon-sun"></i>
+    </button>
     <!-- 登录按钮 - 客户端渲染避免 hydration mismatch -->
     <ClientOnly>
       <button v-if="!isLoggedIn" class="brighten login-btn" @click="openLogin" aria-label="登录">
@@ -148,6 +144,22 @@ const handleLogout = () => {
 
   .button-menu {
     display: none;
+  }
+
+  // 主题切换按钮图标控制
+  .theme-toggle {
+    position: relative;
+    width: 24px;
+    height: 24px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    .theme-icon-moon,
+    .theme-icon-sun {
+      position: absolute;
+      transition: opacity 0.2s ease;
+    }
   }
 
   .login-btn {
@@ -303,7 +315,7 @@ const handleLogout = () => {
   }
 }
 
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 900px) {
   .button-menu {
     display: inline-flex !important;
   }

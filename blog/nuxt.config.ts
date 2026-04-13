@@ -16,6 +16,19 @@ export default defineNuxtConfig({
   app: {
     head: {
       htmlAttrs: { lang: 'zh-CN' },
+      script: [
+        {
+          innerHTML: `
+            (function() {
+              var theme = localStorage.getItem('theme');
+              var isDark = theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches);
+              document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+            })();
+          `,
+          type: 'text/javascript',
+          tagPosition: 'head',
+        }
+      ],
     }
   },
 

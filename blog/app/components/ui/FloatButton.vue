@@ -3,8 +3,9 @@
   <Transition name="fade">
     <div v-show="visible" class="float-button-group">
       <!-- 主题切换按钮 -->
-      <div class="float-button" @click="toggleTheme" title="切换主题">
-        <i :class="isDark ? 'ri-sun-line' : 'ri-moon-line'"></i>
+      <div class="float-button theme-toggle" @click="toggleTheme" title="切换主题">
+        <i class="ri-moon-line theme-icon-moon"></i>
+        <i class="ri-sun-line theme-icon-sun"></i>
       </div>
 
       <!-- 阅读模式按钮（仅文章页显示） -->
@@ -123,6 +124,17 @@ onUnmounted(() => {
   .progress-text {
     line-height: 1;
     user-select: none;
+  }
+
+  // 主题切换按钮图标
+  &.theme-toggle {
+    position: relative;
+
+    .theme-icon-moon,
+    .theme-icon-sun {
+      position: absolute;
+      transition: opacity 0.2s ease;
+    }
   }
 }
 

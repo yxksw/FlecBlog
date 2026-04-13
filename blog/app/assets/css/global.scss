@@ -19,6 +19,7 @@
 
 html {
   scroll-behavior: smooth;
+  color-scheme: light dark;
 }
 
 body {
@@ -99,4 +100,21 @@ input, textarea, select {
 :where([class*=" ri-"]) {
   font-size: 1.15em;
   display: inline-block;
+}
+
+// 主题切换按钮图标控制
+.theme-toggle .theme-icon-moon {
+  opacity: 1;
+}
+
+.theme-toggle .theme-icon-sun {
+  opacity: 0;
+}
+
+html[data-theme='dark'] .theme-toggle .theme-icon-moon {
+  opacity: 0;
+}
+
+html[data-theme='dark'] .theme-toggle .theme-icon-sun {
+  opacity: 1;
 }
