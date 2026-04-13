@@ -13,6 +13,11 @@
         <i class="ri-book-open-line"></i>
       </div>
 
+      <!-- 目录按钮（仅移动端文章页显示） -->
+      <div v-if="isArticlePage && isMobile" class="float-button" @click="showMobileToc = true" title="目录">
+        <i class="ri-list-unordered"></i>
+      </div>
+
       <!-- 跳转到评论区按钮（仅文章页显示） -->
       <div v-if="isArticlePage" class="float-button" @click="scrollToElement('.comment-input')" title="跳转评论区">
         <i class="ri-message-3-line"></i>
@@ -29,6 +34,9 @@
     </div>
   </Transition>
 
+  <!-- 移动端目录抽屉 -->
+  <UiMobileToc :visible="showMobileToc" @close="showMobileToc = false" />
+
   <!-- 阅读模式退出按钮 -->
   <Transition name="fade">
     <div v-if="isReadingMode" class="reading-exit" @click="toggleReadingMode" title="退出阅读模式">
@@ -43,9 +51,15 @@ const visible = ref(false)
 const isHovering = ref(false)
 const readingProgress = ref(0)
 const isReadingMode = ref(false)
+const showMobileToc = ref(false)
 
-// 判断是否在文章页
 const isArticlePage = computed(() => route.name === 'posts-slug')
+
+const isMobile = ref(false)
+
+const checkMobile = () => {
+  isMobile.value = window.innerWidth <= 900
+}
 
 const scrollToTop = () => {
   window.scrollTo({
@@ -80,11 +94,14 @@ const handleScroll = () => {
 
 onMounted(() => {
   window.addEventListener('scroll', handleScroll)
-  handleScroll() // 初始化
+  handleScroll()
+  checkMobile()
+  window.addEventListener('resize', checkMobile)
 })
 
 onUnmounted(() => {
   window.removeEventListener('scroll', handleScroll)
+  window.removeEventListener('resize', checkMobile)
 })
 </script>
 
