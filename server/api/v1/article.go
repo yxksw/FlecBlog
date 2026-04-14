@@ -9,6 +9,7 @@ import (
 	"flec_blog/internal/dto"
 	"flec_blog/internal/service"
 	"flec_blog/pkg/response"
+	"flec_blog/pkg/upload"
 
 	"github.com/gin-gonic/gin"
 )
@@ -318,6 +319,9 @@ func (c *ArticleController) ImportArticles(ctx *gin.Context) {
 
 	uploadImages := ctx.PostForm("upload_images") == "true"
 
+	// 提取 host 用于生成完整的图片 URL
+	host := upload.ExtractHostFromContext(ctx)
+
 	// Markdown/Hexo 文件导入
 	const maxFileSize = 10 << 20 // 10MB
 	fileContents := make(map[string]string)
@@ -338,9 +342,9 @@ func (c *ArticleController) ImportArticles(ctx *gin.Context) {
 
 	var result *dto.ImportArticlesResult
 	if sourceType == "markdown" {
-		result, err = c.articleService.ImportFromMarkdown(ctx.Request.Context(), fileContents, uploadImages)
+		result, err = c.articleService.ImportFromMarkdown(ctx.Request.Context(), fileContents, uploadImages, host)
 	} else {
-		result, err = c.articleService.ImportFromHexo(ctx.Request.Context(), fileContents, uploadImages)
+		result, err = c.articleService.ImportFromHexo(ctx.Request.Context(), fileContents, uploadImages, host)
 	}
 
 	if err != nil {

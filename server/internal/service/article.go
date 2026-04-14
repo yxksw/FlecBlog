@@ -696,7 +696,7 @@ func (s *ArticleService) updateContentFileStatus(oldContent, newContent string) 
 // ============ 数据导入导出方法 ============
 
 // ImportFromHexo 从Hexo格式导入文章
-func (s *ArticleService) ImportFromHexo(ctx context.Context, files map[string]string, uploadImages bool) (*dto.ImportArticlesResult, error) {
+func (s *ArticleService) ImportFromHexo(ctx context.Context, files map[string]string, uploadImages bool, host string) (*dto.ImportArticlesResult, error) {
 	if len(files) == 0 {
 		return nil, fmt.Errorf("没有找到有效的文章数据")
 	}
@@ -724,7 +724,7 @@ func (s *ArticleService) ImportFromHexo(ctx context.Context, files map[string]st
 
 		// 处理图片上传
 		if uploadImages {
-			processedContent, err := s.uploadContentImages(ctx, parsed.Content)
+			processedContent, err := s.uploadContentImages(ctx, parsed.Content, host)
 			if err != nil {
 				logger.Warn("文章 %s 图片上传失败: %v", parsed.Title, err)
 			} else {
@@ -732,7 +732,7 @@ func (s *ArticleService) ImportFromHexo(ctx context.Context, files map[string]st
 			}
 			// 处理封面图
 			if parsed.Cover != "" {
-				uploadedCover, err := s.uploadSingleImage(ctx, parsed.Cover)
+				uploadedCover, err := s.uploadSingleImage(ctx, parsed.Cover, host)
 				if err != nil {
 					logger.Warn("文章 %s 封面上传失败: %v", parsed.Title, err)
 				} else {
@@ -760,7 +760,7 @@ func (s *ArticleService) ImportFromHexo(ctx context.Context, files map[string]st
 }
 
 // ImportFromMarkdown 从Markdown格式导入文章
-func (s *ArticleService) ImportFromMarkdown(ctx context.Context, files map[string]string, uploadImages bool) (*dto.ImportArticlesResult, error) {
+func (s *ArticleService) ImportFromMarkdown(ctx context.Context, files map[string]string, uploadImages bool, host string) (*dto.ImportArticlesResult, error) {
 	if len(files) == 0 {
 		return nil, fmt.Errorf("没有找到有效的文章数据")
 	}
@@ -788,7 +788,7 @@ func (s *ArticleService) ImportFromMarkdown(ctx context.Context, files map[strin
 
 		// 处理图片上传
 		if uploadImages {
-			processedContent, err := s.uploadContentImages(ctx, parsed.Content)
+			processedContent, err := s.uploadContentImages(ctx, parsed.Content, host)
 			if err != nil {
 				logger.Warn("文章 %s 图片上传失败: %v", parsed.Title, err)
 			} else {
@@ -796,7 +796,7 @@ func (s *ArticleService) ImportFromMarkdown(ctx context.Context, files map[strin
 			}
 			// 处理封面图
 			if parsed.Cover != "" {
-				uploadedCover, err := s.uploadSingleImage(ctx, parsed.Cover)
+				uploadedCover, err := s.uploadSingleImage(ctx, parsed.Cover, host)
 				if err != nil {
 					logger.Warn("文章 %s 封面上传失败: %v", parsed.Title, err)
 				} else {
@@ -824,7 +824,7 @@ func (s *ArticleService) ImportFromMarkdown(ctx context.Context, files map[strin
 }
 
 // uploadContentImages 上传文章内容中的所有图片，返回替换后的内容
-func (s *ArticleService) uploadContentImages(ctx context.Context, content string) (string, error) {
+func (s *ArticleService) uploadContentImages(ctx context.Context, content string, host string) (string, error) {
 	if s.fileService == nil {
 		return content, nil
 	}
@@ -873,7 +873,7 @@ func (s *ArticleService) uploadContentImages(ctx context.Context, content string
 			sem <- struct{}{}
 			defer func() { <-sem }()
 
-			uploadedURL, err := s.uploadSingleImage(ctx, url)
+			uploadedURL, err := s.uploadSingleImage(ctx, url, host)
 			if err != nil {
 				logger.Warn("上传图片失败 %s: %v", url, err)
 				results <- struct {
@@ -908,7 +908,7 @@ func (s *ArticleService) uploadContentImages(ctx context.Context, content string
 }
 
 // uploadSingleImage 上传单张图片，返回新的URL
-func (s *ArticleService) uploadSingleImage(ctx context.Context, imgURL string) (string, error) {
+func (s *ArticleService) uploadSingleImage(ctx context.Context, imgURL string, host string) (string, error) {
 	if s.fileService == nil || imgURL == "" {
 		return imgURL, nil
 	}
@@ -931,7 +931,6 @@ func (s *ArticleService) uploadSingleImage(ctx context.Context, imgURL string) (
 
 	// 上传图片
 	reader := bytes.NewReader(data)
-	host := "" // 留空让内部处理
 	uploadedURL, err := s.fileService.UploadFromReader(reader, filename, "image", "image", 0, host)
 	if err != nil {
 		return imgURL, fmt.Errorf("上传图片失败: %w", err)
@@ -1232,67 +1231,40 @@ func generateSummary(content string, maxLen int) string {
 	return content
 }
 
-// parseMarkdownArticle 解析纯Markdown格式文章（无Front Matter）
+// parseMarkdownArticle 解析Markdown格式文章
 func parseMarkdownArticle(filename, content string) (*HexoParsedArticle, error) {
-	lines := strings.Split(content, "\n")
-
 	parsed := &HexoParsedArticle{
-		Title:       "",
 		Tags:        []string{},
 		PublishTime: nil,
 		UpdateTime:  nil,
 	}
 
-	// 尝试从文件名提取标题（去掉扩展名）
+	// 从文件名提取标题（移除 .md 扩展名）
 	if filename != "" {
-		nameWithoutExt := filename
-		if idx := strings.LastIndex(filename, "."); idx > 0 {
-			nameWithoutExt = filename[:idx]
-		}
-		// 清理文件名中的非法字符
-		nameWithoutExt = strings.Map(func(r rune) rune {
-			if strings.ContainsRune("_-", r) {
-				return ' '
-			}
-			if strings.ContainsRune("<>:\"/\\|?*", r) {
-				return '_'
-			}
-			return r
-		}, nameWithoutExt)
-		parsed.Title = strings.TrimSpace(nameWithoutExt)
-	}
-
-	// 尝试从内容中提取标题（第一个 # 标题）
-	contentStart := 0
-	for i, line := range lines {
-		trimmed := strings.TrimSpace(line)
-		if strings.HasPrefix(trimmed, "# ") {
-			parsed.Title = strings.TrimSpace(strings.TrimPrefix(trimmed, "# "))
-			contentStart = i + 1
-			break
+		lowerName := strings.ToLower(filename)
+		if strings.HasSuffix(lowerName, ".md") {
+			parsed.Title = strings.TrimSpace(filename[:len(filename)-3])
+		} else {
+			parsed.Title = strings.TrimSpace(filename)
 		}
 	}
 
-	// 如果没有找到标题，使用文件名
 	if parsed.Title == "" {
 		parsed.Title = "未命名文章"
 	}
 
-	// 剩余内容
-	remainingContent := strings.Join(lines[contentStart:], "\n")
-
 	// 尝试提取第一张图片作为封面
 	coverRe := regexp.MustCompile(`!\[[^\]]*\]\(([^)]+)\)`)
-	coverMatches := coverRe.FindStringSubmatch(remainingContent)
+	coverMatches := coverRe.FindStringSubmatch(content)
 	if len(coverMatches) > 1 {
 		parsed.Cover = coverMatches[1]
 	}
 
 	// 生成摘要（取内容前200字符）
-	parsed.Summary = generateSummary(remainingContent, 200)
+	parsed.Summary = generateSummary(content, 200)
 
-	// 内容部分
-	parsed.Content = remainingContent
+	// 内容部分（保留完整内容）
+	parsed.Content = content
 
 	return parsed, nil
 }
