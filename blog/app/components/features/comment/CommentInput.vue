@@ -134,6 +134,14 @@ const clearError = (field: 'nickname' | 'email' | 'website' | 'content') => {
   errors.value[field] = ''
 }
 
+/**
+ * 处理文本框输入事件
+ */
+const handleTextareaInput = () => {
+  clearError('content')
+  resetTextareaHeight()
+}
+
 // 事件处理
 const handleSubmitComment = async () => {
   if (!validateForm()) return
@@ -425,10 +433,7 @@ onUnmounted(() => {
         rows="3"
         :disabled="isSubmitting"
         :class="{ error: errors.content }"
-        @input="
-          clearError('content');
-          resetTextareaHeight()
-        "
+        @input="handleTextareaInput"
         @paste="handlePaste"
       />
       <transition name="fade">

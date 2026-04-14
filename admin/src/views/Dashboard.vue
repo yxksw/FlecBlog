@@ -255,8 +255,8 @@
       </template>
       <div class="quick-access-content">
         <div class="quick-links">
-          <div class="link-item" @click="openLink('https://talen.top')">
-            <span class="link-text">主页</span>
+          <div class="link-item" @click="openLink('https://qm.qq.com/q/Zzm9XN6lOi')">
+            <span class="link-text">社群</span>
             <el-icon class="link-icon">
               <Right />
             </el-icon>

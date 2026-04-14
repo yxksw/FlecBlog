@@ -188,6 +188,14 @@ const onEnded = () => {
   }
 }
 
+/**
+ * 处理音频加载错误
+ */
+const handleAudioError = () => {
+  loadError.value = true
+  isPlaying.value = false
+}
+
 // 初始化
 onMounted(() => fetchMusicData())
 </script>
@@ -214,10 +222,7 @@ onMounted(() => fetchMusicData())
         @play="isPlaying = true"
         @pause="isPlaying = false"
         @ended="onEnded"
-        @error="
-          loadError = true;
-          isPlaying = false
-        "
+        @error="handleAudioError"
       />
 
       <div class="player-main">
