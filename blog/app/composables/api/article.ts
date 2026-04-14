@@ -15,6 +15,12 @@ export const getArticleBySlug = async (slug: string) => {
 }
 
 /** 搜索文章 */
-export const searchArticles = async (keyword: string, params: Partial<ArticleQuery> = {}) => {
-  return articleApi.get<PaginationData<Article>>('/search', { keyword, ...params })
+export const searchArticles = async (
+  keyword: string,
+  params: Partial<ArticleQuery> = {}
+) => {
+  return articleApi.get<PaginationData<Article>>('/search', {
+    keyword,
+    ...params
+  })
 }

@@ -1,6 +1,11 @@
 <template>
-  <el-dialog v-model="visible" :title="isEdit ? '编辑菜单' : '新增菜单'" width="600px" :close-on-click-modal="false"
-    @close="handleClose">
+  <el-dialog
+    v-model="visible"
+    :title="isEdit ? '编辑菜单' : '新增菜单'"
+    width="600px"
+    :close-on-click-modal="false"
+    @close="handleClose"
+  >
     <el-form ref="formRef" :model="formData" :rules="rules" label-width="100px">
       <!-- 提示信息 -->
       <div class="form-info">
@@ -15,16 +20,30 @@
       </div>
 
       <el-form-item label="菜单标题" prop="title">
-        <el-input v-model="formData.title" placeholder="请输入菜单标题" maxlength="100" show-word-limit />
+        <el-input
+          v-model="formData.title"
+          placeholder="请输入菜单标题"
+          maxlength="100"
+          show-word-limit
+        />
       </el-form-item>
 
       <el-form-item label="链接地址" prop="url">
-        <el-input v-model="formData.url" placeholder="请输入链接地址" maxlength="500" show-word-limit />
+        <el-input
+          v-model="formData.url"
+          placeholder="请输入链接地址"
+          maxlength="500"
+          show-word-limit
+        />
       </el-form-item>
 
       <el-form-item label="图标" prop="icon">
         <div class="icon-input-wrapper">
-          <el-input v-model="formData.icon" placeholder="请输入图标类名(ri-home-line)或上传图片" maxlength="500">
+          <el-input
+            v-model="formData.icon"
+            placeholder="请输入图标类名(ri-home-line)或上传图片"
+            maxlength="500"
+          >
             <template #append>
               <el-button @click="handleIconUpload">
                 <el-icon>
@@ -38,20 +57,47 @@
             <!-- RemixIcon 图标预览 -->
             <i v-if="isRemixIcon(formData.icon)" :class="formData.icon"></i>
             <!-- 图片预览 -->
-            <img v-else :src="formData.icon" alt="图标预览" @error="handleIconError" />
+            <img
+              v-else
+              :src="formData.icon"
+              alt="图标预览"
+              @error="handleIconError"
+            />
           </div>
         </div>
       </el-form-item>
 
       <!-- 编辑时显示父菜单选择器 -->
       <el-form-item v-if="isEdit" label="父菜单" prop="parent_id">
-        <el-select v-model="formData.parent_id" :placeholder="hasChildren ? '包含子菜单，无法设置' : '请选择父菜单'"
-          :disabled="hasChildren" clearable style="width: 100%">
-          <el-option v-for="menu in parentMenuOptions" :key="menu.id" :label="menu.title" :value="menu.id">
-            <div style="display: flex; align-items: center;">
-              <i v-if="menu.icon && isRemixIcon(menu.icon)" :class="menu.icon" style="margin-right: 8px;"></i>
-              <img v-else-if="menu.icon" :src="menu.icon"
-                style="width: 16px; height: 16px; margin-right: 8px; object-fit: contain;" />
+        <el-select
+          v-model="formData.parent_id"
+          :placeholder="hasChildren ? '包含子菜单，无法设置' : '请选择父菜单'"
+          :disabled="hasChildren"
+          clearable
+          style="width: 100%"
+        >
+          <el-option
+            v-for="menu in parentMenuOptions"
+            :key="menu.id"
+            :label="menu.title"
+            :value="menu.id"
+          >
+            <div style="display: flex; align-items: center">
+              <i
+                v-if="menu.icon && isRemixIcon(menu.icon)"
+                :class="menu.icon"
+                style="margin-right: 8px"
+              ></i>
+              <img
+                v-else-if="menu.icon"
+                :src="menu.icon"
+                style="
+                  width: 16px;
+                  height: 16px;
+                  margin-right: 8px;
+                  object-fit: contain;
+                "
+              />
               <span>{{ menu.title }}</span>
             </div>
           </el-option>
@@ -81,7 +127,12 @@ import { ref, computed, watch } from 'vue'
 import { ElMessage } from 'element-plus'
 import { Upload } from '@element-plus/icons-vue'
 import type { FormInstance, FormRules } from 'element-plus'
-import type { MenuTreeNode, CreateMenuRequest, UpdateMenuRequest, MenuType } from '@/types/menu'
+import type {
+  MenuTreeNode,
+  CreateMenuRequest,
+  UpdateMenuRequest,
+  MenuType
+} from '@/types/menu'
 import { createMenu, updateMenu, getMenuTree } from '@/api/menu'
 import { uploadFile } from '@/api/file'
 
@@ -99,7 +150,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits<{
   'update:modelValue': [value: boolean]
-  'success': []
+  success: []
 }>()
 
 const visible = computed({
@@ -144,15 +195,9 @@ const rules: FormRules = {
     { message: '请输入菜单标题', trigger: 'blur' },
     { min: 1, max: 100, message: '长度在 1 到 100 个字符', trigger: 'blur' }
   ],
-  type: [
-    { message: '请选择菜单类型', trigger: 'change' }
-  ],
-  url: [
-    { max: 500, message: '链接地址不能超过 500 个字符', trigger: 'blur' }
-  ],
-  icon: [
-    { max: 500, message: '图标不能超过 500 个字符', trigger: 'blur' }
-  ]
+  type: [{ message: '请选择菜单类型', trigger: 'change' }],
+  url: [{ max: 500, message: '链接地址不能超过 500 个字符', trigger: 'blur' }],
+  icon: [{ max: 500, message: '图标不能超过 500 个字符', trigger: 'blur' }]
 }
 
 // 获取菜单类型标签
@@ -172,7 +217,10 @@ const isRemixIcon = (icon: string) => {
 
 // 清理图标Blob URL
 const cleanupIconBlob = () => {
-  if (iconItem.value?.type === 'file' && iconItem.value.url.startsWith('blob:')) {
+  if (
+    iconItem.value?.type === 'file' &&
+    iconItem.value.url.startsWith('blob:')
+  ) {
     URL.revokeObjectURL(iconItem.value.url)
   }
 }
@@ -212,7 +260,7 @@ const handleIconError = (e: Event) => {
 const getAllChildrenIds = (menu: MenuTreeNode): number[] => {
   const ids: number[] = [menu.id]
   if (menu.children) {
-    menu.children.forEach(child => {
+    menu.children.forEach((child) => {
       ids.push(...getAllChildrenIds(child))
     })
   }
@@ -226,12 +274,12 @@ const fetchParentMenuOptions = async () => {
     const allMenus = await getMenuTree(type)
 
     // 只显示主菜单（parent_id 为 null 的菜单）
-    let options = allMenus.filter(menu => menu.parent_id === null)
+    let options = allMenus.filter((menu) => menu.parent_id === null)
 
     // 编辑时，过滤掉当前菜单及其所有子菜单（防止循环引用）
     if (props.editMenu) {
       const excludeIds = getAllChildrenIds(props.editMenu)
-      options = options.filter(menu => !excludeIds.includes(menu.id))
+      options = options.filter((menu) => !excludeIds.includes(menu.id))
     }
 
     parentMenuOptions.value = options
@@ -269,7 +317,9 @@ const initFormData = () => {
     // 新增菜单时，重置为默认值
     formData.value = {
       title: '',
-      type: props.parentMenu ? props.parentMenu.type : (props.currentType as MenuType || 'navigation'),
+      type: props.parentMenu
+        ? props.parentMenu.type
+        : (props.currentType as MenuType) || 'navigation',
       url: '',
       icon: '',
       sort: 5,
@@ -280,16 +330,19 @@ const initFormData = () => {
 }
 
 // 监听对话框打开状态，打开时初始化表单
-watch(() => props.modelValue, async (newVal) => {
-  if (newVal) {
-    // 对话框打开时初始化表单数据
-    initFormData()
-    // 编辑时加载父菜单选项
-    if (isEdit.value) {
-      await fetchParentMenuOptions()
+watch(
+  () => props.modelValue,
+  async (newVal) => {
+    if (newVal) {
+      // 对话框打开时初始化表单数据
+      initFormData()
+      // 编辑时加载父菜单选项
+      if (isEdit.value) {
+        await fetchParentMenuOptions()
+      }
     }
   }
-})
+)
 
 // 提交表单
 const handleSubmit = async () => {

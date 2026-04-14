@@ -7,7 +7,9 @@
         <div class="profile-section">
           <el-avatar :size="64" :src="userAvatar" class="avatar" />
           <div class="profile-info">
-            <h2 class="greeting">{{ greeting }}，{{ nickName }}，今天又是充满活力的一天！</h2>
+            <h2 class="greeting">
+              {{ greeting }}，{{ nickName }}，今天又是充满活力的一天！
+            </h2>
             <p class="weather-info">{{ hitokoto }}</p>
           </div>
         </div>
@@ -45,10 +47,17 @@
           </div>
           <div class="card-right">
             <div class="card-title">浏览量</div>
-            <div class="card-value">{{ formatNumber(dashboardData.total_views) }}</div>
+            <div class="card-value">
+              {{ formatNumber(dashboardData.total_views) }}
+            </div>
             <div class="card-stats">
-              <span class="today-value">今日: {{ dashboardData.today_views }}</span>
-              <span class="growth-rate" :class="getGrowthClass(dashboardData.views_growth)">
+              <span class="today-value"
+                >今日: {{ dashboardData.today_views }}</span
+              >
+              <span
+                class="growth-rate"
+                :class="getGrowthClass(dashboardData.views_growth)"
+              >
                 <el-icon v-if="dashboardData.views_growth > 0">
                   <CaretTop />
                 </el-icon>
@@ -73,10 +82,17 @@
           </div>
           <div class="card-right">
             <div class="card-title">访客量</div>
-            <div class="card-value">{{ formatNumber(dashboardData.total_visitors) }}</div>
+            <div class="card-value">
+              {{ formatNumber(dashboardData.total_visitors) }}
+            </div>
             <div class="card-stats">
-              <span class="today-value">今日: {{ dashboardData.today_visitors }}</span>
-              <span class="growth-rate" :class="getGrowthClass(dashboardData.visitors_growth)">
+              <span class="today-value"
+                >今日: {{ dashboardData.today_visitors }}</span
+              >
+              <span
+                class="growth-rate"
+                :class="getGrowthClass(dashboardData.visitors_growth)"
+              >
                 <el-icon v-if="dashboardData.visitors_growth > 0">
                   <CaretTop />
                 </el-icon>
@@ -101,10 +117,17 @@
           </div>
           <div class="card-right">
             <div class="card-title">评论数</div>
-            <div class="card-value">{{ formatNumber(dashboardData.total_comments) }}</div>
+            <div class="card-value">
+              {{ formatNumber(dashboardData.total_comments) }}
+            </div>
             <div class="card-stats">
-              <span class="today-value">今日: {{ dashboardData.today_comments }}</span>
-              <span class="growth-rate" :class="getGrowthClass(dashboardData.comments_growth)">
+              <span class="today-value"
+                >今日: {{ dashboardData.today_comments }}</span
+              >
+              <span
+                class="growth-rate"
+                :class="getGrowthClass(dashboardData.comments_growth)"
+              >
                 <el-icon v-if="dashboardData.comments_growth > 0">
                   <CaretTop />
                 </el-icon>
@@ -129,10 +152,17 @@
           </div>
           <div class="card-right">
             <div class="card-title">用户数</div>
-            <div class="card-value">{{ formatNumber(dashboardData.total_users) }}</div>
+            <div class="card-value">
+              {{ formatNumber(dashboardData.total_users) }}
+            </div>
             <div class="card-stats">
-              <span class="today-value">今日: {{ dashboardData.today_users }}</span>
-              <span class="growth-rate" :class="getGrowthClass(dashboardData.users_growth)">
+              <span class="today-value"
+                >今日: {{ dashboardData.today_users }}</span
+              >
+              <span
+                class="growth-rate"
+                :class="getGrowthClass(dashboardData.users_growth)"
+              >
                 <el-icon v-if="dashboardData.users_growth > 0">
                   <CaretTop />
                 </el-icon>
@@ -154,7 +184,11 @@
           <template #header>
             <div class="chart-header">
               <span>访问趋势</span>
-              <el-radio-group v-model="trendType" size="small" @change="fetchTrendData">
+              <el-radio-group
+                v-model="trendType"
+                size="small"
+                @change="fetchTrendData"
+              >
                 <el-radio-button value="daily">日</el-radio-button>
                 <el-radio-button value="monthly">月</el-radio-button>
               </el-radio-group>
@@ -192,8 +226,18 @@
           <template #header>
             <div class="chart-header">
               <span>文章贡献</span>
-              <el-select v-model="selectedYear" size="small" style="width: 100px" @change="fetchContributionData">
-                <el-option v-for="year in availableYears" :key="year" :label="year" :value="year" />
+              <el-select
+                v-model="selectedYear"
+                size="small"
+                style="width: 100px"
+                @change="fetchContributionData"
+              >
+                <el-option
+                  v-for="year in availableYears"
+                  :key="year"
+                  :label="year"
+                  :value="year"
+                />
               </el-select>
             </div>
           </template>
@@ -229,7 +273,14 @@
               <Right />
             </el-icon>
           </div>
-          <div class="link-item" @click="openLink('https://ccnlf8xcz6k3.feishu.cn/wiki/space/7618178485001046989')">
+          <div
+            class="link-item"
+            @click="
+              openLink(
+                'https://ccnlf8xcz6k3.feishu.cn/wiki/space/7618178485001046989'
+              )
+            "
+          >
             <span class="link-text">文档</span>
             <el-icon class="link-icon">
               <Right />
@@ -237,7 +288,7 @@
           </div>
         </div>
         <div class="quick-illustration">
-          <img src="@/assets/img/dashboard.png" alt="dashboard">
+          <img src="@/assets/img/dashboard.png" alt="dashboard" />
         </div>
       </div>
     </el-card>
@@ -246,17 +297,43 @@
 
 <script setup lang="ts">
 import { ref, onMounted, computed, onUnmounted, nextTick } from 'vue'
-import { getDashboardStats, getTrendData, getCategoryStats, getTagStats, getArticleContribution } from '@/api/stats'
-import type { DashboardStats, TrendDataItem, CategoryStats, TagStats, ArticleContribution } from '@/types/stats'
-import { View, User, ChatDotRound, UserFilled, CaretTop, CaretBottom, Right } from '@element-plus/icons-vue'
+import {
+  getDashboardStats,
+  getTrendData,
+  getCategoryStats,
+  getTagStats,
+  getArticleContribution
+} from '@/api/stats'
+import type {
+  DashboardStats,
+  TrendDataItem,
+  CategoryStats,
+  TagStats,
+  ArticleContribution
+} from '@/types/stats'
+import {
+  View,
+  User,
+  ChatDotRound,
+  UserFilled,
+  CaretTop,
+  CaretBottom,
+  Right
+} from '@element-plus/icons-vue'
 import * as echarts from 'echarts'
 import 'echarts-wordcloud'
-import { getToday, getDaysAgo, getMonthsAgo, generateDateSeries } from '@/utils/date'
+import {
+  getToday,
+  getDaysAgo,
+  getMonthsAgo,
+  generateDateSeries
+} from '@/utils/date'
 import { getUserInfo } from '@/utils/auth'
 
 // 响应式断点
 
-const DEFAULT_AVATAR = 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png'
+const DEFAULT_AVATAR =
+  'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png'
 const nickName = computed(() => getUserInfo()?.nickname || 'Admin')
 const userAvatar = computed(() => getUserInfo()?.avatar || DEFAULT_AVATAR)
 const hitokoto = ref('加载中...')
@@ -294,7 +371,17 @@ let pieChart: echarts.ECharts | null = null
 let tagCloud: echarts.ECharts | null = null
 let calendarChart: echarts.ECharts | null = null
 
-const CHART_COLORS = ['#5470c6', '#91cc75', '#fac858', '#ee6666', '#73c0de', '#3ba272', '#fc8452', '#9a60b4', '#ea7ccc']
+const CHART_COLORS = [
+  '#5470c6',
+  '#91cc75',
+  '#fac858',
+  '#ee6666',
+  '#73c0de',
+  '#3ba272',
+  '#fc8452',
+  '#9a60b4',
+  '#ea7ccc'
+]
 
 // 生成可选年份列表（从2024年到当前年份）
 const availableYears = computed(() => {
@@ -364,10 +451,15 @@ const fetchDashboardData = async () => {
 
 const fetchTrendData = async () => {
   const endDate = getToday()
-  const startDate = trendType.value === 'daily' ? getDaysAgo(6) : getMonthsAgo(6)
+  const startDate =
+    trendType.value === 'daily' ? getDaysAgo(6) : getMonthsAgo(6)
 
   try {
-    trendData.value = await getTrendData({ start_date: startDate, end_date: endDate, type: trendType.value })
+    trendData.value = await getTrendData({
+      start_date: startDate,
+      end_date: endDate,
+      type: trendType.value
+    })
     renderTrendChart()
   } catch (error) {
     console.error('获取趋势数据失败', error)
@@ -390,7 +482,8 @@ const initAllCharts = () => {
   if (trendChartRef.value) trendChart = echarts.init(trendChartRef.value)
   if (pieChartRef.value) pieChart = echarts.init(pieChartRef.value)
   if (tagCloudRef.value) tagCloud = echarts.init(tagCloudRef.value)
-  if (calendarChartRef.value) calendarChart = echarts.init(calendarChartRef.value)
+  if (calendarChartRef.value)
+    calendarChart = echarts.init(calendarChartRef.value)
 
   window.addEventListener('resize', handleResize)
 }
@@ -399,18 +492,19 @@ const renderTrendChart = () => {
   if (!trendChart) return
 
   const endDate = getToday()
-  const startDate = trendType.value === 'daily' ? getDaysAgo(6) : getMonthsAgo(6)
+  const startDate =
+    trendType.value === 'daily' ? getDaysAgo(6) : getMonthsAgo(6)
   const format = trendType.value === 'daily' ? 'YYYY-MM-DD' : 'YYYY-MM'
   const unit = trendType.value === 'daily' ? 'day' : 'month'
   const allDates = generateDateSeries(startDate, endDate, unit, format, 7)
 
   const dataMap = new Map<string, { pv: number; uv: number }>()
-  trendData.value.forEach(item => {
+  trendData.value.forEach((item) => {
     dataMap.set(item.date, { pv: item.pv_count, uv: item.uv_count })
   })
 
-  const pvData = allDates.map(date => dataMap.get(date)?.pv || 0)
-  const uvData = allDates.map(date => dataMap.get(date)?.uv || 0)
+  const pvData = allDates.map((date) => dataMap.get(date)?.pv || 0)
+  const uvData = allDates.map((date) => dataMap.get(date)?.uv || 0)
 
   const option = {
     tooltip: {
@@ -513,7 +607,7 @@ const renderPieChart = () => {
         fontSize: 12
       },
       formatter: (name: string) => {
-        const item = categoryData.value.find(d => d.name === name)
+        const item = categoryData.value.find((d) => d.name === name)
         return `${name} (${item?.count || 0})`
       }
     },
@@ -574,25 +668,27 @@ const renderTagCloud = () => {
     tooltip: {
       formatter: '{b}: {c}篇'
     },
-    series: [{
-      type: 'wordCloud',
-      shape: 'circle',
-      sizeRange: [14, 35],
-      rotationRange: [0, 0],
-      gridSize: 5,
-      drawOutOfBound: false,
-      textStyle: {
-        fontFamily: 'sans-serif',
-        fontWeight: '500',
-        color: function () {
-          return CHART_COLORS[Math.floor(Math.random() * CHART_COLORS.length)]
-        }
-      },
-      data: tagData.value.map(item => ({
-        name: item.name,
-        value: item.count
-      }))
-    }]
+    series: [
+      {
+        type: 'wordCloud',
+        shape: 'circle',
+        sizeRange: [14, 35],
+        rotationRange: [0, 0],
+        gridSize: 5,
+        drawOutOfBound: false,
+        textStyle: {
+          fontFamily: 'sans-serif',
+          fontWeight: '500',
+          color: function () {
+            return CHART_COLORS[Math.floor(Math.random() * CHART_COLORS.length)]
+          }
+        },
+        data: tagData.value.map((item) => ({
+          name: item.name,
+          value: item.count
+        }))
+      }
+    ]
   }
 
   tagCloud.setOption(option)
@@ -622,9 +718,10 @@ const renderCalendarChart = () => {
   const chartData = contributionData.value || []
 
   // 计算最大值，如果没有数据则设为1（避免visualMap显示异常）
-  const maxCount = chartData.length > 0
-    ? Math.max(...chartData.map(item => item.count), 1)
-    : 1
+  const maxCount =
+    chartData.length > 0
+      ? Math.max(...chartData.map((item) => item.count), 1)
+      : 1
 
   const option = {
     tooltip: {
@@ -660,7 +757,7 @@ const renderCalendarChart = () => {
     series: {
       type: 'heatmap',
       coordinateSystem: 'calendar',
-      data: chartData.map(item => [item.date, item.count])
+      data: chartData.map((item) => [item.date, item.count])
     }
   }
 
@@ -696,7 +793,6 @@ onUnmounted(() => {
 
 <style scoped lang="scss">
 .dashboard {
-
   // 顶部区域
   .top-card {
     margin-bottom: 20px;
@@ -978,7 +1074,6 @@ onUnmounted(() => {
 
   // 移动端优化（<992px）
   @media (max-width: 991px) {
-
     // 禁用移动端的 hover 效果
     :deep(.el-card.is-hover-shadow:hover) {
       box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);

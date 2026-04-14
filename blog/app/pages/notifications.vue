@@ -67,7 +67,11 @@ onMounted(() => {
           通知
           <span v-if="unreadCount > 0" class="count">({{ unreadCount }})</span>
         </h3>
-        <button v-if="unreadCount > 0" class="mark-all-btn" @click="handleMarkAllAsRead">
+        <button
+          v-if="unreadCount > 0"
+          class="mark-all-btn"
+          @click="handleMarkAllAsRead"
+        >
           全部已读
         </button>
       </div>
@@ -75,12 +79,19 @@ onMounted(() => {
       <div v-if="loading" class="loading">加载中...</div>
 
       <div v-else-if="notifications.length > 0" class="list-content">
-        <div v-for="notification in notifications" :key="notification.id" class="notification-item"
-          :class="{ 'unread': !notification.is_read }" @click="handleNotificationClick(notification)">
+        <div
+          v-for="notification in notifications"
+          :key="notification.id"
+          class="notification-item"
+          :class="{ unread: !notification.is_read }"
+          @click="handleNotificationClick(notification)"
+        >
           <div class="content">
             <div class="header">
               <h4 class="title">{{ notification.title }}</h4>
-              <span class="time">{{ formatMomentTime(notification.created_at) }}</span>
+              <span class="time">{{
+                formatMomentTime(notification.created_at)
+              }}</span>
             </div>
             <p v-if="notification.content" class="content-text">
               {{ notification.content }}
@@ -92,8 +103,13 @@ onMounted(() => {
 
       <div v-else class="empty-state">暂无通知</div>
 
-      <UiPagination v-if="total > pageSize" :current-page="currentPage" :total="total" :page-size="pageSize"
-        @page-change="handlePageChange" />
+      <UiPagination
+        v-if="total > pageSize"
+        :current-page="currentPage"
+        :total="total"
+        :page-size="pageSize"
+        @page-change="handlePageChange"
+      />
     </div>
   </div>
 </template>

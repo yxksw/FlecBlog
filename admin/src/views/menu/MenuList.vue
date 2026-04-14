@@ -1,10 +1,23 @@
 <template>
-  <common-list title="菜单管理" :data="menuTree" :loading="loading" :show-pagination="false" create-text="新增菜单"
-    @create="handleCreate" @refresh="fetchMenuTree" row-key="id"
-    :tree-props="{ children: 'children', hasChildren: 'hasChildren' }" default-expand-all>
+  <common-list
+    title="菜单管理"
+    :data="menuTree"
+    :loading="loading"
+    :show-pagination="false"
+    create-text="新增菜单"
+    @create="handleCreate"
+    @refresh="fetchMenuTree"
+    row-key="id"
+    :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
+    default-expand-all
+  >
     <!-- 菜单类型切换器 -->
     <template #toolbar-before>
-      <el-segmented v-model="selectedType" :options="menuTypeOptions" @change="handleTypeChange" />
+      <el-segmented
+        v-model="selectedType"
+        :options="menuTypeOptions"
+        @change="handleTypeChange"
+      />
     </template>
 
     <!-- 表格列 -->
@@ -12,9 +25,18 @@
       <template #default="{ row }">
         <div class="menu-title">
           <!-- RemixIcon 图标 -->
-          <i v-if="row.icon && isRemixIcon(row.icon)" :class="row.icon" class="menu-icon"></i>
+          <i
+            v-if="row.icon && isRemixIcon(row.icon)"
+            :class="row.icon"
+            class="menu-icon"
+          ></i>
           <!-- 图片图标 -->
-          <img v-else-if="row.icon" :src="row.icon" class="menu-icon-img" alt="icon" />
+          <img
+            v-else-if="row.icon"
+            :src="row.icon"
+            class="menu-icon-img"
+            alt="icon"
+          />
           <span>{{ row.title }}</span>
         </div>
       </template>
@@ -31,13 +53,24 @@
 
     <el-table-column label="操作" width="180" align="center" fixed="right">
       <template #default="{ row }">
-        <el-button v-if="row.parent_id === null" type="primary" link size="small" @click="handleAddChild(row)">
+        <el-button
+          v-if="row.parent_id === null"
+          type="primary"
+          link
+          size="small"
+          @click="handleAddChild(row)"
+        >
           新增子菜单
         </el-button>
         <el-button type="primary" link size="small" @click="handleEdit(row)">
           编辑
         </el-button>
-        <el-button type="danger" link size="small" @click="handleDelete(row.id)">
+        <el-button
+          type="danger"
+          link
+          size="small"
+          @click="handleDelete(row.id)"
+        >
           删除
         </el-button>
       </template>
@@ -45,8 +78,13 @@
 
     <!-- 额外内容 -->
     <template #extra>
-      <menu-form-dialog v-model="dialogVisible" :edit-menu="currentMenu" :parent-menu="parentMenu"
-        :current-type="selectedType" @success="fetchMenuTree" />
+      <menu-form-dialog
+        v-model="dialogVisible"
+        :edit-menu="currentMenu"
+        :parent-menu="parentMenu"
+        :current-type="selectedType"
+        @success="fetchMenuTree"
+      />
     </template>
   </common-list>
 </template>
@@ -131,7 +169,10 @@ const handleEdit = (menu: MenuTreeNode) => {
 }
 
 // 查找菜单节点
-const findMenuNode = (id: number, nodes: MenuTreeNode[] = menuTree.value): MenuTreeNode | null => {
+const findMenuNode = (
+  id: number,
+  nodes: MenuTreeNode[] = menuTree.value
+): MenuTreeNode | null => {
   for (const node of nodes) {
     if (node.id === id) {
       return node
@@ -161,10 +202,12 @@ const handleDelete = async (id: number) => {
           cancelButtonText: '全部删除',
           type: 'warning'
         }
-      ).then(() => 'upgrade' as const).catch((action) => {
-        if (action === 'cancel') return 'delete' as const
-        throw 'close'
-      })
+      )
+        .then(() => 'upgrade' as const)
+        .catch((action) => {
+          if (action === 'cancel') return 'delete' as const
+          throw 'close'
+        })
 
       await deleteMenu(id, { children_action: result })
       ElMessage.success('删除成功')

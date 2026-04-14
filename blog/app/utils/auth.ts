@@ -5,7 +5,9 @@ export const accessToken = ref<string | null>(null)
 export const refreshToken = ref<string | null>(null)
 
 // 响应式登录状态
-export const isLoggedIn = computed(() => !!accessToken.value && accessToken.value !== '')
+export const isLoggedIn = computed(
+  () => !!accessToken.value && accessToken.value !== ''
+)
 
 // 从 localStorage 初始化 token（仅客户端）
 if (process.client) {
@@ -19,7 +21,7 @@ if (process.client) {
 export const setTokens = (access: string, refresh: string): void => {
   accessToken.value = access
   refreshToken.value = refresh
-  
+
   // 同步到 localStorage（仅客户端）
   if (process.client) {
     localStorage.setItem('access_token', access)
@@ -32,7 +34,7 @@ export const setTokens = (access: string, refresh: string): void => {
  */
 export const setAccessToken = (access: string): void => {
   accessToken.value = access
-  
+
   // 同步到 localStorage（仅客户端）
   if (process.client) {
     localStorage.setItem('access_token', access)

@@ -14,10 +14,7 @@ withDefaults(defineProps<ToastProps>(), {
 <template>
   <Teleport to="body">
     <Transition name="toast">
-      <div 
-        v-if="show" 
-        :class="['toast', `toast-${type}`]"
-      >
+      <div v-if="show" :class="['toast', `toast-${type}`]">
         {{ message }}
       </div>
     </Transition>

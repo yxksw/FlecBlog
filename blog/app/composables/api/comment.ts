@@ -1,4 +1,8 @@
-import type { Comment, CommentTargetType, CreateCommentParams } from '@@/types/comment'
+import type {
+  Comment,
+  CommentTargetType,
+  CreateCommentParams
+} from '@@/types/comment'
 import type { PaginationData, PaginationQuery } from '@@/types/request'
 import { createApi } from './createApi'
 

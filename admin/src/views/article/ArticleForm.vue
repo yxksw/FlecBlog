@@ -3,14 +3,28 @@
     <!-- 固定顶部导航栏 -->
     <header class="editor-header">
       <div class="header-left">
-        <el-button :icon="ArrowLeft" circle @click="handleCancel" title="返回" />
+        <el-button
+          :icon="ArrowLeft"
+          circle
+          @click="handleCancel"
+          title="返回"
+        />
         <span class="page-label">{{ isEdit ? '编辑文章' : '新增文章' }}</span>
       </div>
 
       <div class="header-center">
         <div class="title-container">
-          <input v-model="formData.title" placeholder="请输入文章标题..." maxlength="200" class="simple-title-input" />
-          <i v-if="!generatingTitle" class="ri-quill-pen-ai-line ai-generate-icon" @click="handleGenerateTitle"></i>
+          <input
+            v-model="formData.title"
+            placeholder="请输入文章标题..."
+            maxlength="200"
+            class="simple-title-input"
+          />
+          <i
+            v-if="!generatingTitle"
+            class="ri-quill-pen-ai-line ai-generate-icon"
+            @click="handleGenerateTitle"
+          ></i>
           <i v-else class="ri-loader-line ai-generate-icon is-loading"></i>
         </div>
       </div>
@@ -19,7 +33,11 @@
         <el-button @click="drawerVisible = true" :icon="Setting" text>
           文章设置
         </el-button>
-        <el-button type="primary" @click="() => handleSave(false)" :loading="loading">
+        <el-button
+          type="primary"
+          @click="() => handleSave(false)"
+          :loading="loading"
+        >
           {{ loading ? '保存中...' : '保存' }}
         </el-button>
       </div>
@@ -31,22 +49,59 @@
     </main>
 
     <!-- 侧边抽屉 - 文章设置 -->
-    <el-drawer v-model="drawerVisible" title="文章设置" :size="drawerSize" direction="rtl">
-      <el-form ref="formRef" :model="formData" label-width="100px" label-position="top" class="drawer-form">
+    <el-drawer
+      v-model="drawerVisible"
+      title="文章设置"
+      :size="drawerSize"
+      direction="rtl"
+    >
+      <el-form
+        ref="formRef"
+        :model="formData"
+        label-width="100px"
+        label-position="top"
+        class="drawer-form"
+      >
         <div class="form-row">
           <el-form-item label="文章分类" prop="category_id" class="form-col">
-            <el-select v-model="formData.category_id" placeholder="请选择或输入分类名称" style="width: 100%" clearable filterable
-              allow-create @change="handleCategorySelect">
-              <el-option v-for="category in categories" :key="category.id" :label="category.name"
-                :value="category.id" />
+            <el-select
+              v-model="formData.category_id"
+              placeholder="请选择或输入分类名称"
+              style="width: 100%"
+              clearable
+              filterable
+              allow-create
+              @change="handleCategorySelect"
+            >
+              <el-option
+                v-for="category in categories"
+                :key="category.id"
+                :label="category.name"
+                :value="category.id"
+              />
             </el-select>
           </el-form-item>
 
           <el-form-item label="文章标签" prop="tag_ids" class="form-col">
-            <el-select v-model="formData.tag_ids" placeholder="请选择或输入标签名称" style="width: 100%" multiple clearable
-              collapse-tags collapse-tags-tooltip :max-collapse-tags="3" filterable allow-create
-              @change="handleTagSelect">
-              <el-option v-for="tag in tags" :key="tag.id" :label="tag.name" :value="tag.id" />
+            <el-select
+              v-model="formData.tag_ids"
+              placeholder="请选择或输入标签名称"
+              style="width: 100%"
+              multiple
+              clearable
+              collapse-tags
+              collapse-tags-tooltip
+              :max-collapse-tags="3"
+              filterable
+              allow-create
+              @change="handleTagSelect"
+            >
+              <el-option
+                v-for="tag in tags"
+                :key="tag.id"
+                :label="tag.name"
+                :value="tag.id"
+              />
             </el-select>
           </el-form-item>
         </div>
@@ -55,47 +110,80 @@
           <template #label>
             <div class="form-item-header">
               <span>文章摘要</span>
-              <i v-if="!generatingSummary" class="ri-quill-pen-ai-line ai-generate-icon"
-                @click="handleGenerateSummary"></i>
+              <i
+                v-if="!generatingSummary"
+                class="ri-quill-pen-ai-line ai-generate-icon"
+                @click="handleGenerateSummary"
+              ></i>
               <i v-else class="ri-loader-line ai-generate-icon is-loading"></i>
             </div>
           </template>
-          <el-input v-model="formData.summary" type="textarea" placeholder="请输入文章摘要，如不填写将自动截取内容前200字符" :rows="3"
-            maxlength="150" show-word-limit clearable />
+          <el-input
+            v-model="formData.summary"
+            type="textarea"
+            placeholder="请输入文章摘要，如不填写将自动截取内容前200字符"
+            :rows="3"
+            maxlength="150"
+            show-word-limit
+            clearable
+          />
         </el-form-item>
 
         <el-form-item prop="ai_summary">
           <template #label>
             <div class="form-item-header">
               <span>AI 总结</span>
-              <i v-if="!generatingAISummary" class="ri-quill-pen-ai-line ai-generate-icon"
-                @click="handleGenerateAISummary"></i>
+              <i
+                v-if="!generatingAISummary"
+                class="ri-quill-pen-ai-line ai-generate-icon"
+                @click="handleGenerateAISummary"
+              ></i>
               <i v-else class="ri-loader-line ai-generate-icon is-loading"></i>
             </div>
           </template>
-          <el-input v-model="formData.ai_summary" type="textarea" placeholder="AI 总结" :rows="3" maxlength="300"
-            show-word-limit clearable />
+          <el-input
+            v-model="formData.ai_summary"
+            type="textarea"
+            placeholder="AI 总结"
+            :rows="3"
+            maxlength="300"
+            show-word-limit
+            clearable
+          />
         </el-form-item>
 
         <el-form-item label="文章封面" prop="cover">
           <div class="cover-upload-container">
             <!-- 左侧：上传器/预览 -->
             <div class="cover-left">
-              <ImageUploader ref="coverUploaderRef" v-model="formData.cover" upload-type="文章封面" width="285px"
-                height="160px" />
+              <ImageUploader
+                ref="coverUploaderRef"
+                v-model="formData.cover"
+                upload-type="文章封面"
+                width="285px"
+                height="160px"
+              />
             </div>
 
             <!-- 右侧：在线图片输入和制作封面 -->
             <div class="cover-right">
               <div class="online-image-section">
-                <el-input v-model="onlineImageUrl" placeholder="输入在线图片URL" clearable>
+                <el-input
+                  v-model="onlineImageUrl"
+                  placeholder="输入在线图片URL"
+                  clearable
+                >
                   <template #prepend>
                     <span>在线图片</span>
                   </template>
                 </el-input>
               </div>
 
-              <el-button type="primary" @click="handleCoverCommand" class="make-cover-btn">
+              <el-button
+                type="primary"
+                @click="handleCoverCommand"
+                class="make-cover-btn"
+              >
                 制作封面
               </el-button>
             </div>
@@ -104,7 +192,11 @@
 
         <div class="form-row">
           <el-form-item label="发布地点" prop="location" class="form-col">
-            <el-input v-model="formData.location" placeholder="请输入发布地点" clearable />
+            <el-input
+              v-model="formData.location"
+              placeholder="请输入发布地点"
+              clearable
+            />
           </el-form-item>
 
           <div class="form-col form-switches">
@@ -112,15 +204,27 @@
               <el-switch v-model="formData.is_top" />
             </el-form-item>
 
-            <el-form-item label="是否精选" prop="is_essence" class="switch-item">
+            <el-form-item
+              label="是否精选"
+              prop="is_essence"
+              class="switch-item"
+            >
               <el-switch v-model="formData.is_essence" />
             </el-form-item>
 
-            <el-form-item label="过时提醒" prop="is_outdated" class="switch-item">
+            <el-form-item
+              label="过时提醒"
+              prop="is_outdated"
+              class="switch-item"
+            >
               <el-switch v-model="formData.is_outdated" />
             </el-form-item>
 
-            <el-form-item label="是否发布" prop="is_publish" class="switch-item">
+            <el-form-item
+              label="是否发布"
+              prop="is_publish"
+              class="switch-item"
+            >
               <el-switch v-model="formData.is_publish" />
             </el-form-item>
           </div>
@@ -131,20 +235,38 @@
 
           <div class="form-row">
             <el-form-item label="发布时间" class="form-col">
-              <el-date-picker v-model="formData.publish_time" type="datetime" placeholder="选择发布时间" style="width: 100%"
-                format="YYYY-MM-DD HH:mm:ss" clearable />
+              <el-date-picker
+                v-model="formData.publish_time"
+                type="datetime"
+                placeholder="选择发布时间"
+                style="width: 100%"
+                format="YYYY-MM-DD HH:mm:ss"
+                clearable
+              />
             </el-form-item>
 
             <el-form-item label="更新时间" class="form-col">
-              <el-date-picker v-model="formData.update_time" type="datetime" placeholder="选择更新时间" style="width: 100%"
-                format="YYYY-MM-DD HH:mm:ss" clearable />
+              <el-date-picker
+                v-model="formData.update_time"
+                type="datetime"
+                placeholder="选择更新时间"
+                style="width: 100%"
+                format="YYYY-MM-DD HH:mm:ss"
+                clearable
+              />
             </el-form-item>
           </div>
         </div>
 
         <!-- 保存按钮 -->
         <div class="drawer-footer">
-          <el-button type="primary" @click="() => handleSave()" :loading="loading" size="large" style="width: 100%">
+          <el-button
+            type="primary"
+            @click="() => handleSave()"
+            :loading="loading"
+            size="large"
+            style="width: 100%"
+          >
             {{ loading ? '保存中...' : '保存' }}
           </el-button>
         </div>
@@ -152,8 +274,14 @@
     </el-drawer>
 
     <!-- 封面制作对话框 -->
-    <CoverMakerDialog v-model="coverMakerVisible" :title="formData.title" :author="authorInfo.name"
-      :avatar="authorInfo.avatar" @confirm="handleCoverMakerConfirm" @save="handleCoverMakerSave" />
+    <CoverMakerDialog
+      v-model="coverMakerVisible"
+      :title="formData.title"
+      :author="authorInfo.name"
+      :avatar="authorInfo.avatar"
+      @confirm="handleCoverMakerConfirm"
+      @save="handleCoverMakerSave"
+    />
   </div>
 </template>
 
@@ -301,14 +429,21 @@ const saveDraftSilently = async () => {
   }
 
   // 重要：再次检查是否允许自动保存
-  if (isSaved.value || loading.value || !canAutoSave.value || formData.is_publish) {
+  if (
+    isSaved.value ||
+    loading.value ||
+    !canAutoSave.value ||
+    formData.is_publish
+  ) {
     return
   }
 
   try {
     // 准备保存数据
     const saveData: any = {
-      title: formData.title.trim() || `未命名草稿 ${new Date().toLocaleString('zh-CN', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' })}`,
+      title:
+        formData.title.trim() ||
+        `未命名草稿 ${new Date().toLocaleString('zh-CN', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' })}`,
       content: formData.content.trim(),
       summary: formData.summary.trim(),
       cover: formData.cover || '',
@@ -361,7 +496,12 @@ watch(
   }),
   () => {
     // 只有草稿或新建文章才自动保存，且文章未标记为发布
-    if (!isSaved.value && !loading.value && canAutoSave.value && !formData.is_publish) {
+    if (
+      !isSaved.value &&
+      !loading.value &&
+      canAutoSave.value &&
+      !formData.is_publish
+    ) {
       debouncedSaveDraft()
     }
   },
@@ -379,7 +519,8 @@ const fetchData = async (fetchFn: Function, target: any, errorMsg: string) => {
   }
 }
 
-const fetchCategories = () => fetchData(getCategories, categories, '获取分类列表失败')
+const fetchCategories = () =>
+  fetchData(getCategories, categories, '获取分类列表失败')
 const fetchTags = () => fetchData(getTags, tags, '获取标签列表失败')
 
 // 获取文章详情（编辑模式）
@@ -400,7 +541,7 @@ const fetchArticle = async (id: number) => {
       ai_summary: article.ai_summary || '',
       cover: article.cover || '',
       category_id: article.category?.id || undefined,
-      tag_ids: article.tags?.map(tag => tag.id) || [],
+      tag_ids: article.tags?.map((tag) => tag.id) || [],
       location: (article as any).location || '',
       is_top: article.is_top || false,
       is_essence: article.is_essence || false,
@@ -454,7 +595,9 @@ const handleSave = async (autoRedirect: boolean = true) => {
         downloadingImage.value = true
         try {
           // 下载图片
-          const downloadResult = await downloadImage({ url: onlineImageUrl.value.trim() })
+          const downloadResult = await downloadImage({
+            url: onlineImageUrl.value.trim()
+          })
 
           // 将base64数据转换为Blob
           const base64Data = downloadResult.data
@@ -464,10 +607,14 @@ const handleSave = async (autoRedirect: boolean = true) => {
             byteNumbers[i] = byteCharacters.charCodeAt(i)
           }
           const byteArray = new Uint8Array(byteNumbers)
-          const blob = new Blob([byteArray], { type: downloadResult.content_type })
+          const blob = new Blob([byteArray], {
+            type: downloadResult.content_type
+          })
 
           // 创建文件对象并上传
-          const file = new File([blob], 'cover.jpg', { type: downloadResult.content_type })
+          const file = new File([blob], 'cover.jpg', {
+            type: downloadResult.content_type
+          })
           const uploadResult = await uploadFile(file, '文章封面')
           formData.cover = uploadResult.file_url
 
@@ -675,10 +822,17 @@ const handleGenerateTitle = async () => {
 }
 
 // 创建新项目的通用函数
-const createNewItem = async (name: string, createFn: Function, refreshFn: Function, type: 'category' | 'tag') => {
+const createNewItem = async (
+  name: string,
+  createFn: Function,
+  refreshFn: Function,
+  type: 'category' | 'tag'
+) => {
   const maxLength = type === 'category' ? 50 : 50
   if (name.length > maxLength) {
-    ElMessage.error(`${type === 'category' ? '分类' : '标签'}名称不能超过${maxLength}个字符`)
+    ElMessage.error(
+      `${type === 'category' ? '分类' : '标签'}名称不能超过${maxLength}个字符`
+    )
     return null
   }
 
@@ -692,7 +846,9 @@ const createNewItem = async (name: string, createFn: Function, refreshFn: Functi
     const newItem = await createFn({ name, description: '', sort: 0 })
     await refreshFn()
     loadingInstance.close()
-    ElMessage.success(`${type === 'category' ? '分类' : '标签'}"${name}"创建成功`)
+    ElMessage.success(
+      `${type === 'category' ? '分类' : '标签'}"${name}"创建成功`
+    )
     return newItem
   } catch {
     loadingInstance.close()
@@ -712,8 +868,8 @@ const handleCategorySelect = async (value: any) => {
   }
 
   // 检查是否已存在
-  const existing = categories.value.find(cat =>
-    cat.name.toLowerCase() === categoryName.toLowerCase()
+  const existing = categories.value.find(
+    (cat) => cat.name.toLowerCase() === categoryName.toLowerCase()
   )
   if (existing) {
     formData.category_id = existing.id
@@ -722,7 +878,12 @@ const handleCategorySelect = async (value: any) => {
   }
 
   // 创建新分类
-  const newCategory = await createNewItem(categoryName, createCategory, fetchCategories, 'category')
+  const newCategory = await createNewItem(
+    categoryName,
+    createCategory,
+    fetchCategories,
+    'category'
+  )
   if (newCategory) {
     formData.category_id = newCategory.id
   } else {
@@ -738,8 +899,8 @@ const handleTagSelect = async (values: any[]) => {
         const tagName = value.trim()
         if (!tagName || tagName.length > 50) return acc
 
-        const existing = tags.value.find(tag =>
-          tag.name.toLowerCase() === tagName.toLowerCase()
+        const existing = tags.value.find(
+          (tag) => tag.name.toLowerCase() === tagName.toLowerCase()
         )
         if (existing) {
           acc.validIds.push(existing.id)
@@ -871,19 +1032,15 @@ onBeforeRouteLeave(async (to, from, next) => {
     } else {
       // 已发布文章：提示用户选择操作
       try {
-        await ElMessageBox.confirm(
-          '当前文章未保存，是否保存后退出？',
-          '提示',
-          {
-            type: 'warning',
-            confirmButtonText: '保存并退出',
-            cancelButtonText: '放弃修改',
-            showClose: true,           // 显示 X 按钮
-            closeOnPressEscape: true,  // 允许 ESC 关闭
-            closeOnClickModal: true,   // 允许点击遮罩关闭
-            distinguishCancelAndClose: true  // 区分取消和关闭
-          }
-        )
+        await ElMessageBox.confirm('当前文章未保存，是否保存后退出？', '提示', {
+          type: 'warning',
+          confirmButtonText: '保存并退出',
+          cancelButtonText: '放弃修改',
+          showClose: true, // 显示 X 按钮
+          closeOnPressEscape: true, // 允许 ESC 关闭
+          closeOnClickModal: true, // 允许点击遮罩关闭
+          distinguishCancelAndClose: true // 区分取消和关闭
+        })
 
         // 用户点击"保存并退出"
         try {

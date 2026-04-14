@@ -1,4 +1,17 @@
-import type { LoginParams, LoginResponse, RegisterParams, RegisterResponse, UserInfo, UpdateProfileParams, ForgotPasswordParams, ResetPasswordParams, ChangePasswordParams, DeactivateAccountParams, RefreshTokenParams, RefreshTokenResponse } from '@@/types/user'
+import type {
+  LoginParams,
+  LoginResponse,
+  RegisterParams,
+  RegisterResponse,
+  UserInfo,
+  UpdateProfileParams,
+  ForgotPasswordParams,
+  ResetPasswordParams,
+  ChangePasswordParams,
+  DeactivateAccountParams,
+  RefreshTokenParams,
+  RefreshTokenResponse
+} from '@@/types/user'
 import { createApi } from './createApi'
 
 const authApi = createApi<LoginResponse>('/auth')
@@ -45,7 +58,10 @@ export const changePassword = async (data: ChangePasswordParams) => {
 }
 
 /** 设置密码（OAuth 用户首次设置密码） */
-export const setPassword = async (data: { password: string; confirm_password: string }) => {
+export const setPassword = async (data: {
+  password: string
+  confirm_password: string
+}) => {
   return userApi.post<void>('/user/password', data)
 }
 

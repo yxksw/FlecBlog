@@ -95,7 +95,11 @@ onMounted(loadEmojis)
             :title="item.key"
             @click="selectEmoji(item, group.type)"
           >
-            <img v-if="group.type === 'image'" :src="item.val" :alt="item.key" />
+            <img
+              v-if="group.type === 'image'"
+              :src="item.val"
+              :alt="item.key"
+            />
             <span v-else>{{ item.val }}</span>
           </button>
         </div>

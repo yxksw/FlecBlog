@@ -78,7 +78,12 @@ const onMouseLeave = () => {
 </script>
 
 <template>
-  <div v-if="moments?.length" class="moment-widget" @mouseenter="onMouseEnter" @mouseleave="onMouseLeave">
+  <div
+    v-if="moments?.length"
+    class="moment-widget"
+    @mouseenter="onMouseEnter"
+    @mouseleave="onMouseLeave"
+  >
     <NuxtLink to="/moment" class="moment-container">
       <!-- 左侧图标 -->
       <div class="widget-icon">
@@ -88,12 +93,19 @@ const onMouseLeave = () => {
       <!-- 中间滚动内容 -->
       <div class="widget-center">
         <Transition name="slide" mode="out-in">
-          <div v-if="currentMoment" :key="currentIndex" class="moment-content-wrapper">
+          <div
+            v-if="currentMoment"
+            :key="currentIndex"
+            class="moment-content-wrapper"
+          >
             <span class="moment-content">
               {{ currentMoment.content.text }}
             </span>
             <span class="content-icons">
-              <template v-for="type in getContentTypes(currentMoment)" :key="type">
+              <template
+                v-for="type in getContentTypes(currentMoment)"
+                :key="type"
+              >
                 <i v-if="type === 'image'" class="ri-image-fill"></i>
                 <i v-if="type === 'video'" class="ri-video-fill"></i>
                 <i v-if="type === 'link'" class="ri-link"></i>

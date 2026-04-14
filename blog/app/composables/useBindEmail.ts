@@ -2,8 +2,8 @@ import { getUserProfile } from '@/composables/api/user'
 import type { UserInfo } from '@@/types/user'
 
 // 触发间隔配置
-const GLOBAL_REMIND_INTERVAL = 12 * 60 * 60 * 1000  // 全局触发：12小时
-const COMMENT_REMIND_INTERVAL = 10 * 60 * 1000      // 评论触发：10分钟
+const GLOBAL_REMIND_INTERVAL = 12 * 60 * 60 * 1000 // 全局触发：12小时
+const COMMENT_REMIND_INTERVAL = 10 * 60 * 1000 // 评论触发：10分钟
 
 // 存储 key
 const SKIP_TIME_KEY = 'bindEmailSkipTime'
@@ -26,7 +26,10 @@ export function useBindEmail() {
    * @param trigger 触发类型
    * @param userInfo 用户信息（可选）
    */
-  const shouldShowPrompt = async (trigger: TriggerType, userInfo?: UserInfo | null): Promise<boolean> => {
+  const shouldShowPrompt = async (
+    trigger: TriggerType,
+    userInfo?: UserInfo | null
+  ): Promise<boolean> => {
     // 未登录不提示
     if (!isLoggedIn.value) return false
 
@@ -47,7 +50,8 @@ export function useBindEmail() {
     const skipTime = localStorage.getItem(SKIP_TIME_KEY)
     if (skipTime) {
       const elapsed = Date.now() - parseInt(skipTime, 10)
-      const interval = trigger === 'comment' ? COMMENT_REMIND_INTERVAL : GLOBAL_REMIND_INTERVAL
+      const interval =
+        trigger === 'comment' ? COMMENT_REMIND_INTERVAL : GLOBAL_REMIND_INTERVAL
       if (elapsed < interval) return false
     }
 

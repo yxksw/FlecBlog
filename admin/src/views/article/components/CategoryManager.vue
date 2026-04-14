@@ -1,5 +1,10 @@
 <template>
-  <el-dialog v-model="visible" title="分类管理" width="800px" :align-center="true">
+  <el-dialog
+    v-model="visible"
+    title="分类管理"
+    width="800px"
+    :align-center="true"
+  >
     <el-table :data="list" style="margin: 20px 0" max-height="350">
       <el-table-column prop="name" label="分类名称" />
       <el-table-column prop="description" label="描述" show-overflow-tooltip />
@@ -7,7 +12,9 @@
       <el-table-column prop="sort" label="排序" width="100" align="center" />
       <el-table-column label="操作" width="120" align="center">
         <template #header>
-          <el-button type="primary" plain size="small" @click="openForm()">新增</el-button>
+          <el-button type="primary" plain size="small" @click="openForm()"
+            >新增</el-button
+          >
         </template>
         <template #default="{ row }">
           <el-button type="primary" link @click="openForm(row)">编辑</el-button>
@@ -16,13 +23,22 @@
       </el-table-column>
     </el-table>
 
-    <el-dialog v-model="formVisible" :title="current.id ? '编辑' : '新增'" width="400px" append-to-body>
+    <el-dialog
+      v-model="formVisible"
+      :title="current.id ? '编辑' : '新增'"
+      width="400px"
+      append-to-body
+    >
       <el-form :model="current" label-width="80px">
         <el-form-item label="名称" required>
           <el-input v-model="current.name" placeholder="请输入分类名称" />
         </el-form-item>
         <el-form-item label="描述">
-          <el-input v-model="current.description" type="textarea" placeholder="请输入描述" />
+          <el-input
+            v-model="current.description"
+            type="textarea"
+            placeholder="请输入描述"
+          />
         </el-form-item>
         <el-form-item label="排序">
           <el-input-number v-model="current.sort" :min="0" />
@@ -39,7 +55,12 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { ElMessage, ElMessageBox, ElLoading } from 'element-plus'
-import { getCategories, createCategory, updateCategory, deleteCategory } from '@/api/category'
+import {
+  getCategories,
+  createCategory,
+  updateCategory,
+  deleteCategory
+} from '@/api/category'
 import type { Category } from '@/types/category'
 const props = defineProps<{ modelValue: boolean }>()
 const emit = defineEmits(['update:modelValue'])
@@ -52,7 +73,12 @@ const visible = computed({
 const list = ref<Category[]>([])
 
 const formVisible = ref(false)
-const current = ref<Partial<Category>>({ id: 0, name: '', description: '', sort: 0 })
+const current = ref<Partial<Category>>({
+  id: 0,
+  name: '',
+  description: '',
+  sort: 0
+})
 
 // 初始化加载数据
 onMounted(() => {
@@ -88,7 +114,7 @@ async function remove(row: Category) {
     await deleteCategory(row.id)
     await loadData()
     ElMessage.success('删除成功')
-  } catch { }
+  } catch {}
 }
 
 async function save() {

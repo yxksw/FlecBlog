@@ -1,8 +1,16 @@
 <template>
-  <common-list title="评论管理" :data="commentList" :loading="loading" :total="total" :show-create="false"
-    v-model:page="queryParams.page" v-model:page-size="queryParams.page_size" @refresh="fetchComments"
-    @update:page="fetchComments" @update:pageSize="fetchComments">
-
+  <common-list
+    title="评论管理"
+    :data="commentList"
+    :loading="loading"
+    :total="total"
+    :show-create="false"
+    v-model:page="queryParams.page"
+    v-model:page-size="queryParams.page_size"
+    @refresh="fetchComments"
+    @update:page="fetchComments"
+    @update:pageSize="fetchComments"
+  >
     <!-- 表格列 -->
     <el-table-column label="用户信息" width="180" align="center">
       <template #default="{ row }">
@@ -12,11 +20,30 @@
               <User />
             </el-icon>
           </el-avatar>
-          <div style="flex: 1; min-width: 0; overflow: hidden; text-align: left">
-            <div style="font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{
-              row.user.nickname }}</div>
-            <div style="font-size: 12px; color: #999; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{
-              row.user.email }}</div>
+          <div
+            style="flex: 1; min-width: 0; overflow: hidden; text-align: left"
+          >
+            <div
+              style="
+                font-weight: 500;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+              "
+            >
+              {{ row.user.nickname }}
+            </div>
+            <div
+              style="
+                font-size: 12px;
+                color: #999;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+              "
+            >
+              {{ row.user.email }}
+            </div>
           </div>
         </div>
       </template>
@@ -24,9 +51,13 @@
 
     <el-table-column label="评论内容" min-width="300">
       <template #default="{ row }">
-        <div style="line-height: 1.6; display: flex; align-items: center; gap: 8px">
+        <div
+          style="line-height: 1.6; display: flex; align-items: center; gap: 8px"
+        >
           <span>{{ row.content }}</span>
-          <el-tag v-if="row.deleted_at" type="danger" size="small">已删除</el-tag>
+          <el-tag v-if="row.deleted_at" type="danger" size="small"
+            >已删除</el-tag
+          >
           <el-tag v-if="row.parent_id" type="info" size="small">子评论</el-tag>
         </div>
       </template>
@@ -35,11 +66,23 @@
     <el-table-column label="评论来源" width="220" align="center">
       <template #default="{ row }">
         <div style="display: flex; align-items: center; gap: 8px">
-          <el-tag v-if="row.target.type !== 'article'" type="success" size="small">
+          <el-tag
+            v-if="row.target.type !== 'article'"
+            type="success"
+            size="small"
+          >
             {{ getTargetTypeText(row.target.type) }}
           </el-tag>
           <el-tooltip :content="row.target.title" placement="top">
-            <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12px; flex: 1">
+            <div
+              style="
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                font-size: 12px;
+                flex: 1;
+              "
+            >
               {{ row.target.title }}
             </div>
           </el-tooltip>
@@ -55,20 +98,45 @@
 
     <el-table-column label="状态" width="100" align="center">
       <template #default="{ row }">
-        <el-switch v-model="row.status" :active-value="1" :inactive-value="0" inline-prompt active-text="显示"
-          inactive-text="隐藏" @change="handleStatusChange(row)" />
+        <el-switch
+          v-model="row.status"
+          :active-value="1"
+          :inactive-value="0"
+          inline-prompt
+          active-text="显示"
+          inactive-text="隐藏"
+          @change="handleStatusChange(row)"
+        />
       </template>
     </el-table-column>
 
     <el-table-column label="操作" width="220" align="center" fixed="right">
       <template #default="{ row }">
-        <el-button v-if="!row.deleted_at" type="primary" link size="small" @click="openReplyDialog(row)">
+        <el-button
+          v-if="!row.deleted_at"
+          type="primary"
+          link
+          size="small"
+          @click="openReplyDialog(row)"
+        >
           回复
         </el-button>
-        <el-button v-if="row.deleted_at" type="success" link size="small" @click="handleRestore(row.id)">
+        <el-button
+          v-if="row.deleted_at"
+          type="success"
+          link
+          size="small"
+          @click="handleRestore(row.id)"
+        >
           恢复
         </el-button>
-        <el-button v-else type="danger" link size="small" @click="handleDelete(row.id)">
+        <el-button
+          v-else
+          type="danger"
+          link
+          size="small"
+          @click="handleDelete(row.id)"
+        >
           删除
         </el-button>
       </template>
@@ -76,12 +144,21 @@
   </common-list>
 
   <!-- 回复对话框 -->
-  <el-dialog v-model="replyDialogVisible" title="回复评论" width="500px" destroy-on-close>
+  <el-dialog
+    v-model="replyDialogVisible"
+    title="回复评论"
+    width="500px"
+    destroy-on-close
+  >
     <div v-if="replyingComment" class="reply-info">
       <div class="info-row">
         <span class="label">评论来源：</span>
         <span class="value">
-          <el-tag v-if="replyingComment.target.type !== 'article'" type="success" size="small">
+          <el-tag
+            v-if="replyingComment.target.type !== 'article'"
+            type="success"
+            size="small"
+          >
             {{ getTargetTypeText(replyingComment.target.type) }}
           </el-tag>
           {{ replyingComment.target.title }}
@@ -89,21 +166,34 @@
       </div>
       <div class="info-row">
         <span class="label">评论时间：</span>
-        <span class="value">{{ formatDateTime(replyingComment.created_at) }}</span>
+        <span class="value">{{
+          formatDateTime(replyingComment.created_at)
+        }}</span>
       </div>
       <el-divider style="margin: 12px 0" />
-      <div class="reply-to">回复 <span class="nickname">{{ replyingComment.user.nickname }}</span>：</div>
+      <div class="reply-to">
+        回复 <span class="nickname">{{ replyingComment.user.nickname }}</span
+        >：
+      </div>
       <div class="original-content">{{ replyingComment.content }}</div>
     </div>
     <el-form :model="replyForm" label-width="80px" style="margin-top: 16px">
       <el-form-item label="回复内容">
-        <el-input v-model="replyForm.content" type="textarea" :rows="4" placeholder="请输入回复内容..." show-word-limit
-          maxlength="500" />
+        <el-input
+          v-model="replyForm.content"
+          type="textarea"
+          :rows="4"
+          placeholder="请输入回复内容..."
+          show-word-limit
+          maxlength="500"
+        />
       </el-form-item>
     </el-form>
     <template #footer>
       <el-button @click="replyDialogVisible = false">取消</el-button>
-      <el-button type="primary" :loading="replying" @click="handleReply">提交回复</el-button>
+      <el-button type="primary" :loading="replying" @click="handleReply"
+        >提交回复</el-button
+      >
     </template>
   </el-dialog>
 </template>
@@ -115,7 +205,13 @@ import { User } from '@element-plus/icons-vue'
 import CommonList from '@/components/common/CommonList.vue'
 import type { Comment } from '@/types/comment'
 import type { PaginationQuery } from '@/types/request'
-import { getComments, deleteComment, restoreComment, toggleCommentStatus, createComment } from '@/api/comment'
+import {
+  getComments,
+  deleteComment,
+  restoreComment,
+  toggleCommentStatus,
+  createComment
+} from '@/api/comment'
 import { formatDateTime } from '@/utils/date'
 
 const loading = ref(false)
@@ -136,7 +232,7 @@ const fetchComments = async () => {
   try {
     const [result] = await Promise.all([
       getComments(queryParams.value),
-      new Promise(resolve => setTimeout(resolve, 300))
+      new Promise((resolve) => setTimeout(resolve, 300))
     ])
     commentList.value = result.list
     total.value = result.total
@@ -164,23 +260,29 @@ const handleStatusChange = async (comment: Comment) => {
 
 const handleDelete = async (id: number) => {
   try {
-    await ElMessageBox.confirm('确定要删除这条评论吗？', '提示', { type: 'warning' })
+    await ElMessageBox.confirm('确定要删除这条评论吗？', '提示', {
+      type: 'warning'
+    })
     await deleteComment(id)
     ElMessage.success('删除成功')
     fetchComments()
   } catch (error) {
-    if (error !== 'cancel' && error instanceof Error) ElMessage.error(error.message)
+    if (error !== 'cancel' && error instanceof Error)
+      ElMessage.error(error.message)
   }
 }
 
 const handleRestore = async (id: number) => {
   try {
-    await ElMessageBox.confirm('确定要恢复这条评论吗？', '提示', { type: 'info' })
+    await ElMessageBox.confirm('确定要恢复这条评论吗？', '提示', {
+      type: 'info'
+    })
     await restoreComment(id)
     ElMessage.success('恢复成功')
     fetchComments()
   } catch (error) {
-    if (error !== 'cancel' && error instanceof Error) ElMessage.error(error.message)
+    if (error !== 'cancel' && error instanceof Error)
+      ElMessage.error(error.message)
   }
 }
 

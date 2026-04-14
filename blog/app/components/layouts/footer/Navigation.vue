@@ -14,23 +14,26 @@ const friendGroups = ref<Friend[]>([])
 const isLoadingFriends = ref(false)
 
 // 使用SSR获取友链数据
-const { data: initialFriendData } = await useAsyncData('footer-friends', async () => {
-  try {
-    const data = await getFriends()
-    const allFriends: Friend[] = []
-    data.groups?.forEach(group => {
-      group.friends.forEach(friend => {
-        if (!friend.is_invalid) {
-          allFriends.push(friend)
-        }
+const { data: initialFriendData } = await useAsyncData(
+  'footer-friends',
+  async () => {
+    try {
+      const data = await getFriends()
+      const allFriends: Friend[] = []
+      data.groups?.forEach((group) => {
+        group.friends.forEach((friend) => {
+          if (!friend.is_invalid) {
+            allFriends.push(friend)
+          }
+        })
       })
-    })
-    return allFriends
-  } catch (error) {
-    console.error('获取友链失败:', error)
-    return []
+      return allFriends
+    } catch (error) {
+      console.error('获取友链失败:', error)
+      return []
+    }
   }
-})
+)
 
 // 初始化数据
 if (initialFriendData.value) {
@@ -43,8 +46,8 @@ const fetchFriends = async () => {
     isLoadingFriends.value = true
     const data = await getFriends()
     const allFriends: Friend[] = []
-    data.groups?.forEach(group => {
-      group.friends.forEach(friend => {
+    data.groups?.forEach((group) => {
+      group.friends.forEach((friend) => {
         if (!friend.is_invalid) {
           allFriends.push(friend)
         }
@@ -76,11 +79,19 @@ const refreshFriends = () => {
 <template>
   <div v-if="footerMenus.length > 0" class="footer-group">
     <div v-for="menu in footerMenus" :key="menu.id" class="group-item">
-      <div class="item-title" role="heading" aria-level="2">{{ menu.title }}</div>
+      <div class="item-title" role="heading" aria-level="2">
+        {{ menu.title }}
+      </div>
       <nav class="item-content" :aria-label="`${menu.title}导航`">
-        <a v-for="child in menu.children" :key="child.id" class="content_link" :href="child.url"
+        <a
+          v-for="child in menu.children"
+          :key="child.id"
+          class="content_link"
+          :href="child.url"
           :target="isExternalLink(child.url) ? '_blank' : '_self'"
-          :rel="isExternalLink(child.url) ? 'noopener noreferrer' : undefined" :aria-label="child.title">
+          :rel="isExternalLink(child.url) ? 'noopener noreferrer' : undefined"
+          :aria-label="child.title"
+        >
           {{ child.title }}
         </a>
       </nav>
@@ -90,15 +101,32 @@ const refreshFriends = () => {
     <div class="group-item">
       <div class="item-title friend-title" role="heading" aria-level="2">
         友链
-        <i class="refresh-icon ri-refresh-line" :class="{ 'is-loading': isLoadingFriends }" @click="refreshFriends"
-          :aria-label="isLoadingFriends ? '正在加载友链' : '刷新友链'"></i>
+        <i
+          class="refresh-icon ri-refresh-line"
+          :class="{ 'is-loading': isLoadingFriends }"
+          @click="refreshFriends"
+          :aria-label="isLoadingFriends ? '正在加载友链' : '刷新友链'"
+        ></i>
       </div>
       <nav class="item-content friend-content" aria-label="友情链接">
-        <a v-for="friend in randomFriends" :key="friend.id" class="content_link" :href="friend.url" target="_blank"
-          rel="noopener noreferrer" :aria-label="friend.name" :title="friend.description">
+        <a
+          v-for="friend in randomFriends"
+          :key="friend.id"
+          class="content_link"
+          :href="friend.url"
+          target="_blank"
+          rel="noopener noreferrer"
+          :aria-label="friend.name"
+          :title="friend.description"
+        >
           {{ friend.name }}
         </a>
-        <a v-if="friendGroups.length > 3" href="/friend" class="content_link" aria-label="查看更多友链">
+        <a
+          v-if="friendGroups.length > 3"
+          href="/friend"
+          class="content_link"
+          aria-label="查看更多友链"
+        >
           更多...
         </a>
       </nav>

@@ -9,11 +9,21 @@
         <div class="login-form">
           <div class="form-item">
             <i class="ri-user-line"></i>
-            <input type="text" v-model="formState.email" placeholder="请输入邮箱" @keyup.enter="handleLogin" />
+            <input
+              type="text"
+              v-model="formState.email"
+              placeholder="请输入邮箱"
+              @keyup.enter="handleLogin"
+            />
           </div>
           <div class="form-item">
             <i class="ri-lock-line"></i>
-            <input type="password" v-model="formState.password" placeholder="请输入密码" @keyup.enter="handleLogin" />
+            <input
+              type="password"
+              v-model="formState.password"
+              placeholder="请输入密码"
+              @keyup.enter="handleLogin"
+            />
           </div>
           <button class="submit-btn" :disabled="loading" @click="handleLogin">
             <span v-if="!loading">登 录</span>
@@ -226,7 +236,6 @@ const handleLogin = async () => {
 
 @media (max-width: 768px) {
   .admin-login {
-
     &::before,
     &::after {
       display: none;

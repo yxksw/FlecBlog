@@ -20,9 +20,10 @@ const groupedComments = computed(() => {
     replies: FlatComment[]
   }> = []
 
-  let currentGroup: { parent: FlatComment; replies: FlatComment[] } | null = null
+  let currentGroup: { parent: FlatComment; replies: FlatComment[] } | null =
+    null
 
-  props.comments.forEach(item => {
+  props.comments.forEach((item) => {
     if (item.depth === 0) {
       // 顶级评论，创建新�?
       currentGroup = {
@@ -44,20 +45,17 @@ const groupedComments = computed(() => {
 
 <template>
   <div class="comments-list">
-    <div 
+    <div
       v-for="group in groupedComments"
       :key="group.parent.comment.id"
       class="comment-card"
     >
       <!-- 顶级评论 -->
-      <CommentItem 
-        :comment="group.parent.comment"
-        :depth="group.parent.depth"
-      >
+      <CommentItem :comment="group.parent.comment" :depth="group.parent.depth">
         <!-- 子评论列�?-->
         <template v-if="group.replies.length > 0" #replies>
           <div class="replies-list">
-            <CommentItem 
+            <CommentItem
               v-for="reply in group.replies"
               :key="reply.comment.id"
               :comment="reply.comment"
@@ -89,5 +87,3 @@ const groupedComments = computed(() => {
   }
 }
 </style>
-
-

@@ -21,8 +21,14 @@
             <div class="version-item">
               <span class="label">最新版本</span>
               <span class="version-value">
-                <span class="value">{{ dynamicInfo.version_latest_version || '尚未检测' }}</span>
-                <el-tooltip v-if="versionCheckErrorMessage" :content="versionCheckErrorMessage" placement="top">
+                <span class="value">{{
+                  dynamicInfo.version_latest_version || '尚未检测'
+                }}</span>
+                <el-tooltip
+                  v-if="versionCheckErrorMessage"
+                  :content="versionCheckErrorMessage"
+                  placement="top"
+                >
                   <span class="error-dot"></span>
                 </el-tooltip>
               </span>
@@ -58,7 +64,9 @@
               </div>
               <div class="info-item">
                 <span class="label">运行时间</span>
-                <span class="value">{{ formatDays(dynamicInfo.host_uptime) }}</span>
+                <span class="value">{{
+                  formatDays(dynamicInfo.host_uptime)
+                }}</span>
               </div>
             </div>
           </div>
@@ -78,8 +86,14 @@
               </div>
               <div class="info-item">
                 <span class="label">使用率</span>
-                <el-progress :percentage="Math.round(dynamicInfo.cpu_usage || 0)" :stroke-width="6"
-                  :color="getProgressColor(Math.round(dynamicInfo.cpu_usage || 0))" style="width: 120px" />
+                <el-progress
+                  :percentage="Math.round(dynamicInfo.cpu_usage || 0)"
+                  :stroke-width="6"
+                  :color="
+                    getProgressColor(Math.round(dynamicInfo.cpu_usage || 0))
+                  "
+                  style="width: 120px"
+                />
               </div>
               <div class="info-item">
                 <span class="label">型号</span>
@@ -91,8 +105,11 @@
               </div>
               <div class="info-item">
                 <span class="label">系统负载</span>
-                <span class="value">{{ dynamicInfo.load_1?.toFixed(2) || 'N/A' }} / {{ dynamicInfo.load_5?.toFixed(2) ||
-                  'N/A' }} / {{ dynamicInfo.load_15?.toFixed(2) || 'N/A' }}</span>
+                <span class="value"
+                  >{{ dynamicInfo.load_1?.toFixed(2) || 'N/A' }} /
+                  {{ dynamicInfo.load_5?.toFixed(2) || 'N/A' }} /
+                  {{ dynamicInfo.load_15?.toFixed(2) || 'N/A' }}</span
+                >
               </div>
             </div>
           </div>
@@ -108,24 +125,44 @@
             <div class="section-body">
               <div class="info-item">
                 <span class="label">总容量</span>
-                <span class="value">{{ formatBytes(dynamicInfo.memory_used) }} / {{ formatBytes(staticInfo.memory_total)
-                }}</span>
+                <span class="value"
+                  >{{ formatBytes(dynamicInfo.memory_used) }} /
+                  {{ formatBytes(staticInfo.memory_total) }}</span
+                >
               </div>
               <div class="info-item">
                 <span class="label">使用率</span>
-                <el-progress :percentage="calcPercent(dynamicInfo.memory_used, staticInfo.memory_total)"
+                <el-progress
+                  :percentage="
+                    calcPercent(
+                      dynamicInfo.memory_used,
+                      staticInfo.memory_total
+                    )
+                  "
                   :stroke-width="6"
-                  :color="getProgressColor(calcPercent(dynamicInfo.memory_used, staticInfo.memory_total))"
-                  style="width: 120px" />
+                  :color="
+                    getProgressColor(
+                      calcPercent(
+                        dynamicInfo.memory_used,
+                        staticInfo.memory_total
+                      )
+                    )
+                  "
+                  style="width: 120px"
+                />
               </div>
               <div class="info-item">
                 <span class="label">未使用</span>
-                <span class="value">{{ formatBytes(dynamicInfo.memory_available) }}</span>
+                <span class="value">{{
+                  formatBytes(dynamicInfo.memory_available)
+                }}</span>
               </div>
               <div class="info-item">
                 <span class="label">Swap</span>
-                <span class="value">{{ formatBytes(dynamicInfo.swap_used) }} / {{ formatBytes(staticInfo.swap_total)
-                }}</span>
+                <span class="value"
+                  >{{ formatBytes(dynamicInfo.swap_used) }} /
+                  {{ formatBytes(staticInfo.swap_total) }}</span
+                >
               </div>
             </div>
           </div>
@@ -141,21 +178,36 @@
             <div class="section-body">
               <div class="info-item">
                 <span class="label">总容量</span>
-                <span class="value">{{ formatBytes(staticInfo.disk_total) }}</span>
+                <span class="value">{{
+                  formatBytes(staticInfo.disk_total)
+                }}</span>
               </div>
               <div class="info-item">
                 <span class="label">使用率</span>
-                <el-progress :percentage="calcPercent(dynamicInfo.disk_used, staticInfo.disk_total)" :stroke-width="6"
-                  :color="getProgressColor(calcPercent(dynamicInfo.disk_used, staticInfo.disk_total))"
-                  style="width: 120px" />
+                <el-progress
+                  :percentage="
+                    calcPercent(dynamicInfo.disk_used, staticInfo.disk_total)
+                  "
+                  :stroke-width="6"
+                  :color="
+                    getProgressColor(
+                      calcPercent(dynamicInfo.disk_used, staticInfo.disk_total)
+                    )
+                  "
+                  style="width: 120px"
+                />
               </div>
               <div class="info-item">
                 <span class="label">已使用</span>
-                <span class="value">{{ formatBytes(dynamicInfo.disk_used) }}</span>
+                <span class="value">{{
+                  formatBytes(dynamicInfo.disk_used)
+                }}</span>
               </div>
               <div class="info-item">
                 <span class="label">未使用</span>
-                <span class="value">{{ formatBytes(dynamicInfo.disk_free) }}</span>
+                <span class="value">{{
+                  formatBytes(dynamicInfo.disk_free)
+                }}</span>
               </div>
             </div>
           </div>
@@ -175,13 +227,20 @@
               </div>
               <div class="info-item">
                 <span class="label">状态</span>
-                <el-tag :type="dynamicInfo.db_status === '正常' ? 'success' : 'danger'" size="small">
+                <el-tag
+                  :type="
+                    dynamicInfo.db_status === '正常' ? 'success' : 'danger'
+                  "
+                  size="small"
+                >
                   {{ dynamicInfo.db_status }}
                 </el-tag>
               </div>
               <div class="info-item">
                 <span class="label">大小</span>
-                <span class="value">{{ formatBytes(dynamicInfo.db_size) }}</span>
+                <span class="value">{{
+                  formatBytes(dynamicInfo.db_size)
+                }}</span>
               </div>
               <div class="info-item">
                 <span class="label">表数量</span>
@@ -205,29 +264,47 @@
             <div class="section-body">
               <div class="info-item">
                 <span class="label">文件存储</span>
-                <el-tag :type="staticInfo.storage_status === '正常' ? 'success' : 'danger'" size="small">
+                <el-tag
+                  :type="
+                    staticInfo.storage_status === '正常' ? 'success' : 'danger'
+                  "
+                  size="small"
+                >
                   {{ staticInfo.storage_status }}
                 </el-tag>
               </div>
               <div class="info-item">
                 <span class="label">邮箱通知</span>
                 <el-tag
-                  :type="staticInfo.email_status === '正常' ? 'success' : staticInfo.email_status === '未配置' ? 'info' : 'danger'"
-                  size="small">
+                  :type="
+                    staticInfo.email_status === '正常'
+                      ? 'success'
+                      : staticInfo.email_status === '未配置'
+                        ? 'info'
+                        : 'danger'
+                  "
+                  size="small"
+                >
                   {{ staticInfo.email_status }}
                 </el-tag>
               </div>
               <div class="info-item">
                 <span class="label">飞书交互</span>
                 <el-tag
-                  :type="staticInfo.feishu_status === '正常' ? 'success' : staticInfo.feishu_status === '未配置' ? 'info' : 'danger'"
-                  size="small">
+                  :type="
+                    staticInfo.feishu_status === '正常'
+                      ? 'success'
+                      : staticInfo.feishu_status === '未配置'
+                        ? 'info'
+                        : 'danger'
+                  "
+                  size="small"
+                >
                   {{ staticInfo.feishu_status }}
                 </el-tag>
               </div>
             </div>
           </div>
-
         </div>
       </div>
     </el-card>
@@ -238,8 +315,13 @@
 import { computed, ref, onMounted, onUnmounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import {
-  Monitor, Cpu, Coin, DataLine,
-  FolderOpened, Connection, Bell
+  Monitor,
+  Cpu,
+  Coin,
+  DataLine,
+  FolderOpened,
+  Connection,
+  Bell
 } from '@element-plus/icons-vue'
 import { getSystemStatic, getSystemDynamic } from '@/api/system'
 import type { SystemStatic, SystemDynamic } from '@/types/system'

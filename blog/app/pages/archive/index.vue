@@ -3,12 +3,13 @@ import { getArticlesForWeb } from '@/composables/api/article'
 
 definePageMeta({})
 
-const PAGE_SIZE = 20;
-const { articles, total, currentPage, fetchArticles } = useArticles();
+const PAGE_SIZE = 20
+const { articles, total, currentPage, fetchArticles } = useArticles()
 
 useSeoMeta({
   title: '归档',
-  description: () => `浏览所有文章归档，共 ${total.value} 篇文章，按时间顺序查看历史文章`
+  description: () =>
+    `浏览所有文章归档，共 ${total.value} 篇文章，按时间顺序查看历史文章`
 })
 
 // 使用SSR获取归档数据
@@ -32,24 +33,34 @@ const loadData = async (page: number = 1) => {
   await fetchArticles({
     page,
     page_size: PAGE_SIZE
-  });
-};
+  })
+}
 
 // 处理分页变化
 const handlePageChange = async (page: number) => {
-  await loadData(page);
+  await loadData(page)
   if (process.client) {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: 'smooth' })
   }
-};
+}
 </script>
 
 <template>
   <div id="page">
-    <FeaturesArchiveArticleList :articles="articles" :group-by-year="true" title="归档" :total="total" />
+    <FeaturesArchiveArticleList
+      :articles="articles"
+      :group-by-year="true"
+      title="归档"
+      :total="total"
+    />
 
-    <UiPagination v-if="total > PAGE_SIZE" :total="total" :current-page="currentPage"
-      :page-size="PAGE_SIZE" @change="handlePageChange" />
+    <UiPagination
+      v-if="total > PAGE_SIZE"
+      :total="total"
+      :current-page="currentPage"
+      :page-size="PAGE_SIZE"
+      @change="handlePageChange"
+    />
   </div>
 </template>
 

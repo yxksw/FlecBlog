@@ -1,5 +1,5 @@
-import { ref, nextTick, onMounted, onUnmounted } from "vue";
-import type { Ref } from "vue";
+import { ref, nextTick, onMounted, onUnmounted } from 'vue'
+import type { Ref } from 'vue'
 import { useEventListener, useResizeObserver } from '@vueuse/core'
 
 export interface WaterfallOptions {
@@ -26,7 +26,10 @@ export function useWaterfall(options: WaterfallOptions) {
 
   const isLayoutReady: Ref<boolean> = ref(false)
   let debounceTimer: ReturnType<typeof setTimeout> | null = null
-  let imageLoadListeners: Array<{ img: HTMLImageElement; listener: () => void }> = []
+  let imageLoadListeners: Array<{
+    img: HTMLImageElement
+    listener: () => void
+  }> = []
 
   // 根据窗口宽度获取列数
   const getColumns = (): number => {
@@ -53,7 +56,7 @@ export function useWaterfall(options: WaterfallOptions) {
         }
       })
     })
-    return Promise.all(imagePromises).then(() => { })
+    return Promise.all(imagePromises).then(() => {})
   }
 
   // 执行瀑布流布局计算
@@ -69,7 +72,7 @@ export function useWaterfall(options: WaterfallOptions) {
     const columnWidth = (containerWidth - gap * (cols - 1)) / cols
 
     const columnsHeight = new Array(cols).fill(0)
-    const itemHeights = items.map(item => item.offsetHeight)
+    const itemHeights = items.map((item) => item.offsetHeight)
 
     items.forEach((item, index) => {
       const minHeight = Math.min(...columnsHeight)
@@ -84,7 +87,7 @@ export function useWaterfall(options: WaterfallOptions) {
     })
 
     const containerHeight = Math.max(...columnsHeight)
-      ; (container as HTMLElement).style.height = `${containerHeight}px`
+    ;(container as HTMLElement).style.height = `${containerHeight}px`
 
     if (!isLayoutReady.value) {
       isLayoutReady.value = true

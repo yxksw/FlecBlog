@@ -1,7 +1,17 @@
 <template>
-  <common-list title="用户列表" :data="userList" :loading="loading" :total="total" v-model:page="queryParams.page"
-    v-model:page-size="queryParams.page_size" create-text="新增用户" @create="handleCreate" @refresh="fetchUsers"
-    @update:page="fetchUsers" @update:pageSize="fetchUsers">
+  <common-list
+    title="用户列表"
+    :data="userList"
+    :loading="loading"
+    :total="total"
+    v-model:page="queryParams.page"
+    v-model:page-size="queryParams.page_size"
+    create-text="新增用户"
+    @create="handleCreate"
+    @refresh="fetchUsers"
+    @update:page="fetchUsers"
+    @update:pageSize="fetchUsers"
+  >
     <!-- 表格列 -->
     <el-table-column label="头像" width="100" align="center">
       <template #default="{ row }">
@@ -18,18 +28,31 @@
       <template #default="{ row }">
         <div style="display: flex; align-items: center; gap: 8px">
           <span>{{ row.nickname }}</span>
-          <el-tag v-if="row.badge" type="info" effect="plain" size="small">{{ row.badge }}</el-tag>
-          <el-tag v-if="row.deleted_at" type="danger" size="small">已删除</el-tag>
+          <el-tag v-if="row.badge" type="info" effect="plain" size="small">{{
+            row.badge
+          }}</el-tag>
+          <el-tag v-if="row.deleted_at" type="danger" size="small"
+            >已删除</el-tag
+          >
         </div>
       </template>
     </el-table-column>
 
     <el-table-column label="邮箱" min-width="150" align="center">
       <template #default="{ row }">
-        <div style="display: flex; align-items: center; justify-content: center; gap: 8px">
+        <div
+          style="
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+          "
+        >
           <span v-if="row.email">{{ row.email }}</span>
           <span v-else style="color: #999">-</span>
-          <el-tag v-if="!row.is_enabled" type="danger" size="small">禁用</el-tag>
+          <el-tag v-if="!row.is_enabled" type="danger" size="small"
+            >禁用</el-tag
+          >
         </div>
       </template>
     </el-table-column>
@@ -43,9 +66,15 @@
 
     <el-table-column label="角色" width="120" align="center">
       <template #default="{ row }">
-        <el-tag v-if="row.role === 'super_admin'" type="danger" size="small">超级管理员</el-tag>
-        <el-tag v-else-if="row.role === 'admin'" type="warning" size="small">管理员</el-tag>
-        <el-tag v-else-if="row.role === 'user'" type="success" size="small">普通用户</el-tag>
+        <el-tag v-if="row.role === 'super_admin'" type="danger" size="small"
+          >超级管理员</el-tag
+        >
+        <el-tag v-else-if="row.role === 'admin'" type="warning" size="small"
+          >管理员</el-tag
+        >
+        <el-tag v-else-if="row.role === 'user'" type="success" size="small"
+          >普通用户</el-tag
+        >
         <el-tag v-else type="info" size="small">访客</el-tag>
       </template>
     </el-table-column>
@@ -85,8 +114,16 @@
     <el-table-column label="操作" width="180" align="center" fixed="right">
       <template #default="{ row }">
         <template v-if="!row.deleted_at && canOperateUser(row)">
-          <el-button type="primary" link size="small" @click="handleEdit(row)">编辑</el-button>
-          <el-button type="danger" link size="small" @click="handleDelete(row.id)">删除</el-button>
+          <el-button type="primary" link size="small" @click="handleEdit(row)"
+            >编辑</el-button
+          >
+          <el-button
+            type="danger"
+            link
+            size="small"
+            @click="handleDelete(row.id)"
+            >删除</el-button
+          >
         </template>
       </template>
     </el-table-column>
@@ -94,7 +131,11 @@
     <!-- 额外内容 -->
     <template #extra>
       <!-- 用户表单对话框 -->
-      <user-form-dialog v-model="dialogVisible" :edit-user="currentUser" @success="fetchUsers" />
+      <user-form-dialog
+        v-model="dialogVisible"
+        :edit-user="currentUser"
+        @success="fetchUsers"
+      />
     </template>
   </common-list>
 </template>
@@ -121,15 +162,17 @@ const currentRole = computed(() => getCurrentUserRole())
 const dialogVisible = ref(false)
 const currentUser = ref<UserType | null>(null)
 
-const isManagedRole = (role: string) => role === 'admin' || role === 'super_admin'
-const canOperateUser = (user: UserType) => currentRole.value === 'super_admin' || !isManagedRole(user.role)
+const isManagedRole = (role: string) =>
+  role === 'admin' || role === 'super_admin'
+const canOperateUser = (user: UserType) =>
+  currentRole.value === 'super_admin' || !isManagedRole(user.role)
 
 const fetchUsers = async () => {
   loading.value = true
   try {
     const [result] = await Promise.all([
       getUsers(queryParams.value),
-      new Promise(resolve => setTimeout(resolve, 300))
+      new Promise((resolve) => setTimeout(resolve, 300))
     ])
     userList.value = result.list
     total.value = result.total
@@ -152,16 +195,19 @@ const handleEdit = (user: UserType) => {
 }
 
 const handleDelete = async (id: number) => {
-  const target = userList.value.find(user => user.id === id)
+  const target = userList.value.find((user) => user.id === id)
   if (target && !canOperateUser(target)) return
 
   try {
-    await ElMessageBox.confirm('确定要删除这个用户吗？', '提示', { type: 'warning' })
+    await ElMessageBox.confirm('确定要删除这个用户吗？', '提示', {
+      type: 'warning'
+    })
     await deleteUser(id)
     ElMessage.success('删除成功')
     fetchUsers()
   } catch (error) {
-    if (error !== 'cancel' && error instanceof Error) ElMessage.error(error.message)
+    if (error !== 'cancel' && error instanceof Error)
+      ElMessage.error(error.message)
   }
 }
 

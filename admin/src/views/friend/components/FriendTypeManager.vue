@@ -1,9 +1,19 @@
 <template>
-  <el-dialog v-model="visible" title="友链类型管理" width="550px" :align-center="true">
+  <el-dialog
+    v-model="visible"
+    title="友链类型管理"
+    width="550px"
+    :align-center="true"
+  >
     <el-table :data="list" style="margin: 20px 0" max-height="350">
       <el-table-column prop="name" label="类型名称" min-width="60" />
       <el-table-column prop="sort" label="排序" width="60" align="center" />
-      <el-table-column prop="is_visible" label="展示" width="100" align="center">
+      <el-table-column
+        prop="is_visible"
+        label="展示"
+        width="100"
+        align="center"
+      >
         <template #default="{ row }">
           <el-tag :type="row.is_visible ? 'success' : 'info'" size="small">
             {{ row.is_visible ? '展示' : '隐藏' }}
@@ -13,7 +23,9 @@
       <el-table-column prop="count" label="友链数" width="100" align="center" />
       <el-table-column label="操作" width="150" align="center">
         <template #header>
-          <el-button type="primary" plain size="small" @click="openForm()">新增</el-button>
+          <el-button type="primary" plain size="small" @click="openForm()"
+            >新增</el-button
+          >
         </template>
         <template #default="{ row }">
           <el-button type="primary" link @click="openForm(row)">编辑</el-button>
@@ -22,20 +34,38 @@
       </el-table-column>
     </el-table>
 
-    <el-dialog v-model="formVisible" :title="current.id ? '编辑类型' : '新增类型'" width="450px" append-to-body>
+    <el-dialog
+      v-model="formVisible"
+      :title="current.id ? '编辑类型' : '新增类型'"
+      width="450px"
+      append-to-body
+    >
       <el-form :model="current" label-width="80px">
         <el-form-item label="类型名称" required>
-          <el-input v-model="current.name" placeholder="请输入类型名称" maxlength="50" show-word-limit />
+          <el-input
+            v-model="current.name"
+            placeholder="请输入类型名称"
+            maxlength="50"
+            show-word-limit
+          />
         </el-form-item>
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item label="排序">
-              <el-input-number v-model="current.sort" :min="0" style="width: 100%" />
+              <el-input-number
+                v-model="current.sort"
+                :min="0"
+                style="width: 100%"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="展示">
-              <el-switch v-model="current.is_visible" active-text="展示" inactive-text="隐藏" />
+              <el-switch
+                v-model="current.is_visible"
+                active-text="展示"
+                inactive-text="隐藏"
+              />
             </el-form-item>
           </el-col>
         </el-row>
@@ -51,7 +81,12 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { ElMessage, ElMessageBox, ElLoading } from 'element-plus'
-import { getFriendTypes, createFriendType, updateFriendType, deleteFriendType } from '@/api/friend'
+import {
+  getFriendTypes,
+  createFriendType,
+  updateFriendType,
+  deleteFriendType
+} from '@/api/friend'
 import type { FriendType } from '@/types/friend'
 const props = defineProps<{ modelValue: boolean }>()
 const emit = defineEmits(['update:modelValue', 'success'])

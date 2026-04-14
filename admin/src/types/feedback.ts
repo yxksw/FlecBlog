@@ -1,5 +1,9 @@
 // 举报类型
-export type ReportType = 'copyright' | 'inappropriate' | 'summary' | 'suggestion'
+export type ReportType =
+  | 'copyright'
+  | 'inappropriate'
+  | 'summary'
+  | 'suggestion'
 
 // 反馈状态
 export type FeedbackStatus = 'pending' | 'resolved' | 'closed'

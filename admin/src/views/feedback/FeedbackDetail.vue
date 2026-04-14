@@ -46,7 +46,9 @@
           </el-descriptions-item>
 
           <el-descriptions-item label="回复时间">
-            {{ feedback.reply_time ? formatDate(feedback.reply_time) : '未回复' }}
+            {{
+              feedback.reply_time ? formatDate(feedback.reply_time) : '未回复'
+            }}
           </el-descriptions-item>
         </el-descriptions>
 
@@ -57,17 +59,32 @@
             <div v-if="feedback.form_content" class="form-content">
               <!-- 版权侵权内容投诉 -->
               <template v-if="feedback.report_type === 'copyright'">
-                <div v-if="feedback.form_content.description" class="form-field">
+                <div
+                  v-if="feedback.form_content.description"
+                  class="form-field"
+                >
                   <strong>侵权说明:</strong>
-                  <div class="field-value">{{ feedback.form_content.description }}</div>
+                  <div class="field-value">
+                    {{ feedback.form_content.description }}
+                  </div>
                 </div>
 
                 <div class="form-field">
                   <strong>权利人证明文件:</strong>
                   <div class="field-value">
-                    <div v-if="getCopyrightProofFiles(feedback.form_content).length" class="attachment-list">
-                      <div v-for="(file, index) in getCopyrightProofFiles(feedback.form_content)" :key="index"
-                        class="attachment-item">
+                    <div
+                      v-if="
+                        getCopyrightProofFiles(feedback.form_content).length
+                      "
+                      class="attachment-list"
+                    >
+                      <div
+                        v-for="(file, index) in getCopyrightProofFiles(
+                          feedback.form_content
+                        )"
+                        :key="index"
+                        class="attachment-item"
+                      >
                         <el-link :href="file" target="_blank" type="primary">
                           <i class="el-icon-paperclip"></i>
                           {{ getFileName(file) }}
@@ -81,9 +98,20 @@
                 <div class="form-field">
                   <strong>侵权内容证明:</strong>
                   <div class="field-value">
-                    <div v-if="getCopyrightInfringementFiles(feedback.form_content).length" class="attachment-list">
-                      <div v-for="(file, index) in getCopyrightInfringementFiles(feedback.form_content)" :key="index"
-                        class="attachment-item">
+                    <div
+                      v-if="
+                        getCopyrightInfringementFiles(feedback.form_content)
+                          .length
+                      "
+                      class="attachment-list"
+                    >
+                      <div
+                        v-for="(file, index) in getCopyrightInfringementFiles(
+                          feedback.form_content
+                        )"
+                        :key="index"
+                        class="attachment-item"
+                      >
                         <el-link :href="file" target="_blank" type="primary">
                           <i class="el-icon-paperclip"></i>
                           {{ getFileName(file) }}
@@ -99,20 +127,34 @@
               <template v-else-if="feedback.report_type === 'inappropriate'">
                 <div v-if="feedback.form_content.reason" class="form-field">
                   <strong>投诉原因:</strong>
-                  <div class="field-value">{{ feedback.form_content.reason }}</div>
+                  <div class="field-value">
+                    {{ feedback.form_content.reason }}
+                  </div>
                 </div>
 
-                <div v-if="feedback.form_content.description" class="form-field">
+                <div
+                  v-if="feedback.form_content.description"
+                  class="form-field"
+                >
                   <strong>投诉内容:</strong>
-                  <div class="field-value">{{ feedback.form_content.description }}</div>
+                  <div class="field-value">
+                    {{ feedback.form_content.description }}
+                  </div>
                 </div>
 
                 <div class="form-field">
                   <strong>证据截图:</strong>
                   <div class="field-value">
-                    <div v-if="feedback.form_content.attachmentFiles?.length" class="attachment-list">
-                      <div v-for="(file, index) in feedback.form_content.attachmentFiles" :key="index"
-                        class="attachment-item">
+                    <div
+                      v-if="feedback.form_content.attachmentFiles?.length"
+                      class="attachment-list"
+                    >
+                      <div
+                        v-for="(file, index) in feedback.form_content
+                          .attachmentFiles"
+                        :key="index"
+                        class="attachment-item"
+                      >
                         <el-link :href="file" target="_blank" type="primary">
                           <i class="el-icon-paperclip"></i>
                           {{ getFileName(file) }}
@@ -128,20 +170,34 @@
               <template v-else-if="feedback.report_type === 'summary'">
                 <div v-if="feedback.form_content.reason" class="form-field">
                   <strong>问题类型:</strong>
-                  <div class="field-value">{{ feedback.form_content.reason }}</div>
+                  <div class="field-value">
+                    {{ feedback.form_content.reason }}
+                  </div>
                 </div>
 
-                <div v-if="feedback.form_content.description" class="form-field">
+                <div
+                  v-if="feedback.form_content.description"
+                  class="form-field"
+                >
                   <strong>反馈内容:</strong>
-                  <div class="field-value">{{ feedback.form_content.description }}</div>
+                  <div class="field-value">
+                    {{ feedback.form_content.description }}
+                  </div>
                 </div>
 
                 <div class="form-field">
                   <strong>相关截图:</strong>
                   <div class="field-value">
-                    <div v-if="feedback.form_content.attachmentFiles?.length" class="attachment-list">
-                      <div v-for="(file, index) in feedback.form_content.attachmentFiles" :key="index"
-                        class="attachment-item">
+                    <div
+                      v-if="feedback.form_content.attachmentFiles?.length"
+                      class="attachment-list"
+                    >
+                      <div
+                        v-for="(file, index) in feedback.form_content
+                          .attachmentFiles"
+                        :key="index"
+                        class="attachment-item"
+                      >
                         <el-link :href="file" target="_blank" type="primary">
                           <i class="el-icon-paperclip"></i>
                           {{ getFileName(file) }}
@@ -155,22 +211,36 @@
 
               <!-- 功能建议优化反馈 -->
               <template v-else-if="feedback.report_type === 'suggestion'">
-                <div v-if="feedback.form_content.description" class="form-field">
+                <div
+                  v-if="feedback.form_content.description"
+                  class="form-field"
+                >
                   <strong>功能描述:</strong>
-                  <div class="field-value">{{ feedback.form_content.description }}</div>
+                  <div class="field-value">
+                    {{ feedback.form_content.description }}
+                  </div>
                 </div>
 
                 <div v-if="feedback.form_content.reason" class="form-field">
                   <strong>使用场景:</strong>
-                  <div class="field-value">{{ feedback.form_content.reason }}</div>
+                  <div class="field-value">
+                    {{ feedback.form_content.reason }}
+                  </div>
                 </div>
 
                 <div class="form-field">
                   <strong>相关附件:</strong>
                   <div class="field-value">
-                    <div v-if="feedback.form_content.attachmentFiles?.length" class="attachment-list">
-                      <div v-for="(file, index) in feedback.form_content.attachmentFiles" :key="index"
-                        class="attachment-item">
+                    <div
+                      v-if="feedback.form_content.attachmentFiles?.length"
+                      class="attachment-list"
+                    >
+                      <div
+                        v-for="(file, index) in feedback.form_content
+                          .attachmentFiles"
+                        :key="index"
+                        class="attachment-item"
+                      >
                         <el-link :href="file" target="_blank" type="primary">
                           <i class="el-icon-paperclip"></i>
                           {{ getFileName(file) }}
@@ -184,22 +254,36 @@
 
               <!-- 未知类型的通用显示 -->
               <template v-else>
-                <div v-if="feedback.form_content.description" class="form-field">
+                <div
+                  v-if="feedback.form_content.description"
+                  class="form-field"
+                >
                   <strong>详细描述:</strong>
-                  <div class="field-value">{{ feedback.form_content.description }}</div>
+                  <div class="field-value">
+                    {{ feedback.form_content.description }}
+                  </div>
                 </div>
 
                 <div v-if="feedback.form_content.reason" class="form-field">
                   <strong>原因/类型:</strong>
-                  <div class="field-value">{{ feedback.form_content.reason }}</div>
+                  <div class="field-value">
+                    {{ feedback.form_content.reason }}
+                  </div>
                 </div>
 
-                <div v-if="feedback.form_content.attachmentFiles?.length" class="form-field">
+                <div
+                  v-if="feedback.form_content.attachmentFiles?.length"
+                  class="form-field"
+                >
                   <strong>附件文件:</strong>
                   <div class="field-value">
                     <div class="attachment-list">
-                      <div v-for="(file, index) in feedback.form_content.attachmentFiles" :key="index"
-                        class="attachment-item">
+                      <div
+                        v-for="(file, index) in feedback.form_content
+                          .attachmentFiles"
+                        :key="index"
+                        class="attachment-item"
+                      >
                         <el-link :href="file" target="_blank" type="primary">
                           <i class="el-icon-paperclip"></i>
                           {{ getFileName(file) }}
@@ -210,9 +294,7 @@
                 </div>
               </template>
             </div>
-            <div v-else class="empty-content">
-              暂无详细内容
-            </div>
+            <div v-else class="empty-content">暂无详细内容</div>
           </div>
         </div>
 
@@ -230,7 +312,11 @@
 
         <div class="process-section">
           <h3 class="section-title">处理反馈</h3>
-          <el-form :model="form" label-width="100px" @submit.prevent="handleSubmit">
+          <el-form
+            :model="form"
+            label-width="100px"
+            @submit.prevent="handleSubmit"
+          >
             <el-form-item label="状态">
               <el-radio-group v-model="form.status">
                 <el-radio-button label="resolved">已解决</el-radio-button>
@@ -239,11 +325,20 @@
             </el-form-item>
 
             <el-form-item label="管理员回复">
-              <el-input v-model="form.admin_reply" type="textarea" :rows="8" placeholder="请输入回复内容..." />
+              <el-input
+                v-model="form.admin_reply"
+                type="textarea"
+                :rows="8"
+                placeholder="请输入回复内容..."
+              />
             </el-form-item>
 
             <el-form-item>
-              <el-button type="primary" @click="handleSubmit" :loading="submitting">
+              <el-button
+                type="primary"
+                @click="handleSubmit"
+                :loading="submitting"
+              >
                 保存
               </el-button>
             </el-form-item>
@@ -328,20 +423,20 @@ const handleBack = () => {
 
 const getReportTypeLabel = (reportType: ReportType) => {
   const labels: Record<string, string> = {
-    'copyright': '版权侵权内容投诉',
-    'inappropriate': '不当内容举报投诉',
-    'summary': '文章摘要问题反馈',
-    'suggestion': '功能建议优化反馈'
+    copyright: '版权侵权内容投诉',
+    inappropriate: '不当内容举报投诉',
+    summary: '文章摘要问题反馈',
+    suggestion: '功能建议优化反馈'
   }
   return labels[reportType] || reportType
 }
 
 const getReportTypeTagType = (reportType: ReportType) => {
   const types: Record<string, any> = {
-    'copyright': 'warning',
-    'inappropriate': 'danger',
-    'summary': 'info',
-    'suggestion': 'success'
+    copyright: 'warning',
+    inappropriate: 'danger',
+    summary: 'info',
+    suggestion: 'success'
   }
   return types[reportType] || 'info'
 }
@@ -419,7 +514,6 @@ onMounted(() => {
 
 <style scoped lang="scss">
 .feedback-detail-page {
-
   .card-header {
     display: flex;
     justify-content: space-between;

@@ -74,10 +74,12 @@ const applyTemplates = {
 }
 
 // 复制站点信息
-const copySiteInfo = (type: 'yaml' | 'json' | 'html') => copyToClipboard(siteTemplates.value[type])
+const copySiteInfo = (type: 'yaml' | 'json' | 'html') =>
+  copyToClipboard(siteTemplates.value[type])
 
 // 快速提交到评论框
-const quickSubmit = (format: 'yaml' | 'text') => fillComment(applyTemplates[format])
+const quickSubmit = (format: 'yaml' | 'text') =>
+  fillComment(applyTemplates[format])
 
 // 表单申请相关状态
 const showForm = ref(false)
@@ -138,7 +140,9 @@ watch(showForm, (newValue) => {
       </p>
       <p>所以在我力所能及的情况下，我会包括但不限于：</p>
       <ol>
-        <li>针对收录的博客中的绝大多数内容通过标题来鉴别是否存在有风险的内容</li>
+        <li>
+          针对收录的博客中的绝大多数内容通过标题来鉴别是否存在有风险的内容
+        </li>
         <li>在收录的友链好文推荐中检查是否存在风险内容</li>
       </ol>
       <p>但是你在访问的时候，仍然无法避免，包括但不限于：</p>
@@ -151,7 +155,12 @@ watch(showForm, (newValue) => {
       </ol>
       <p>
         如果因为从本页跳转给你造成了损失，深表歉意，并且建议用户如果发现存在问题在本页面进行回复。通常会很快处理。如果长时间无法得到处理，建议联系
-        <a v-if="contactEmail" :href="`mailto:${contactEmail}`" class="highlight">{{ contactEmail }}</a>
+        <a
+          v-if="contactEmail"
+          :href="`mailto:${contactEmail}`"
+          class="highlight"
+          >{{ contactEmail }}</a
+        >
         <span v-else>网站管理员</span>。
       </p>
     </div>
@@ -161,14 +170,19 @@ watch(showForm, (newValue) => {
   <h3>互链规则</h3>
   <ol>
     <li>
-      确保贵站是 <span class="highlight">博客网站</span> 且 <span class="highlight">原创文章在5篇以上</span>。
+      确保贵站是 <span class="highlight">博客网站</span> 且
+      <span class="highlight">原创文章在5篇以上</span>。
     </li>
     <li>为了友链相关页面的统一性和美观性，可能会对你的昵称进行缩短处理。</li>
     <li>
-      如果贵站使用的是 <span class="highlight">免费</span> 域名，将视站点质量进行添加。
+      如果贵站使用的是
+      <span class="highlight">免费</span> 域名，将视站点质量进行添加。
     </li>
     <li>
-      若发现 <span class="highlight">站点三个月以上不进行维护或存在违规内容将会删除友链</span>，若网站恢复正常可联系我重新添加友链。
+      若发现
+      <span class="highlight"
+        >站点三个月以上不进行维护或存在违规内容将会删除友链</span
+      >，若网站恢复正常可联系我重新添加友链。
     </li>
   </ol>
 
@@ -177,39 +191,45 @@ watch(showForm, (newValue) => {
 
   <div class="tabs">
     <div class="tab-buttons">
-      <button :class="{ active: activeTab === 'yaml' }" @click="activeTab = 'yaml'">
+      <button
+        :class="{ active: activeTab === 'yaml' }"
+        @click="activeTab = 'yaml'"
+      >
         YAML
       </button>
-      <button :class="{ active: activeTab === 'json' }" @click="activeTab = 'json'">
+      <button
+        :class="{ active: activeTab === 'json' }"
+        @click="activeTab = 'json'"
+      >
         JSON
       </button>
-      <button :class="{ active: activeTab === 'html' }" @click="activeTab = 'html'">
+      <button
+        :class="{ active: activeTab === 'html' }"
+        @click="activeTab = 'html'"
+      >
         HTML
       </button>
-      <button :class="{ active: activeTab === 'table' }" @click="activeTab = 'table'">
+      <button
+        :class="{ active: activeTab === 'table' }"
+        @click="activeTab = 'table'"
+      >
         通用
       </button>
     </div>
 
     <div class="tab-content">
       <div v-show="activeTab === 'yaml'" class="code-block">
-        <button class="copy-btn" @click="copySiteInfo('yaml')">
-          复制
-        </button>
+        <button class="copy-btn" @click="copySiteInfo('yaml')">复制</button>
         <pre><code>{{ siteTemplates.yaml }}</code></pre>
       </div>
 
       <div v-show="activeTab === 'json'" class="code-block">
-        <button class="copy-btn" @click="copySiteInfo('json')">
-          复制
-        </button>
+        <button class="copy-btn" @click="copySiteInfo('json')">复制</button>
         <pre><code>{{ siteTemplates.json }}</code></pre>
       </div>
 
       <div v-show="activeTab === 'html'" class="code-block">
-        <button class="copy-btn" @click="copySiteInfo('html')">
-          复制
-        </button>
+        <button class="copy-btn" @click="copySiteInfo('html')">复制</button>
         <pre><code>&lt;a href="{{ siteConfig.link }}"&gt;{{ siteConfig.name }}&lt;/a&gt;</code></pre>
       </div>
 
@@ -247,13 +267,22 @@ watch(showForm, (newValue) => {
 
   <div class="tabs">
     <div class="tab-buttons">
-      <button :class="{ active: activeApplyTab === 'format1' }" @click="activeApplyTab = 'format1'">
+      <button
+        :class="{ active: activeApplyTab === 'format1' }"
+        @click="activeApplyTab = 'format1'"
+      >
         格式一
       </button>
-      <button :class="{ active: activeApplyTab === 'format2' }" @click="activeApplyTab = 'format2'">
+      <button
+        :class="{ active: activeApplyTab === 'format2' }"
+        @click="activeApplyTab = 'format2'"
+      >
         格式二
       </button>
-      <button :class="{ active: activeApplyTab === 'form' }" @click="activeApplyTab = 'form'">
+      <button
+        :class="{ active: activeApplyTab === 'form' }"
+        @click="activeApplyTab = 'form'"
+      >
         表单申请
       </button>
     </div>
@@ -299,42 +328,75 @@ watch(showForm, (newValue) => {
           <button v-if="isLoggedIn" class="submit-btn" @click="showApplyForm">
             表单提交
           </button>
-          <button v-else class="submit-btn" @click="openLogin">
-            注册登录
-          </button>
+          <button v-else class="submit-btn" @click="openLogin">注册登录</button>
         </div>
       </div>
     </div>
   </div>
 
   <!-- 友链申请表单弹窗 -->
-  <UiBaseDialog v-model="showForm" title="友链申请" confirm-text="提交申请" :loading="formSubmitting"
-    @confirm="submitApplyForm">
+  <UiBaseDialog
+    v-model="showForm"
+    title="友链申请"
+    confirm-text="提交申请"
+    :loading="formSubmitting"
+    @confirm="submitApplyForm"
+  >
     <form @submit.prevent="submitApplyForm">
       <div class="form-group">
         <label for="site-name">网站名称 *</label>
-        <input id="site-name" v-model="formData.name" type="text" placeholder="请输入网站名称" required maxlength="50" />
+        <input
+          id="site-name"
+          v-model="formData.name"
+          type="text"
+          placeholder="请输入网站名称"
+          required
+          maxlength="50"
+        />
       </div>
 
       <div class="form-group">
         <label for="site-url">网站地址 *</label>
-        <input id="site-url" v-model="formData.url" type="url" placeholder="https://example.com" required />
+        <input
+          id="site-url"
+          v-model="formData.url"
+          type="url"
+          placeholder="https://example.com"
+          required
+        />
       </div>
 
       <div class="form-group">
         <label for="site-description">网站描述 *</label>
-        <textarea id="site-description" v-model="formData.description" placeholder="请简单描述您的网站" required maxlength="500"
-          rows="3"></textarea>
+        <textarea
+          id="site-description"
+          v-model="formData.description"
+          placeholder="请简单描述您的网站"
+          required
+          maxlength="500"
+          rows="3"
+        ></textarea>
       </div>
 
       <div class="form-group">
         <label for="site-avatar">网站头像/Logo *</label>
-        <input id="site-avatar" v-model="formData.avatar" type="url" placeholder="请提供网站头像或Logo的链接地址" required />
+        <input
+          id="site-avatar"
+          v-model="formData.avatar"
+          type="url"
+          placeholder="请提供网站头像或Logo的链接地址"
+          required
+        />
       </div>
 
       <div class="form-group">
         <label for="site-screenshot">网站截图</label>
-        <input id="site-screenshot" v-model="formData.screenshot" type="url" placeholder="可选：提供网站截图链接" />
+        <input
+          id="site-screenshot"
+          v-model="formData.screenshot"
+          type="url"
+          placeholder="可选：提供网站截图链接"
+        />
       </div>
     </form>
   </UiBaseDialog>

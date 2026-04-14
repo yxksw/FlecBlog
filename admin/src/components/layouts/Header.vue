@@ -46,7 +46,8 @@ import { logout as logoutApi } from '@/api/user'
 import { clearAuthState, getUserInfo } from '@/utils/auth'
 
 const router = useRouter()
-const DEFAULT_AVATAR = 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png'
+const DEFAULT_AVATAR =
+  'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png'
 const nickname = computed(() => getUserInfo()?.nickname || 'Admin')
 const userAvatar = computed(() => getUserInfo()?.avatar || DEFAULT_AVATAR)
 

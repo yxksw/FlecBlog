@@ -8,7 +8,9 @@ definePageMeta({
 const { articles, total, currentPage, pageSize, fetchArticles } = useArticles()
 const { blogConfig } = useSysConfig()
 
-const homeLayout = computed(() => blogConfig.value['home_layout'] || 'waterfall')
+const homeLayout = computed(
+  () => blogConfig.value['home_layout'] || 'waterfall'
+)
 
 const { waterfall } = useWaterfall({
   containerSelector: '#post-list',
@@ -54,24 +56,32 @@ onMounted(async () => {
 
 // 监听路由变化，处理从详情页返回的情况
 const route = useRoute()
-watch(() => route.path, async (newPath) => {
-  if (newPath === '/' && process.client && homeLayout.value === 'waterfall') {
-    await nextTick()
-    setTimeout(() => {
-      waterfall()
-    }, 50)
+watch(
+  () => route.path,
+  async (newPath) => {
+    if (newPath === '/' && process.client && homeLayout.value === 'waterfall') {
+      await nextTick()
+      setTimeout(() => {
+        waterfall()
+      }, 50)
+    }
   }
-})
+)
 
-watch(() => articles.value.length, () => {
-  if (homeLayout.value === 'waterfall') {
-    setTimeout(() => waterfall(), 50)
+watch(
+  () => articles.value.length,
+  () => {
+    if (homeLayout.value === 'waterfall') {
+      setTimeout(() => waterfall(), 50)
+    }
   }
-})
+)
 
 useSeoMeta({
   title: '首页',
-  description: () => blogConfig.value.description || '欢迎来到我的博客，分享技术、生活与思考的个人空间'
+  description: () =>
+    blogConfig.value.description ||
+    '欢迎来到我的博客，分享技术、生活与思考的个人空间'
 })
 </script>
 
@@ -90,7 +100,9 @@ useSeoMeta({
           </NuxtLink>
         </div>
         <div class="post-info">
-          <NuxtLink class="article-title" :to="article.url">{{ article.title }}</NuxtLink>
+          <NuxtLink class="article-title" :to="article.url">{{
+            article.title
+          }}</NuxtLink>
           <div class="article-meta-wrap">
             <span class="article-date">
               <i class="ri-calendar-2-fill"></i>
@@ -99,7 +111,11 @@ useSeoMeta({
             </span>
             <span class="article-meta" v-if="article.category">
               <i class="ri-inbox-2-fill"></i>
-              <NuxtLink class="article-meta__categories" :to="article.category.url">{{ article.category.name }}</NuxtLink>
+              <NuxtLink
+                class="article-meta__categories"
+                :to="article.category.url"
+                >{{ article.category.name }}</NuxtLink
+              >
             </span>
             <span class="article-meta tags" v-if="article.tags?.length">
               <template v-for="(tag, index) in article.tags" :key="tag.id">
@@ -107,7 +123,9 @@ useSeoMeta({
                   <span class="article-meta-link">•</span>
                 </template>
                 <i class="ri-price-tag-3-fill"></i>
-                <NuxtLink class="article-meta__tags" :to="tag.url">{{ tag.name }}</NuxtLink>
+                <NuxtLink class="article-meta__tags" :to="tag.url">{{
+                  tag.name
+                }}</NuxtLink>
               </template>
             </span>
             <span class="article-meta comments">
@@ -124,9 +142,15 @@ useSeoMeta({
 
     <!-- 单列布局 -->
     <div class="single-column-list">
-      <div v-for="article in articles" :key="article.id" class="single-column-item">
+      <div
+        v-for="article in articles"
+        :key="article.id"
+        class="single-column-item"
+      >
         <div class="single-column-info">
-          <NuxtLink class="single-column-title" :to="article.url">{{ article.title }}</NuxtLink>
+          <NuxtLink class="single-column-title" :to="article.url">{{
+            article.title
+          }}</NuxtLink>
           <div class="single-column-meta">
             <span class="article-date">
               <i class="ri-calendar-2-fill"></i>
@@ -134,7 +158,11 @@ useSeoMeta({
             </span>
             <span class="article-meta" v-if="article.category">
               <i class="ri-inbox-2-fill"></i>
-              <NuxtLink class="article-meta__categories" :to="article.category.url">{{ article.category.name }}</NuxtLink>
+              <NuxtLink
+                class="article-meta__categories"
+                :to="article.category.url"
+                >{{ article.category.name }}</NuxtLink
+              >
             </span>
             <span class="article-meta tags" v-if="article.tags?.length">
               <template v-for="(tag, index) in article.tags" :key="tag.id">
@@ -142,7 +170,9 @@ useSeoMeta({
                   <span class="article-meta-link">•</span>
                 </template>
                 <i class="ri-price-tag-3-fill"></i>
-                <NuxtLink class="article-meta__tags" :to="tag.url">{{ tag.name }}</NuxtLink>
+                <NuxtLink class="article-meta__tags" :to="tag.url">{{
+                  tag.name
+                }}</NuxtLink>
               </template>
             </span>
           </div>
@@ -151,9 +181,14 @@ useSeoMeta({
           </div>
         </div>
         <div class="single-column-cover" v-if="article.cover">
-          <div v-if="article.is_top || article.is_essence" class="single-column-badge">
+          <div
+            v-if="article.is_top || article.is_essence"
+            class="single-column-badge"
+          >
             <span v-if="article.is_top" class="badge-top">置顶</span>
-            <span v-else-if="article.is_essence" class="badge-essence">精选</span>
+            <span v-else-if="article.is_essence" class="badge-essence"
+              >精选</span
+            >
           </div>
           <NuxtLink :to="article.url">
             <NuxtImg :src="article.cover" :alt="article.title" loading="lazy" />
@@ -163,8 +198,13 @@ useSeoMeta({
     </div>
 
     <!-- 分页 -->
-    <UiPagination v-if="articles.length > 0" :total="total" :current-page="currentPage" :page-size="pageSize"
-      @change="handlePageChange" />
+    <UiPagination
+      v-if="articles.length > 0"
+      :total="total"
+      :current-page="currentPage"
+      :page-size="pageSize"
+      @change="handlePageChange"
+    />
   </div>
 </template>
 

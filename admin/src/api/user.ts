@@ -1,6 +1,16 @@
-import request from "@/utils/request";
-import type { LoginParams, LoginResponse, User, UserListData, ResetPasswordRequest, CreateUserRequest, UpdateUserRequest, RefreshTokenRequest, RefreshTokenResponse } from "@/types/user";
-import type { PaginationQuery } from "@/types/request";
+import request from '@/utils/request'
+import type {
+  LoginParams,
+  LoginResponse,
+  User,
+  UserListData,
+  ResetPasswordRequest,
+  CreateUserRequest,
+  UpdateUserRequest,
+  RefreshTokenRequest,
+  RefreshTokenResponse
+} from '@/types/user'
+import type { PaginationQuery } from '@/types/request'
 
 /**
  * 用户登录
@@ -8,7 +18,7 @@ import type { PaginationQuery } from "@/types/request";
  * @returns Promise<LoginResponse>
  */
 export function login(data: LoginParams): Promise<LoginResponse> {
-  return request.post("/auth/login", data);
+  return request.post('/auth/login', data)
 }
 
 /**
@@ -16,7 +26,7 @@ export function login(data: LoginParams): Promise<LoginResponse> {
  * @returns Promise<User>
  */
 export function getProfile(): Promise<User> {
-  return request.get("/user/profile");
+  return request.get('/user/profile')
 }
 
 /**
@@ -24,8 +34,10 @@ export function getProfile(): Promise<User> {
  * @param data 刷新Token参数
  * @returns Promise<RefreshTokenResponse>
  */
-export function refreshToken(data: RefreshTokenRequest): Promise<RefreshTokenResponse> {
-  return request.post("/auth/refresh", data);
+export function refreshToken(
+  data: RefreshTokenRequest
+): Promise<RefreshTokenResponse> {
+  return request.post('/auth/refresh', data)
 }
 
 /**
@@ -33,7 +45,7 @@ export function refreshToken(data: RefreshTokenRequest): Promise<RefreshTokenRes
  * @returns Promise<void>
  */
 export function logout(): Promise<void> {
-  return request.post("/auth/logout");
+  return request.post('/auth/logout')
 }
 
 /**
@@ -42,7 +54,7 @@ export function logout(): Promise<void> {
  * @returns Promise<UserListData>
  */
 export function getUsers(params: PaginationQuery): Promise<UserListData> {
-  return request.get("/admin/users", { params });
+  return request.get('/admin/users', { params })
 }
 
 /**
@@ -51,7 +63,7 @@ export function getUsers(params: PaginationQuery): Promise<UserListData> {
  * @returns Promise<User>
  */
 export function getUserById(id: number): Promise<User> {
-  return request.get(`/admin/users/${id}`);
+  return request.get(`/admin/users/${id}`)
 }
 
 /**
@@ -60,7 +72,7 @@ export function getUserById(id: number): Promise<User> {
  * @returns Promise<void>
  */
 export function deleteUser(id: number): Promise<void> {
-  return request.delete(`/admin/users/${id}`);
+  return request.delete(`/admin/users/${id}`)
 }
 
 /**
@@ -69,8 +81,11 @@ export function deleteUser(id: number): Promise<void> {
  * @param data 重置密码数据
  * @returns Promise<void>
  */
-export function resetUserPassword(id: number, data: ResetPasswordRequest): Promise<void> {
-  return request.put(`/admin/users/${id}/password`, data);
+export function resetUserPassword(
+  id: number,
+  data: ResetPasswordRequest
+): Promise<void> {
+  return request.put(`/admin/users/${id}/password`, data)
 }
 
 /**
@@ -79,7 +94,7 @@ export function resetUserPassword(id: number, data: ResetPasswordRequest): Promi
  * @returns Promise<User>
  */
 export function createUser(data: CreateUserRequest): Promise<User> {
-  return request.post("/admin/users", data);
+  return request.post('/admin/users', data)
 }
 
 /**
@@ -89,5 +104,5 @@ export function createUser(data: CreateUserRequest): Promise<User> {
  * @returns Promise<User>
  */
 export function updateUser(id: number, data: UpdateUserRequest): Promise<User> {
-  return request.put(`/admin/users/${id}`, data);
+  return request.put(`/admin/users/${id}`, data)
 }

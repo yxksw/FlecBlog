@@ -420,7 +420,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "从Hexo等静态博客系统导入文章数据，上传Markdown文件（支持多文件）",
+                "description": "从Hexo或Markdown格式导入文章数据，支持多文件",
                 "consumes": [
                     "multipart/form-data"
                 ],
@@ -434,13 +434,20 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "enum": [
-                            "hexo"
+                            "hexo",
+                            "markdown"
                         ],
                         "type": "string",
-                        "description": "来源类型，目前支持：hexo",
+                        "description": "来源类型，支持：hexo, markdown",
                         "name": "source_type",
                         "in": "formData",
                         "required": true
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "是否上传文章中的图片（默认false）",
+                        "name": "upload_images",
+                        "in": "formData"
                     },
                     {
                         "type": "array",
@@ -7343,6 +7350,9 @@ const docTemplate = `{
                 "id": {
                     "type": "integer"
                 },
+                "is_deleted": {
+                    "type": "boolean"
+                },
                 "location": {
                     "description": "地理位置",
                     "type": "string"
@@ -8978,9 +8988,6 @@ const docTemplate = `{
         "model.Category": {
             "type": "object",
             "properties": {
-                "count": {
-                    "type": "integer"
-                },
                 "created_at": {
                     "type": "string"
                 },
@@ -9007,9 +9014,6 @@ const docTemplate = `{
         "model.Tag": {
             "type": "object",
             "properties": {
-                "count": {
-                    "type": "integer"
-                },
                 "created_at": {
                     "type": "string"
                 },

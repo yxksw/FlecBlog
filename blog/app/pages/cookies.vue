@@ -12,26 +12,40 @@ useSeoMeta({
 <template>
   <div id="page">
     <div class="page-title">Cookie 与本地存储</div>
-    
+
     <div class="content">
       <p>本页面说明本站在你的浏览器中存储了哪些数据，以及如何管理这些数据。</p>
 
-      <p>本站不使用 Cookie，而是使用浏览器本地存储（LocalStorage）。这些数据仅保存在你的设备上，不会自动发送到服务器。</p>
+      <p>
+        本站不使用
+        Cookie，而是使用浏览器本地存储（LocalStorage）。这些数据仅保存在你的设备上，不会自动发送到服务器。
+      </p>
 
-      <p>关于数据收集和使用的完整说明，请查看 <router-link to="/privacy">隐私政策</router-link>。</p>
+      <p>
+        关于数据收集和使用的完整说明，请查看
+        <router-link to="/privacy">隐私政策</router-link>。
+      </p>
 
       <h1>存储的数据</h1>
 
       <ul>
         <li><strong>主题偏好</strong>（isDark）：记住你选择的深色/浅色模式</li>
-        <li><strong>游客信息</strong>（guest_info）：未登录时评论所填写的昵称、邮箱、网址</li>
-        <li><strong>登录令牌</strong>（token）：登录后的身份凭证，用于保持登录状态</li>
+        <li>
+          <strong>游客信息</strong
+          >（guest_info）：未登录时评论所填写的昵称、邮箱、网址
+        </li>
+        <li>
+          <strong>登录令牌</strong>（token）：登录后的身份凭证，用于保持登录状态
+        </li>
       </ul>
 
       <h1>为什么使用本地存储</h1>
 
       <p><strong>更好的隐私保护：</strong></p>
-      <p>与传统 Cookie 不同，LocalStorage 中的数据不会在每次请求时自动发送到服务器。这意味着你的主题偏好等个人设置完全保存在本地，服务器无权访问。</p>
+      <p>
+        与传统 Cookie 不同，LocalStorage
+        中的数据不会在每次请求时自动发送到服务器。这意味着你的主题偏好等个人设置完全保存在本地，服务器无权访问。
+      </p>
 
       <p><strong>更快的加载速度：</strong></p>
       <p>主题设置等数据直接从本地读取，无需等待服务器响应，页面加载更快。</p>
@@ -42,21 +56,37 @@ useSeoMeta({
       <h1>你的数据控制权</h1>
 
       <ul>
-        <li><strong>完全控制</strong>：这些数据存储在你的设备上，你可以随时查看、修改或删除</li>
-        <li><strong>不会跟踪</strong>：我们不使用这些数据进行跨站跟踪或用户画像</li>
-        <li><strong>不会出售</strong>：你的本地数据归你所有，我们无权访问也不会出售</li>
-        <li><strong>随时清除</strong>：可以通过浏览器设置随时清除，无需联系我们</li>
+        <li>
+          <strong>完全控制</strong
+          >：这些数据存储在你的设备上，你可以随时查看、修改或删除
+        </li>
+        <li>
+          <strong>不会跟踪</strong>：我们不使用这些数据进行跨站跟踪或用户画像
+        </li>
+        <li>
+          <strong>不会出售</strong
+          >：你的本地数据归你所有，我们无权访问也不会出售
+        </li>
+        <li>
+          <strong>随时清除</strong>：可以通过浏览器设置随时清除，无需联系我们
+        </li>
       </ul>
 
       <h1>如何管理这些数据</h1>
 
       <p><strong>查看存储的数据：</strong></p>
-      <p>按 <strong>F12</strong> 打开开发者工具 → Application/Storage → Local Storage → 选择本站域名。</p>
+      <p>
+        按 <strong>F12</strong> 打开开发者工具 → Application/Storage → Local
+        Storage → 选择本站域名。
+      </p>
 
       <p><strong>清除存储的数据：</strong></p>
       <ul>
         <li>在浏览器地址栏点击锁图标 → 网站设置 → 清除数据</li>
-        <li>或按 <strong>Ctrl+Shift+Delete</strong>（Mac: <strong>⌘+Shift+Delete</strong>）清除浏览数据</li>
+        <li>
+          或按 <strong>Ctrl+Shift+Delete</strong>（Mac:
+          <strong>⌘+Shift+Delete</strong>）清除浏览数据
+        </li>
       </ul>
 
       <p><strong>清除后的影响：</strong></p>
@@ -66,21 +96,32 @@ useSeoMeta({
         <li>登录状态丢失，需重新登录</li>
       </ul>
 
-      <blockquote>清除这些数据不会影响你的账号信息（如已注册），只是需要重新登录。</blockquote>
+      <blockquote>
+        清除这些数据不会影响你的账号信息（如已注册），只是需要重新登录。
+      </blockquote>
 
       <h1>常见场景说明</h1>
 
       <p><strong>更换设备：</strong></p>
-      <p>本地存储只保存在当前设备的当前浏览器中。如果你更换了设备或浏览器，需要重新设置主题偏好和登录账号。但你的账号数据（如发表的评论）保存在服务器上，不会丢失。</p>
+      <p>
+        本地存储只保存在当前设备的当前浏览器中。如果你更换了设备或浏览器，需要重新设置主题偏好和登录账号。但你的账号数据（如发表的评论）保存在服务器上，不会丢失。
+      </p>
 
       <p><strong>隐私模式/无痕浏览：</strong></p>
-      <p>在隐私模式下，本地存储功能正常工作。但关闭隐私窗口后，所有数据会被自动清除。如果你经常使用隐私模式，建议注册账号以保存你的部分偏好设置。</p>
+      <p>
+        在隐私模式下，本地存储功能正常工作。但关闭隐私窗口后，所有数据会被自动清除。如果你经常使用隐私模式，建议注册账号以保存你的部分偏好设置。
+      </p>
 
       <p><strong>清除浏览数据：</strong></p>
-      <p>如果你清除了浏览器数据，主题会恢复默认，登录状态会丢失。但你的账号本身不受影响，重新登录即可。</p>
+      <p>
+        如果你清除了浏览器数据，主题会恢复默认，登录状态会丢失。但你的账号本身不受影响，重新登录即可。
+      </p>
 
       <p><strong>同步到其他设备：</strong></p>
-      <p>浏览器本地存储的数据不会通过浏览器同步功能（如 Chrome 同步）传输到其他设备。如果你在多个设备上使用本站，建议在每个设备上分别登录账号。</p>
+      <p>
+        浏览器本地存储的数据不会通过浏览器同步功能（如 Chrome
+        同步）传输到其他设备。如果你在多个设备上使用本站，建议在每个设备上分别登录账号。
+      </p>
 
       <h1>免责声明</h1>
 
@@ -124,7 +165,7 @@ useSeoMeta({
       margin: 2.5rem 0 1rem;
       color: var(--font-color);
       line-height: 1.3;
-      
+
       &:first-child {
         margin-top: 1.5rem;
       }
@@ -160,7 +201,8 @@ useSeoMeta({
       color: var(--font-color);
     }
 
-    ul, ol {
+    ul,
+    ol {
       padding-left: 2rem;
       margin: 1rem 0;
 
@@ -222,7 +264,8 @@ useSeoMeta({
         font-size: 0.95rem;
       }
 
-      ul, ol {
+      ul,
+      ol {
         li {
           font-size: 0.95rem;
         }
@@ -261,7 +304,8 @@ useSeoMeta({
         font-size: 0.9rem;
       }
 
-      ul, ol {
+      ul,
+      ol {
         padding-left: 1.5rem;
 
         li {

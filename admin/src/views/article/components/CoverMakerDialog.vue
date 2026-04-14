@@ -6,17 +6,31 @@
           <header class="editor-header">
             <span class="app-title">制作封面</span>
             <div class="header-right">
-              <el-dropdown trigger="click" @command="handleExportCommand" split-button
-                @click="handleExportCommand('apply')" :popper-class="'export-dropdown'">
+              <el-dropdown
+                trigger="click"
+                @command="handleExportCommand"
+                split-button
+                @click="handleExportCommand('apply')"
+                :popper-class="'export-dropdown'"
+              >
                 应用
                 <template #dropdown>
                   <el-dropdown-menu>
-                    <el-dropdown-item command="apply-export">应用并导出</el-dropdown-item>
-                    <el-dropdown-item command="export-only">仅导出</el-dropdown-item>
+                    <el-dropdown-item command="apply-export"
+                      >应用并导出</el-dropdown-item
+                    >
+                    <el-dropdown-item command="export-only"
+                      >仅导出</el-dropdown-item
+                    >
                   </el-dropdown-menu>
                 </template>
               </el-dropdown>
-              <el-button size="small" :icon="Close" @click="handleClose" circle />
+              <el-button
+                size="small"
+                :icon="Close"
+                @click="handleClose"
+                circle
+              />
             </div>
           </header>
 
@@ -41,8 +55,13 @@
                       <span>加载中...</span>
                     </div>
                     <div v-else class="photos-list">
-                      <div v-for="photo in displayedPhotos" :key="photo.id" class="photo-item"
-                        :class="{ active: selectedPhoto?.id === photo.id }" @click="selectPhoto(photo)">
+                      <div
+                        v-for="photo in displayedPhotos"
+                        :key="photo.id"
+                        class="photo-item"
+                        :class="{ active: selectedPhoto?.id === photo.id }"
+                        @click="selectPhoto(photo)"
+                      >
                         <img :src="photo.thumbnail" alt="" loading="lazy" />
                       </div>
                     </div>
@@ -56,8 +75,13 @@
                 </template>
                 <template v-else>
                   <div class="upload-section">
-                    <el-upload :auto-upload="false" :show-file-list="false" accept="image/*"
-                      :on-change="handleImageUpload" drag>
+                    <el-upload
+                      :auto-upload="false"
+                      :show-file-list="false"
+                      accept="image/*"
+                      :on-change="handleImageUpload"
+                      drag
+                    >
                       <div class="upload-area">
                         <el-icon class="upload-icon">
                           <Plus />
@@ -70,7 +94,12 @@
               </div>
 
               <div v-if="imageSource !== 'upload'" class="toolbar-bottom">
-                <el-input v-model="searchQuery" placeholder="搜索图片..." @keyup.enter="searchPhotos" clearable>
+                <el-input
+                  v-model="searchQuery"
+                  placeholder="搜索图片..."
+                  @keyup.enter="searchPhotos"
+                  clearable
+                >
                   <template #append>
                     <el-button :icon="Search" @click="searchPhotos" />
                   </template>
@@ -86,28 +115,55 @@
                   </el-icon>
                   <p>上传图片开始创作</p>
                 </div>
-                <div v-else class="image-canvas" ref="canvasRef" :style="canvasStyle">
+                <div
+                  v-else
+                  class="image-canvas"
+                  ref="canvasRef"
+                  :style="canvasStyle"
+                >
                   <img :src="imageUrl" alt="" class="base-image" />
-                  <div class="image-overlay" :style="{ opacity: overlayOpacity / 100 }"></div>
+                  <div
+                    class="image-overlay"
+                    :style="{ opacity: overlayOpacity / 100 }"
+                  ></div>
                   <div v-if="isDragging" class="guide-lines">
                     <div class="guide-line vertical-center"></div>
                     <div class="guide-line horizontal-center"></div>
                   </div>
-                  <div v-if="textElements.subtitle.text" class="text-element subtitle-element" :style="getSubtitleStyle()"
-                    @mousedown="startDragElement('subtitle', $event)">
+                  <div
+                    v-if="textElements.subtitle.text"
+                    class="text-element subtitle-element"
+                    :style="getSubtitleStyle()"
+                    @mousedown="startDragElement('subtitle', $event)"
+                  >
                     {{ textElements.subtitle.text }}
                   </div>
-                  <div v-if="textElements.title.text" class="text-element title-element" :style="getTitleStyle()"
-                    @mousedown="startDragElement('title', $event)">
+                  <div
+                    v-if="textElements.title.text"
+                    class="text-element title-element"
+                    :style="getTitleStyle()"
+                    @mousedown="startDragElement('title', $event)"
+                  >
                     {{ textElements.title.text }}
                   </div>
-                  <div v-if="textElements.author.text" class="text-element author-element" :style="getAuthorStyle()"
-                    @mousedown="startDragElement('author', $event)">
+                  <div
+                    v-if="textElements.author.text"
+                    class="text-element author-element"
+                    :style="getAuthorStyle()"
+                    @mousedown="startDragElement('author', $event)"
+                  >
                     {{ textElements.author.text }}
                   </div>
-                  <div v-if="textElements.avatar.src" class="avatar-element" :style="getAvatarStyle()"
-                    @mousedown="startDragElement('avatar', $event)">
-                    <img :src="textElements.avatar.src" :style="getAvatarImageStyle()" />
+                  <div
+                    v-if="textElements.avatar.src"
+                    class="avatar-element"
+                    :style="getAvatarStyle()"
+                    @mousedown="startDragElement('avatar', $event)"
+                  >
+                    <img
+                      :src="textElements.avatar.src"
+                      :style="getAvatarImageStyle()"
+                    />
                   </div>
                 </div>
               </div>
@@ -116,26 +172,48 @@
             <aside class="properties-panel">
               <div class="property-group">
                 <label>遮罩层浓度</label>
-                <div style="display: flex; align-items: center; gap: 12px;">
-                  <el-slider v-model="overlayOpacity" :min="0" :max="100" :step="5" style="flex: 1;" />
-                  <span style="min-width: 45px; text-align: right; color: #666;">{{ overlayOpacity }}%</span>
+                <div style="display: flex; align-items: center; gap: 12px">
+                  <el-slider
+                    v-model="overlayOpacity"
+                    :min="0"
+                    :max="100"
+                    :step="5"
+                    style="flex: 1"
+                  />
+                  <span style="min-width: 45px; text-align: right; color: #666"
+                    >{{ overlayOpacity }}%</span
+                  >
                 </div>
               </div>
               <div class="property-group">
                 <label>标题</label>
-                <el-input v-model="textElements.title.text" placeholder="请输入标题" />
+                <el-input
+                  v-model="textElements.title.text"
+                  placeholder="请输入标题"
+                />
               </div>
               <div class="property-group">
                 <label>副标题</label>
-                <el-input v-model="textElements.subtitle.text" placeholder="请输入副标题" />
+                <el-input
+                  v-model="textElements.subtitle.text"
+                  placeholder="请输入副标题"
+                />
               </div>
               <div class="property-group">
                 <label>作者</label>
-                <el-input v-model="textElements.author.text" placeholder="请输入作者名称" />
+                <el-input
+                  v-model="textElements.author.text"
+                  placeholder="请输入作者名称"
+                />
               </div>
               <div class="property-group">
                 <label>头像</label>
-                <el-upload action="#" :show-file-list="false" :before-upload="handleAvatarUpload" accept="image/*">
+                <el-upload
+                  action="#"
+                  :show-file-list="false"
+                  :before-upload="handleAvatarUpload"
+                  accept="image/*"
+                >
                   <el-button type="primary">选择图片</el-button>
                 </el-upload>
               </div>
@@ -192,7 +270,9 @@ const emit = defineEmits<Emits>()
 const visible = ref(false)
 const canvasRef = ref<HTMLElement>()
 const photosGridRef = ref<HTMLElement>()
-const imageSource = ref<'unsplash' | 'pixabay' | 'pexels' | 'upload'>('unsplash')
+const imageSource = ref<'unsplash' | 'pixabay' | 'pexels' | 'upload'>(
+  'unsplash'
+)
 const searchQuery = ref('')
 const platformPhotos = ref<PlatformPhoto[]>([])
 const selectedPhoto = ref<PlatformPhoto | null>(null)
@@ -240,7 +320,9 @@ const textElements = ref({
 
 const dragStart = ref({ x: 0, y: 0, elementX: 0, elementY: 0 })
 const isDragging = ref(false)
-const currentDragElement = ref<'title' | 'subtitle' | 'author' | 'avatar' | null>(null)
+const currentDragElement = ref<
+  'title' | 'subtitle' | 'author' | 'avatar' | null
+>(null)
 const canvasContainerRef = ref<HTMLElement>()
 
 const displayedPhotos = computed(() => {
@@ -364,7 +446,10 @@ function getAvatarImageStyle() {
   }
 }
 
-function startDragElement(element: 'title' | 'subtitle' | 'author' | 'avatar', e: MouseEvent) {
+function startDragElement(
+  element: 'title' | 'subtitle' | 'author' | 'avatar',
+  e: MouseEvent
+) {
   e.preventDefault()
   e.stopPropagation()
   isDragging.value = true
@@ -484,10 +569,18 @@ async function generateImageDataUrl() {
   }
   try {
     const previewCanvas = canvasRef.value
-    const titleElement = previewCanvas.querySelector('.title-element') as HTMLElement
-    const subtitleElement = previewCanvas.querySelector('.subtitle-element') as HTMLElement
-    const authorElement = previewCanvas.querySelector('.author-element') as HTMLElement
-    const avatarElement = previewCanvas.querySelector('.avatar-element') as HTMLElement
+    const titleElement = previewCanvas.querySelector(
+      '.title-element'
+    ) as HTMLElement
+    const subtitleElement = previewCanvas.querySelector(
+      '.subtitle-element'
+    ) as HTMLElement
+    const authorElement = previewCanvas.querySelector(
+      '.author-element'
+    ) as HTMLElement
+    const avatarElement = previewCanvas.querySelector(
+      '.avatar-element'
+    ) as HTMLElement
     const canvas = document.createElement('canvas')
     canvas.width = 1920
     canvas.height = 1080
@@ -527,8 +620,12 @@ async function generateImageDataUrl() {
       ctx.fillStyle = '#ffffff'
       const titleRect = titleElement.getBoundingClientRect()
       const previewRect = previewCanvas.getBoundingClientRect()
-      const titleX = ((titleRect.left + titleRect.width / 2 - previewRect.left) / canvasScale.value)
-      const titleY = ((titleRect.top + titleRect.height / 2 - previewRect.top) / canvasScale.value)
+      const titleX =
+        (titleRect.left + titleRect.width / 2 - previewRect.left) /
+        canvasScale.value
+      const titleY =
+        (titleRect.top + titleRect.height / 2 - previewRect.top) /
+        canvasScale.value
       ctx.fillText(textElements.value.title.text, titleX, titleY)
     }
     if (textElements.value.subtitle.text && subtitleElement) {
@@ -538,8 +635,12 @@ async function generateImageDataUrl() {
       ctx.fillStyle = '#ffffff'
       const subtitleRect = subtitleElement.getBoundingClientRect()
       const previewRect = previewCanvas.getBoundingClientRect()
-      const subtitleX = ((subtitleRect.left + subtitleRect.width / 2 - previewRect.left) / canvasScale.value)
-      const subtitleY = ((subtitleRect.top + subtitleRect.height / 2 - previewRect.top) / canvasScale.value)
+      const subtitleX =
+        (subtitleRect.left + subtitleRect.width / 2 - previewRect.left) /
+        canvasScale.value
+      const subtitleY =
+        (subtitleRect.top + subtitleRect.height / 2 - previewRect.top) /
+        canvasScale.value
       ctx.fillText(textElements.value.subtitle.text, subtitleX, subtitleY)
     }
     if (textElements.value.author.text && authorElement) {
@@ -549,8 +650,12 @@ async function generateImageDataUrl() {
       ctx.fillStyle = '#ffffff'
       const authorRect = authorElement.getBoundingClientRect()
       const previewRect = previewCanvas.getBoundingClientRect()
-      const authorX = ((authorRect.left + authorRect.width / 2 - previewRect.left) / canvasScale.value)
-      const authorY = ((authorRect.top + authorRect.height / 2 - previewRect.top) / canvasScale.value)
+      const authorX =
+        (authorRect.left + authorRect.width / 2 - previewRect.left) /
+        canvasScale.value
+      const authorY =
+        (authorRect.top + authorRect.height / 2 - previewRect.top) /
+        canvasScale.value
       ctx.fillText(textElements.value.author.text, authorX, authorY)
     }
     if (textElements.value.avatar.src && avatarElement) {
@@ -564,15 +669,25 @@ async function generateImageDataUrl() {
       if (avatarImg.complete) {
         const avatarRect = avatarElement.getBoundingClientRect()
         const previewRect = previewCanvas.getBoundingClientRect()
-        const avatarX = ((avatarRect.left + avatarRect.width / 2 - previewRect.left) / canvasScale.value)
-        const avatarY = ((avatarRect.top + avatarRect.height / 2 - previewRect.top) / canvasScale.value)
-        const avatarRadius = (avatarRect.width / 2 / canvasScale.value)
+        const avatarX =
+          (avatarRect.left + avatarRect.width / 2 - previewRect.left) /
+          canvasScale.value
+        const avatarY =
+          (avatarRect.top + avatarRect.height / 2 - previewRect.top) /
+          canvasScale.value
+        const avatarRadius = avatarRect.width / 2 / canvasScale.value
         ctx.save()
         ctx.beginPath()
         ctx.arc(avatarX, avatarY, avatarRadius, 0, Math.PI * 2)
         ctx.closePath()
         ctx.clip()
-        ctx.drawImage(avatarImg, avatarX - avatarRadius, avatarY - avatarRadius, avatarRadius * 2, avatarRadius * 2)
+        ctx.drawImage(
+          avatarImg,
+          avatarX - avatarRadius,
+          avatarY - avatarRadius,
+          avatarRadius * 2,
+          avatarRadius * 2
+        )
         ctx.restore()
         ctx.beginPath()
         ctx.arc(avatarX, avatarY, avatarRadius, 0, Math.PI * 2)
@@ -588,7 +703,9 @@ async function generateImageDataUrl() {
   }
 }
 
-const handleExportCommand = async (command: 'apply' | 'apply-export' | 'export-only') => {
+const handleExportCommand = async (
+  command: 'apply' | 'apply-export' | 'export-only'
+) => {
   const dataUrl = await generateImageDataUrl()
   if (!dataUrl) return
   if (command === 'apply') {
@@ -613,9 +730,12 @@ const handleExportCommand = async (command: 'apply' | 'apply-export' | 'export-o
   }
 }
 
-watch(() => props.modelValue, (val) => {
-  visible.value = val
-})
+watch(
+  () => props.modelValue,
+  (val) => {
+    visible.value = val
+  }
+)
 
 watch(visible, (val) => {
   emit('update:modelValue', val)
@@ -627,7 +747,10 @@ watch(visible, (val) => {
         const apiBaseUrl = import.meta.env.VITE_API_URL
         const backendBaseUrl = apiBaseUrl.replace(/\/api\/v\d+$/, '')
         if (props.avatar.startsWith(backendBaseUrl)) {
-          textElements.value.avatar.src = props.avatar.replace(backendBaseUrl, '')
+          textElements.value.avatar.src = props.avatar.replace(
+            backendBaseUrl,
+            ''
+          )
         } else {
           textElements.value.avatar.src = props.avatar
         }
@@ -665,7 +788,10 @@ function setupScrollListener() {
 }
 
 onUnmounted(() => {
-  if (textElements.value.avatar.src && textElements.value.avatar.src.startsWith('blob:')) {
+  if (
+    textElements.value.avatar.src &&
+    textElements.value.avatar.src.startsWith('blob:')
+  ) {
     URL.revokeObjectURL(textElements.value.avatar.src)
   }
 })
@@ -817,7 +943,7 @@ onUnmounted(() => {
         }
 
         &.active {
-          border: 2px solid #409EFF;
+          border: 2px solid #409eff;
           box-shadow: 0 0 0 4px rgba(64, 158, 255, 0.2);
         }
 
@@ -857,7 +983,7 @@ onUnmounted(() => {
       transition: all 0.3s ease;
 
       &:hover {
-        border-color: #409EFF;
+        border-color: #409eff;
         background: rgba(64, 158, 255, 0.05);
       }
 
@@ -901,7 +1027,7 @@ onUnmounted(() => {
       width: 0;
     }
 
-    >* {
+    > * {
       position: absolute;
       top: 0;
       left: 0;
@@ -959,7 +1085,7 @@ onUnmounted(() => {
     left: 0;
     right: 0;
     bottom: 0;
-    background: #1F2937;
+    background: #1f2937;
     pointer-events: none;
     z-index: 1;
   }

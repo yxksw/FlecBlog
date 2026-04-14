@@ -1,35 +1,66 @@
 <template>
-  <common-list title="文件管理" :data="fileList" :loading="loading" :total="total" :show-create="false"
-    v-model:page="query.page" v-model:page-size="query.page_size" @refresh="loadList" @update:page="loadList"
-    @update:pageSize="loadList">
+  <common-list
+    title="文件管理"
+    :data="fileList"
+    :loading="loading"
+    :total="total"
+    :show-create="false"
+    v-model:page="query.page"
+    v-model:page-size="query.page_size"
+    @refresh="loadList"
+    @update:page="loadList"
+    @update:pageSize="loadList"
+  >
     <!-- 表格列 -->
     <el-table-column label="预览" width="80" align="center">
       <template #default="{ row }">
-        <el-image v-if="isImage(row)" :src="row.file_url" fit="cover"
-          style="width: 50px; height: 50px; border-radius: 4px" />
+        <el-image
+          v-if="isImage(row)"
+          :src="row.file_url"
+          fit="cover"
+          style="width: 50px; height: 50px; border-radius: 4px"
+        />
       </template>
     </el-table-column>
 
     <el-table-column label="文件名" min-width="180">
       <template #default="{ row }">
-        <span style="margin-right: 8px;font-weight: 500">{{ row.file_name }}</span>
-        <span style="font-size: 12px; color: #909399">{{ formatFileSize(row.file_size) }}</span>
+        <span style="margin-right: 8px; font-weight: 500">{{
+          row.file_name
+        }}</span>
+        <span style="font-size: 12px; color: #909399">{{
+          formatFileSize(row.file_size)
+        }}</span>
       </template>
     </el-table-column>
 
-    <el-table-column prop="original_name" label="原始文件名" min-width="200" show-overflow-tooltip />
+    <el-table-column
+      prop="original_name"
+      label="原始文件名"
+      min-width="200"
+      show-overflow-tooltip
+    />
 
     <el-table-column prop="file_type" label="类型" width="100" align="center" />
 
     <el-table-column label="状态" width="100" align="center">
       <template #default="{ row }">
-        <el-tag :type="getStatusTagType(row.status)" size="small" effect="light">
+        <el-tag
+          :type="getStatusTagType(row.status)"
+          size="small"
+          effect="light"
+        >
           {{ getStatusText(row.status) }}
         </el-tag>
       </template>
     </el-table-column>
 
-    <el-table-column prop="upload_type" label="用途" width="100" align="center" />
+    <el-table-column
+      prop="upload_type"
+      label="用途"
+      width="100"
+      align="center"
+    />
 
     <el-table-column label="上传时间" width="180" align="center">
       <template #default="{ row }">
@@ -39,8 +70,12 @@
 
     <el-table-column label="操作" width="180" align="center" fixed="right">
       <template #default="{ row }">
-        <el-button link type="primary" size="small" @click="copyUrl(row)">复制链接</el-button>
-        <el-button link type="danger" size="small" @click="handleDelete(row.id)">删除</el-button>
+        <el-button link type="primary" size="small" @click="copyUrl(row)"
+          >复制链接</el-button
+        >
+        <el-button link type="danger" size="small" @click="handleDelete(row.id)"
+          >删除</el-button
+        >
       </template>
     </el-table-column>
   </common-list>
@@ -64,7 +99,7 @@ const loadList = async () => {
   try {
     const [data] = await Promise.all([
       getFileList(query),
-      new Promise(resolve => setTimeout(resolve, 300))
+      new Promise((resolve) => setTimeout(resolve, 300))
     ])
     fileList.value = data.list
     total.value = data.total
@@ -86,12 +121,15 @@ const copyUrl = async (file: FileInfo) => {
 
 const handleDelete = async (id: number) => {
   try {
-    await ElMessageBox.confirm('确定要删除这个文件吗？', '提示', { type: 'warning' })
+    await ElMessageBox.confirm('确定要删除这个文件吗？', '提示', {
+      type: 'warning'
+    })
     await deleteFile(id)
     ElMessage.success('删除成功')
     loadList()
   } catch (error) {
-    if (error !== 'cancel' && error instanceof Error) ElMessage.error(error.message)
+    if (error !== 'cancel' && error instanceof Error)
+      ElMessage.error(error.message)
   }
 }
 

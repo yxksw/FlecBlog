@@ -1,32 +1,35 @@
 <script lang="ts" setup>
-import { getArticleBySlug } from "@/composables/api/article";
-import type { Article } from "@@/types/article";
+import { getArticleBySlug } from '@/composables/api/article'
+import type { Article } from '@@/types/article'
 
 definePageMeta({
   typeHeader: 'post'
 })
 
-const route = useRoute();
-const router = useRouter();
-const article = ref<Article | null>(null);
-const { setCurrentArticle, clearCurrentArticle } = useCurrentArticle();
-const { $tracker } = useNuxtApp();
+const route = useRoute()
+const router = useRouter()
+const article = ref<Article | null>(null)
+const { setCurrentArticle, clearCurrentArticle } = useCurrentArticle()
+const { $tracker } = useNuxtApp()
 
 // 使用SSR获取文章详情
-const { data: initialData } = await useAsyncData(`post-${route.params.slug}`, async () => {
-  const slug = route.params.slug as string;
-  
-  try {
-    const articleData = await getArticleBySlug(slug);
-    setCurrentArticle(articleData);
-    return { article: articleData };
-  } catch (err: any) {
-    if (err.response?.status === 404) {
-      router.replace('/404');
+const { data: initialData } = await useAsyncData(
+  `post-${route.params.slug}`,
+  async () => {
+    const slug = route.params.slug as string
+
+    try {
+      const articleData = await getArticleBySlug(slug)
+      setCurrentArticle(articleData)
+      return { article: articleData }
+    } catch (err: any) {
+      if (err.response?.status === 404) {
+        router.replace('/404')
+      }
+      return null
     }
-    return null;
   }
-})
+)
 
 // 初始化本地 article ref
 article.value = initialData.value?.article ?? null
@@ -38,14 +41,15 @@ useHead({
 
 useSeoMeta({
   title: () => article.value?.title,
-  description: () => article.value?.summary || `${article.value?.title} - 阅读全文了解更多详情`,
+  description: () =>
+    article.value?.summary || `${article.value?.title} - 阅读全文了解更多详情`,
   ogTitle: () => article.value?.title,
   ogDescription: () => article.value?.summary,
   ogImage: () => article.value?.cover,
   ogType: 'article',
   twitterTitle: () => article.value?.title,
   twitterDescription: () => article.value?.summary,
-  twitterImage: () => article.value?.cover,
+  twitterImage: () => article.value?.cover
 })
 
 // 文章结构化数据
@@ -55,59 +59,67 @@ useSchemaOrg([
     description: () => article.value?.summary,
     image: () => article.value?.cover,
     datePublished: () => article.value?.publish_time,
-    dateModified: () => article.value?.update_time,
+    dateModified: () => article.value?.update_time
   })
 ])
 
 const fetchArticle = async () => {
-  const slug = route.params.slug as string;
+  const slug = route.params.slug as string
 
   try {
-    article.value = await getArticleBySlug(slug);
-    setCurrentArticle(article.value);
+    article.value = await getArticleBySlug(slug)
+    setCurrentArticle(article.value)
 
     // 设置当前文章ID用于埋点追踪
     if (article.value) {
-      $tracker?.setArticleId(article.value.id);
+      $tracker?.setArticleId(article.value.id)
       // 发送包含 article_id 的页面访问埋点
-      $tracker?.trackPageView(undefined, article.value.id);
+      $tracker?.trackPageView(undefined, article.value.id)
 
       // 处理 URL hash 锚点跳转
       nextTick(() => {
         if (route.hash) {
-          requestAnimationFrame(() => scrollToElement(route.hash, { block: 'start' }));
+          requestAnimationFrame(() =>
+            scrollToElement(route.hash, { block: 'start' })
+          )
         }
-      });
+      })
     }
   } catch (err: any) {
-    clearCurrentArticle();
-    $tracker?.setArticleId(undefined);
+    clearCurrentArticle()
+    $tracker?.setArticleId(undefined)
 
     // 如果是404错误，替换到404页面（不保留历史记录，避免循环）
     if (err.response?.status === 404) {
-      router.replace('/404');
+      router.replace('/404')
     }
   }
-};
+}
 
 // 监听路由参数变化
-watch(() => route.params.slug, fetchArticle);
+watch(() => route.params.slug, fetchArticle)
 
 // 监听 URL hash 变化，实现锚点跳转
-watch(() => route.hash, (hash) => {
-  if (hash) scrollToElement(hash, { block: 'start' });
-})
+watch(
+  () => route.hash,
+  (hash) => {
+    if (hash) scrollToElement(hash, { block: 'start' })
+  }
+)
 
 // 组件卸载时清除文章数据
 onUnmounted(() => {
-  clearCurrentArticle();
-  $tracker?.setArticleId(undefined);
-});
+  clearCurrentArticle()
+  $tracker?.setArticleId(undefined)
+})
 </script>
 
 <template>
   <div id="post" v-if="article">
-    <FeaturesArticleAISummary v-if="article.ai_summary" :summary="article.ai_summary" />
+    <FeaturesArticleAISummary
+      v-if="article.ai_summary"
+      :summary="article.ai_summary"
+    />
 
     <FeaturesArticleOutdatedNotice v-if="article.is_outdated" />
 
@@ -119,7 +131,10 @@ onUnmounted(() => {
 
     <FeaturesArticleNavigation :prev="article.prev" :next="article.next" />
 
-    <LazyFeaturesCommentComments target-type="article" :target-key="article.slug!" />
+    <LazyFeaturesCommentComments
+      target-type="article"
+      :target-key="article.slug!"
+    />
   </div>
 </template>
 

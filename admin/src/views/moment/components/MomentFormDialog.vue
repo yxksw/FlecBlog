@@ -1,34 +1,67 @@
 <template>
-  <el-dialog v-model="visible" :title="dialogTitle" width="800px" :close-on-click-modal="false" top="8vh">
+  <el-dialog
+    v-model="visible"
+    :title="dialogTitle"
+    width="800px"
+    :close-on-click-modal="false"
+    top="8vh"
+  >
     <div class="moment-editor">
       <!-- 功能工具栏 -->
       <div class="toolbar">
         <!-- 链接按钮 -->
-        <el-button :type="formData.content.link?.url ? 'primary' : 'default'" :icon="Link" circle
-          @click="linkDialogVisible = true" />
+        <el-button
+          :type="formData.content.link?.url ? 'primary' : 'default'"
+          :icon="Link"
+          circle
+          @click="linkDialogVisible = true"
+        />
 
         <!-- 图片按钮 -->
-        <el-button :type="imageItems.length ? 'primary' : 'default'" :icon="Picture" circle
-          @click="imageDialogVisible = true" />
+        <el-button
+          :type="imageItems.length ? 'primary' : 'default'"
+          :icon="Picture"
+          circle
+          @click="imageDialogVisible = true"
+        />
 
         <!-- 音乐按钮 -->
-        <el-button :type="formData.content.music?.id ? 'primary' : 'default'" :icon="Headset" circle
-          @click="musicDialogVisible = true" />
+        <el-button
+          :type="formData.content.music?.id ? 'primary' : 'default'"
+          :icon="Headset"
+          circle
+          @click="musicDialogVisible = true"
+        />
 
         <!-- 视频按钮 -->
-        <el-button :type="videoItem ? 'primary' : 'default'" :icon="VideoPlay" circle
-          @click="videoDialogVisible = true" />
+        <el-button
+          :type="videoItem ? 'primary' : 'default'"
+          :icon="VideoPlay"
+          circle
+          @click="videoDialogVisible = true"
+        />
       </div>
 
       <!-- 文本输入区域 -->
       <div class="content-area">
-        <el-input v-model="formData.content.text" type="textarea" placeholder="分享你的想法..." :rows="6" maxlength="1000"
-          show-word-limit resize="none" />
+        <el-input
+          v-model="formData.content.text"
+          type="textarea"
+          placeholder="分享你的想法..."
+          :rows="6"
+          maxlength="1000"
+          show-word-limit
+          resize="none"
+        />
       </div>
 
       <!-- 图片预览区域 -->
       <div v-if="imageItems.length" class="images-preview">
-        <div v-for="(item, index) in imageItems" :key="item.id" class="image-item">
+        <div
+          v-for="(item, index) in imageItems"
+          :key="item.id"
+          class="image-item"
+        >
           <img :src="item.url" @error="handleImageError" />
           <el-button size="small" circle text @click="removeImage(index)">
             <el-icon>
@@ -40,12 +73,23 @@
 
       <!-- 其他内容预览区域 -->
       <div v-if="otherContentPreviews.length" class="content-preview">
-        <div v-for="preview in otherContentPreviews" :key="preview.type"
-          :class="[`${preview.type}-preview`, preview.type === 'video' ? 'video-preview' : '']">
+        <div
+          v-for="preview in otherContentPreviews"
+          :key="preview.type"
+          :class="[
+            `${preview.type}-preview`,
+            preview.type === 'video' ? 'video-preview' : ''
+          ]"
+        >
           <!-- 链接类型：显示图标、标题和URL -->
           <template v-if="preview.type === 'link'">
             <div class="content-icon">
-              <img v-if="preview.favicon" :src="preview.favicon" alt="网站图标" class="favicon-icon" />
+              <img
+                v-if="preview.favicon"
+                :src="preview.favicon"
+                alt="网站图标"
+                class="favicon-icon"
+              />
             </div>
             <div class="content-info">
               <div class="preview-title">{{ preview.title }}</div>
@@ -60,7 +104,12 @@
           <!-- 音乐类型：显示封面、歌名和艺术家 -->
           <template v-else-if="preview.type === 'music'">
             <div class="content-icon">
-              <img v-if="preview.cover" :src="preview.cover" alt="音乐封面" class="music-cover" />
+              <img
+                v-if="preview.cover"
+                :src="preview.cover"
+                alt="音乐封面"
+                class="music-cover"
+              />
               <div v-else class="music-cover-placeholder">
                 <el-icon>
                   <Headset />
@@ -70,7 +119,9 @@
             <div class="content-info">
               <div class="preview-title">
                 {{ preview.title }}
-                <el-tag size="small" style="margin-left: 8px;">{{ preview.musicType }}</el-tag>
+                <el-tag size="small" style="margin-left: 8px">{{
+                  preview.musicType
+                }}</el-tag>
               </div>
               <div class="preview-artist">{{ preview.artist }}</div>
             </div>
@@ -83,13 +134,31 @@
           <!-- 视频类型：使用iframe显示网络视频，使用video标签显示本地视频 -->
           <template v-else-if="preview.type === 'video'">
             <!-- 网络视频预览（iframe） -->
-            <div class="video-preview-container" v-if="!preview.isLocal && preview.url">
-              <iframe :src="preview.url" frameborder="0" scrolling="no" allowfullscreen
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                class="video-iframe"></iframe>
+            <div
+              class="video-preview-container"
+              v-if="!preview.isLocal && preview.url"
+            >
+              <iframe
+                :src="preview.url"
+                frameborder="0"
+                scrolling="no"
+                allowfullscreen
+                allow="
+                  accelerometer;
+                  autoplay;
+                  clipboard-write;
+                  encrypted-media;
+                  gyroscope;
+                  picture-in-picture;
+                "
+                class="video-iframe"
+              ></iframe>
             </div>
             <!-- 本地视频预览（video标签） -->
-            <div class="video-local-preview-container" v-else-if="preview.isLocal && preview.url">
+            <div
+              class="video-local-preview-container"
+              v-else-if="preview.isLocal && preview.url"
+            >
               <video :src="preview.url" controls class="video-local"></video>
             </div>
             <el-button size="small" text @click="removeContent(preview.type)">
@@ -115,19 +184,32 @@
       <!-- 底部工具栏 -->
       <div class="bottom-toolbar">
         <!-- 位置按钮 -->
-        <el-button :type="formData.content.location ? 'primary' : 'default'" :icon="Location" text
-          @click="locationDialogVisible = true">
+        <el-button
+          :type="formData.content.location ? 'primary' : 'default'"
+          :icon="Location"
+          text
+          @click="locationDialogVisible = true"
+        >
           {{ formData.content.location || '发布位置' }}
         </el-button>
 
         <!-- 标签按钮 -->
-        <el-button :type="formData.content.tags ? 'primary' : 'default'" :icon="PriceTag" text
-          @click="tagDialogVisible = true">
+        <el-button
+          :type="formData.content.tags ? 'primary' : 'default'"
+          :icon="PriceTag"
+          text
+          @click="tagDialogVisible = true"
+        >
           {{ formData.content.tags || '分类标签' }}
         </el-button>
 
         <!-- 发布时间按钮 -->
-        <el-button :type="publishTime ? 'primary' : 'default'" :icon="Timer" text @click="timeDialogVisible = true">
+        <el-button
+          :type="publishTime ? 'primary' : 'default'"
+          :icon="Timer"
+          text
+          @click="timeDialogVisible = true"
+        >
           {{ publishTime ? formatTime(publishTime) : '发布时间' }}
         </el-button>
 
@@ -143,7 +225,11 @@
     <template #footer>
       <span class="dialog-footer">
         <el-button @click="handleCancel">取消</el-button>
-        <el-button type="primary" @click="handleSubmit" :loading="submitLoading">
+        <el-button
+          type="primary"
+          @click="handleSubmit"
+          :loading="submitLoading"
+        >
           {{ formData.is_publish ? '发布' : '保存' }}
         </el-button>
       </span>
@@ -153,17 +239,37 @@
   <!-- 链接Dialog -->
   <el-dialog v-model="linkDialogVisible" title="网站分享" width="400px">
     <div class="link-form">
-      <div style="display: flex; gap: 8px; margin-bottom: 12px;">
-        <el-input v-model="formData.content.link!.url" placeholder="请输入网站地址" style="flex: 1;" />
-        <el-button type="primary" :loading="fetchingLink" @click="handleParseLink">
+      <div style="display: flex; gap: 8px; margin-bottom: 12px">
+        <el-input
+          v-model="formData.content.link!.url"
+          placeholder="请输入网站地址"
+          style="flex: 1"
+        />
+        <el-button
+          type="primary"
+          :loading="fetchingLink"
+          @click="handleParseLink"
+        >
           {{ fetchingLink ? '解析中...' : '解析' }}
         </el-button>
       </div>
-      <el-input v-model="formData.content.link!.title" placeholder="网站标题" style="margin-bottom: 12px;" />
-      <div style="display: flex; align-items: center; gap: 8px;">
-        <el-input v-model="formData.content.link!.favicon" placeholder="网站图标" style="flex: 1;" />
+      <el-input
+        v-model="formData.content.link!.title"
+        placeholder="网站标题"
+        style="margin-bottom: 12px"
+      />
+      <div style="display: flex; align-items: center; gap: 8px">
+        <el-input
+          v-model="formData.content.link!.favicon"
+          placeholder="网站图标"
+          style="flex: 1"
+        />
         <div class="favicon-preview">
-          <img v-if="formData.content.link!.favicon" :src="formData.content.link!.favicon" alt="图标" />
+          <img
+            v-if="formData.content.link!.favicon"
+            :src="formData.content.link!.favicon"
+            alt="图标"
+          />
           <span v-else>图标</span>
         </div>
       </div>
@@ -173,16 +279,32 @@
   <!-- 图片Dialog -->
   <el-dialog v-model="imageDialogVisible" title="动态配图" width="400px">
     <div class="image-form">
-      <div style="display: flex; gap: 8px; margin-bottom: 16px;">
-        <el-input v-model="imageUrlInput" placeholder="输入图片链接或点击右侧上传" @keyup.enter="addImageUrl" style="flex: 1;" />
-        <el-button type="primary" @click="addImageUrl" :disabled="!imageUrlInput.trim()">添加</el-button>
+      <div style="display: flex; gap: 8px; margin-bottom: 16px">
+        <el-input
+          v-model="imageUrlInput"
+          placeholder="输入图片链接或点击右侧上传"
+          @keyup.enter="addImageUrl"
+          style="flex: 1"
+        />
+        <el-button
+          type="primary"
+          @click="addImageUrl"
+          :disabled="!imageUrlInput.trim()"
+          >添加</el-button
+        >
         <el-button type="primary" @click="handleImageUpload">上传</el-button>
       </div>
 
       <div v-if="imageItems.length" class="image-url-list">
-        <div v-for="(item, index) in imageItems" :key="item.id" class="url-item">
-          <el-input :value="item.url" readonly style="flex: 1;" />
-          <el-button type="danger" size="small" @click="removeImage(index)">删除</el-button>
+        <div
+          v-for="(item, index) in imageItems"
+          :key="item.id"
+          class="url-item"
+        >
+          <el-input :value="item.url" readonly style="flex: 1" />
+          <el-button type="danger" size="small" @click="removeImage(index)"
+            >删除</el-button
+          >
         </div>
       </div>
     </div>
@@ -191,7 +313,11 @@
   <!-- 音乐Dialog -->
   <el-dialog v-model="musicDialogVisible" title="动态音乐" width="400px">
     <div class="music-form">
-      <el-select v-model="formData.content.music!.server" placeholder="音乐平台" style="width: 100%; margin-bottom: 12px;">
+      <el-select
+        v-model="formData.content.music!.server"
+        placeholder="音乐平台"
+        style="width: 100%; margin-bottom: 12px"
+      >
         <el-option label="网易云音乐" value="netease" />
         <el-option label="QQ音乐" value="tencent" />
         <el-option label="酷狗音乐" value="kugou" />
@@ -199,32 +325,64 @@
         <el-option label="百度音乐" value="baidu" />
         <el-option label="酷我音乐" value="kuwo" />
       </el-select>
-      <el-select v-model="formData.content.music!.type" placeholder="类型" style="width: 100%; margin-bottom: 12px;">
+      <el-select
+        v-model="formData.content.music!.type"
+        placeholder="类型"
+        style="width: 100%; margin-bottom: 12px"
+      >
         <el-option label="单曲" value="song" />
         <el-option label="歌单" value="playlist" />
         <el-option label="艺术家" value="artist" />
         <el-option label="专辑" value="album" />
         <el-option label="搜索" value="search" />
       </el-select>
-      <div style="display: flex; gap: 8px; margin-bottom: 12px;">
-        <el-input v-model="formData.content.music!.id" placeholder="音乐ID" style="flex: 1;" />
-        <el-button type="primary" :loading="fetchingMusic" @click="handleParseMusic">
+      <div style="display: flex; gap: 8px; margin-bottom: 12px">
+        <el-input
+          v-model="formData.content.music!.id"
+          placeholder="音乐ID"
+          style="flex: 1"
+        />
+        <el-button
+          type="primary"
+          :loading="fetchingMusic"
+          @click="handleParseMusic"
+        >
           {{ fetchingMusic ? '解析中...' : '解析' }}
         </el-button>
       </div>
 
       <!-- 音乐信息预览 -->
       <div v-if="musicInfo" class="music-info-preview">
-        <img v-if="musicInfo.pic" :src="musicInfo.pic" alt="音乐封面" class="music-preview-cover" />
+        <img
+          v-if="musicInfo.pic"
+          :src="musicInfo.pic"
+          alt="音乐封面"
+          class="music-preview-cover"
+        />
         <div class="music-preview-info">
           <div class="music-preview-title">
             {{ musicInfo.title }}
-            <el-tag size="small" style="margin-left: 8px;">
-              {{ {
-                netease: '网易云', tencent: 'QQ音乐', kugou: '酷狗', xiami: '虾米', baidu: '百度', kuwo: '酷我'
-              }[musicInfo.server]
-              }} ·
-              {{ { search: '搜索', song: '单曲', album: '专辑', artist: '艺术家', playlist: '歌单' }[musicInfo.type] }}
+            <el-tag size="small" style="margin-left: 8px">
+              {{
+                {
+                  netease: '网易云',
+                  tencent: 'QQ音乐',
+                  kugou: '酷狗',
+                  xiami: '虾米',
+                  baidu: '百度',
+                  kuwo: '酷我'
+                }[musicInfo.server]
+              }}
+              ·
+              {{
+                {
+                  search: '搜索',
+                  song: '单曲',
+                  album: '专辑',
+                  artist: '艺术家',
+                  playlist: '歌单'
+                }[musicInfo.type]
+              }}
             </el-tag>
           </div>
           <div class="music-preview-artist">{{ musicInfo.artist }}</div>
@@ -241,11 +399,21 @@
   <!-- 视频Dialog -->
   <el-dialog v-model="videoDialogVisible" title="动态视频" width="400px">
     <div class="video-form">
-      <div style="display: flex; gap: 8px;">
+      <div style="display: flex; gap: 8px">
         <!-- 未添加视频时：显示输入框和解析/上传按钮 -->
         <template v-if="!videoItem">
-          <el-input v-model="videoUrlInput" placeholder="输入视频链接或点击右侧上传" @keyup.enter="addVideoUrl" style="flex: 1;" />
-          <el-button type="primary" @click="addVideoUrl" :disabled="!videoUrlInput.trim()" :loading="fetchingVideo">
+          <el-input
+            v-model="videoUrlInput"
+            placeholder="输入视频链接或点击右侧上传"
+            @keyup.enter="addVideoUrl"
+            style="flex: 1"
+          />
+          <el-button
+            type="primary"
+            @click="addVideoUrl"
+            :disabled="!videoUrlInput.trim()"
+            :loading="fetchingVideo"
+          >
             {{ fetchingVideo ? '解析中...' : '解析' }}
           </el-button>
           <el-button type="primary" @click="handleVideoUpload">上传</el-button>
@@ -254,8 +422,14 @@
         <!-- 已添加视频时：显示只读输入框和删除按钮 -->
         <template v-else>
           <el-input
-            :value="videoItem.platform && videoItem.video_id ? getVideoIframeSrc(videoItem.platform, videoItem.video_id) : videoItem.url"
-            readonly style="flex: 1;" />
+            :value="
+              videoItem.platform && videoItem.video_id
+                ? getVideoIframeSrc(videoItem.platform, videoItem.video_id)
+                : videoItem.url
+            "
+            readonly
+            style="flex: 1"
+          />
           <el-button type="danger" @click="removeVideo">删除</el-button>
         </template>
       </div>
@@ -265,8 +439,13 @@
   <!-- 标签Dialog -->
   <el-dialog v-model="tagDialogVisible" title="分类标签" width="400px">
     <div class="tags-form">
-      <el-input v-model="formData.content.tags" placeholder="输入标签名称" maxlength="20" show-word-limit />
-      <div style="margin-top: 12px; font-size: 12px; color: #999;">
+      <el-input
+        v-model="formData.content.tags"
+        placeholder="输入标签名称"
+        maxlength="20"
+        show-word-limit
+      />
+      <div style="margin-top: 12px; font-size: 12px; color: #999">
         输入一个标签，如：日常、学习、技术等
       </div>
     </div>
@@ -275,8 +454,13 @@
   <!-- 位置Dialog -->
   <el-dialog v-model="locationDialogVisible" title="发布位置" width="400px">
     <div class="location-form">
-      <el-input v-model="formData.content.location" placeholder="输入位置信息" maxlength="100" show-word-limit />
-      <div style="margin-top: 12px; font-size: 12px; color: #999;">
+      <el-input
+        v-model="formData.content.location"
+        placeholder="输入位置信息"
+        maxlength="100"
+        show-word-limit
+      />
+      <div style="margin-top: 12px; font-size: 12px; color: #999">
         可以输入具体地址、城市或地标名称
       </div>
     </div>
@@ -285,9 +469,15 @@
   <!-- 时间Dialog -->
   <el-dialog v-model="timeDialogVisible" title="发布时间" width="400px">
     <div class="time-form">
-      <el-date-picker v-model="publishTime" type="datetime" placeholder="选择发布时间" format="YYYY-MM-DD HH:mm"
-        value-format="YYYY-MM-DD HH:mm:ss" style="width: 100%;" />
-      <div style="margin-top: 12px; font-size: 12px; color: #999;">
+      <el-date-picker
+        v-model="publishTime"
+        type="datetime"
+        placeholder="选择发布时间"
+        format="YYYY-MM-DD HH:mm"
+        value-format="YYYY-MM-DD HH:mm:ss"
+        style="width: 100%"
+      />
+      <div style="margin-top: 12px; font-size: 12px; color: #999">
         设置动态显示的发布时间，不设置则使用当前时间
       </div>
     </div>
@@ -297,8 +487,21 @@
 <script setup lang="ts">
 import { ref, reactive, computed, watch } from 'vue'
 import { ElMessage } from 'element-plus'
-import { Location, Link, Picture, Headset, VideoPlay, PriceTag, Close, Timer } from '@element-plus/icons-vue'
-import type { CreateMomentRequest, UpdateMomentRequest, Moment } from '@/types/moment'
+import {
+  Location,
+  Link,
+  Picture,
+  Headset,
+  VideoPlay,
+  PriceTag,
+  Close,
+  Timer
+} from '@element-plus/icons-vue'
+import type {
+  CreateMomentRequest,
+  UpdateMomentRequest,
+  Moment
+} from '@/types/moment'
 import { createMoment, updateMoment } from '@/api/moment'
 import { fetchLinkInfo, parseVideo } from '@/api/tools'
 import { uploadFile } from '@/api/file'
@@ -316,7 +519,7 @@ const visible = computed({
   set: (val) => emit('update:modelValue', val)
 })
 const isEdit = computed(() => !!props.editMoment)
-const dialogTitle = computed(() => isEdit.value ? '编辑动态' : '新增动态')
+const dialogTitle = computed(() => (isEdit.value ? '编辑动态' : '新增动态'))
 const submitLoading = ref(false)
 const fetchingLink = ref(false)
 const fetchingVideo = ref(false)
@@ -339,8 +542,8 @@ interface MusicInfo {
   title: string
   artist: string
   pic: string
-  type: 'search' | 'song' | 'album' | 'artist' | 'playlist'  // 音乐类型
-  server: 'netease' | 'tencent' | 'kugou' | 'xiami' | 'baidu' | 'kuwo'  // 平台
+  type: 'search' | 'song' | 'album' | 'artist' | 'playlist' // 音乐类型
+  server: 'netease' | 'tencent' | 'kugou' | 'xiami' | 'baidu' | 'kuwo' // 平台
 }
 const musicInfo = ref<MusicInfo | null>(null)
 const fetchingMusic = ref(false)
@@ -359,8 +562,8 @@ interface VideoItem {
   type: 'file' | 'url'
   file?: File
   url: string
-  platform?: string  // 视频平台
-  video_id?: string  // 视频ID
+  platform?: string // 视频平台
+  video_id?: string // 视频ID
 }
 const videoItem = ref<VideoItem | null>(null)
 
@@ -380,9 +583,12 @@ const formData = reactive<CreateMomentRequest>({
 const publishTime = ref('')
 
 // 计算属性
-const hasContent = computed(() =>
-  formData.content.link?.url || imageItems.value.length ||
-  formData.content.music?.id || videoItem.value
+const hasContent = computed(
+  () =>
+    formData.content.link?.url ||
+    imageItems.value.length ||
+    formData.content.music?.id ||
+    videoItem.value
 )
 
 const otherContentPreviews = computed(() => {
@@ -397,21 +603,38 @@ const otherContentPreviews = computed(() => {
   }
   if (formData.content.music?.id) {
     const MUSIC_LABELS = {
-      type: { search: '搜索', song: '单曲', album: '专辑', artist: '艺术家', playlist: '歌单' },
-      server: { netease: '网易云', tencent: 'QQ音乐', kugou: '酷狗', xiami: '虾米', baidu: '百度', kuwo: '酷我' }
+      type: {
+        search: '搜索',
+        song: '单曲',
+        album: '专辑',
+        artist: '艺术家',
+        playlist: '歌单'
+      },
+      server: {
+        netease: '网易云',
+        tencent: 'QQ音乐',
+        kugou: '酷狗',
+        xiami: '虾米',
+        baidu: '百度',
+        kuwo: '酷我'
+      }
     }
 
     const music = formData.content.music
     const info = musicInfo.value
     const typeLabel = info?.type ? MUSIC_LABELS.type[info.type] : music.type
-    const serverLabel = info?.server ? MUSIC_LABELS.server[info.server] : music.server
+    const serverLabel = info?.server
+      ? MUSIC_LABELS.server[info.server]
+      : music.server
 
     previews.push({
       type: 'music',
       title: info?.title || '未知歌曲',
       artist: info?.artist || `${music.server} - ${music.type}`,
       cover: info?.pic || '',
-      musicType: info ? `${serverLabel} · ${typeLabel}` : `${music.server} - ${music.type}`
+      musicType: info
+        ? `${serverLabel} · ${typeLabel}`
+        : `${music.server} - ${music.type}`
     })
   }
   if (videoItem.value) {
@@ -432,7 +655,11 @@ const formatTime = (time: string) => {
   const date = new Date(time)
   const now = new Date()
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
-  const targetDay = new Date(date.getFullYear(), date.getMonth(), date.getDate())
+  const targetDay = new Date(
+    date.getFullYear(),
+    date.getMonth(),
+    date.getDate()
+  )
 
   if (targetDay.getTime() === today.getTime()) {
     return `今天 ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`
@@ -484,7 +711,9 @@ const handleParseLink = async () => {
 
   fetchingLink.value = true
   try {
-    const result = await fetchLinkInfo({ url: formData.content.link.url.trim() })
+    const result = await fetchLinkInfo({
+      url: formData.content.link.url.trim()
+    })
     if (formData.content.link) {
       formData.content.link.title = result.title || ''
       formData.content.link.favicon = result.favicon || ''
@@ -499,7 +728,11 @@ const handleParseLink = async () => {
 
 // 音乐解析函数
 const handleParseMusic = async () => {
-  if (!formData.content.music?.server || !formData.content.music?.type || !formData.content.music?.id) {
+  if (
+    !formData.content.music?.server ||
+    !formData.content.music?.type ||
+    !formData.content.music?.id
+  ) {
     ElMessage.warning('请先填写音乐平台、类型和ID')
     return
   }
@@ -519,7 +752,13 @@ const handleParseMusic = async () => {
         artist: info.artist || info.author || '未知艺术家',
         pic: info.pic || info.cover || '',
         type: type as 'search' | 'song' | 'album' | 'artist' | 'playlist',
-        server: server as 'netease' | 'tencent' | 'kugou' | 'xiami' | 'baidu' | 'kuwo'
+        server: server as
+          | 'netease'
+          | 'tencent'
+          | 'kugou'
+          | 'xiami'
+          | 'baidu'
+          | 'kuwo'
       }
       ElMessage.success('解析成功')
     } else {
@@ -543,7 +782,7 @@ const handleImageUpload = () => {
     const files = (e.target as HTMLInputElement).files
     if (!files) return
 
-    Array.from(files).forEach(file => {
+    Array.from(files).forEach((file) => {
       imageItems.value.push({
         id: `${Date.now()}-${Math.random()}`,
         type: 'file',
@@ -572,7 +811,8 @@ const addImageUrl = () => {
 const VIDEO_PLATFORMS = {
   bilibili: {
     name: '哔哩哔哩',
-    getIframeSrc: (id: string) => `//player.bilibili.com/player.html?isOutside=true&bvid=${id}&p=1`
+    getIframeSrc: (id: string) =>
+      `//player.bilibili.com/player.html?isOutside=true&bvid=${id}&p=1`
   },
   youtube: {
     name: 'YouTube',
@@ -580,12 +820,19 @@ const VIDEO_PLATFORMS = {
   }
 } as const
 
-const getPlatformName = (platform: string) => VIDEO_PLATFORMS[platform as keyof typeof VIDEO_PLATFORMS]?.name || platform
-const getVideoIframeSrc = (platform: string, videoId: string) => VIDEO_PLATFORMS[platform as keyof typeof VIDEO_PLATFORMS]?.getIframeSrc(videoId) || ''
+const getPlatformName = (platform: string) =>
+  VIDEO_PLATFORMS[platform as keyof typeof VIDEO_PLATFORMS]?.name || platform
+const getVideoIframeSrc = (platform: string, videoId: string) =>
+  VIDEO_PLATFORMS[platform as keyof typeof VIDEO_PLATFORMS]?.getIframeSrc(
+    videoId
+  ) || ''
 
 // 清理旧的视频Blob URL
 const cleanupVideoBlob = () => {
-  if (videoItem.value?.type === 'file' && videoItem.value.url.startsWith('blob:')) {
+  if (
+    videoItem.value?.type === 'file' &&
+    videoItem.value.url.startsWith('blob:')
+  ) {
     URL.revokeObjectURL(videoItem.value.url)
   }
 }
@@ -626,7 +873,9 @@ const addVideoUrl = async () => {
       video_id: result.video_id
     }
     videoUrlInput.value = ''
-    ElMessage.success(`已识别：${getPlatformName(result.platform)} - ${result.video_id}`)
+    ElMessage.success(
+      `已识别：${getPlatformName(result.platform)} - ${result.video_id}`
+    )
   } catch (error) {
     ElMessage.error('无法识别的视频链接，请检查URL格式（支持B站、YouTube）')
   } finally {
@@ -662,51 +911,62 @@ const handleImageError = (e: Event) => {
   parent.style.display = 'flex'
   parent.style.alignItems = 'center'
   parent.style.justifyContent = 'center'
-  parent.innerHTML = '<span style="color: #c0c4cc; font-size: 12px;">加载失败</span>'
+  parent.innerHTML =
+    '<span style="color: #c0c4cc; font-size: 12px;">加载失败</span>'
 }
 
 // 移除内容
 const removeContent = (type: string) => {
   const removeMap = {
-    link: () => { formData.content.link = { url: '', title: '', favicon: '' } },
-    images: () => { formData.content.images = [] },
+    link: () => {
+      formData.content.link = { url: '', title: '', favicon: '' }
+    },
+    images: () => {
+      formData.content.images = []
+    },
     music: () => {
       formData.content.music = { server: 'netease', type: 'song', id: '' }
       musicInfo.value = null
     },
-    video: () => { removeVideo() }
+    video: () => {
+      removeVideo()
+    }
   }
   removeMap[type as keyof typeof removeMap]?.()
 }
 
 // 监听器
-watch(() => props.editMoment, (moment) => {
-  resetForm()
-  if (moment) {
-    Object.assign(formData.content, moment.content)
-    formData.is_publish = moment.is_publish
-    publishTime.value = moment.publish_time || ''
+watch(
+  () => props.editMoment,
+  (moment) => {
+    resetForm()
+    if (moment) {
+      Object.assign(formData.content, moment.content)
+      formData.is_publish = moment.is_publish
+      publishTime.value = moment.publish_time || ''
 
-    // 加载已有图片（编辑时）
-    if (moment.content.images?.length) {
-      imageItems.value = moment.content.images.map(url => ({
-        id: `${Date.now()}-${Math.random()}`,
-        type: 'url' as const,
-        url: url
-      }))
-    }
+      // 加载已有图片（编辑时）
+      if (moment.content.images?.length) {
+        imageItems.value = moment.content.images.map((url) => ({
+          id: `${Date.now()}-${Math.random()}`,
+          type: 'url' as const,
+          url: url
+        }))
+      }
 
-    // 加载已有视频（编辑时）
-    if (moment.content.video?.url) {
-      videoItem.value = {
-        type: 'url' as const,
-        url: moment.content.video.url,
-        platform: moment.content.video.platform,
-        video_id: moment.content.video.video_id
+      // 加载已有视频（编辑时）
+      if (moment.content.video?.url) {
+        videoItem.value = {
+          type: 'url' as const,
+          url: moment.content.video.url,
+          platform: moment.content.video.platform,
+          video_id: moment.content.video.video_id
+        }
       }
     }
-  }
-}, { immediate: true })
+  },
+  { immediate: true }
+)
 
 // 上传图片（本地文件上传，网络图片直接使用）
 const uploadImages = async (): Promise<string[]> => {
@@ -750,10 +1010,13 @@ const handleSubmit = async () => {
 
     // 清理数据，只传递有值的字段
     const content: any = {}
-    if (formData.content.text?.trim()) content.text = formData.content.text.trim()
-    if (formData.content.tags?.trim()) content.tags = formData.content.tags.trim()
+    if (formData.content.text?.trim())
+      content.text = formData.content.text.trim()
+    if (formData.content.tags?.trim())
+      content.tags = formData.content.tags.trim()
     if (uploadedImages.length) content.images = uploadedImages
-    if (formData.content.location?.trim()) content.location = formData.content.location.trim()
+    if (formData.content.location?.trim())
+      content.location = formData.content.location.trim()
 
     // 复杂对象只在有主要字段时才添加
     if (uploadedVideo?.trim()) {
@@ -773,8 +1036,10 @@ const handleSubmit = async () => {
     }
     if (formData.content.link?.url?.trim()) {
       content.link = { url: formData.content.link.url.trim() }
-      if (formData.content.link.title?.trim()) content.link.title = formData.content.link.title.trim()
-      if (formData.content.link.favicon?.trim()) content.link.favicon = formData.content.link.favicon.trim()
+      if (formData.content.link.title?.trim())
+        content.link.title = formData.content.link.title.trim()
+      if (formData.content.link.favicon?.trim())
+        content.link.favicon = formData.content.link.favicon.trim()
     }
 
     const saveData: any = { content, is_publish: formData.is_publish }
@@ -867,7 +1132,7 @@ const handleSubmit = async () => {
     background-color: #f8f9fa;
     border-radius: 8px;
 
-    >div {
+    > div {
       display: flex;
       align-items: center;
       gap: 12px;

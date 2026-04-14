@@ -14,17 +14,17 @@ useSeoMeta({
 <template>
   <!-- 内容区域 -->
   <div id="page">
-      <h1 class="page-title">标签</h1>
-      <div class="tag-cloud-list">
-        <router-link 
-          v-for="tag in tags" 
-          :key="tag.id" 
-          :to="tag.url"
-          :title="tag.name"
-        >
-          {{ tag.name }}
-        </router-link>
-      </div>
+    <h1 class="page-title">标签</h1>
+    <div class="tag-cloud-list">
+      <router-link
+        v-for="tag in tags"
+        :key="tag.id"
+        :to="tag.url"
+        :title="tag.name"
+      >
+        {{ tag.name }}
+      </router-link>
+    </div>
   </div>
 </template>
 

@@ -1,9 +1,9 @@
 <script setup lang="ts">
 interface Props {
-  total: number        // 总条目数
-  currentPage: number  // 当前页码（从1开始）
-  pageSize: number     // 每页条目数
-  maxVisiblePages?: number  // 最多显示多少个页码按钮
+  total: number // 总条目数
+  currentPage: number // 当前页码（从1开始）
+  pageSize: number // 每页条目数
+  maxVisiblePages?: number // 最多显示多少个页码按钮
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -11,7 +11,7 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const emit = defineEmits<{
-  'change': [page: number]
+  change: [page: number]
 }>()
 
 // 计算总页数
@@ -30,24 +30,24 @@ const visiblePages = computed(() => {
   const total = totalPages.value
   const current = props.currentPage
   const max = props.maxVisiblePages
-  
+
   if (total <= max) {
     // 总页数小于等于最大显示数，显示所有页码
     return Array.from({ length: total }, (_, i) => i + 1)
   }
-  
+
   const pages: (number | string)[] = []
-  
+
   // 计算需要在中间显示的页码数量（除去首尾两页）
   const middleCount = max - 2
   const half = Math.floor(middleCount / 2)
-  
+
   // 始终显示第一页
   pages.push(1)
-  
+
   let start: number
   let end: number
-  
+
   // 判断当前页的位置，动态计算中间页码范围
   if (current <= half + 2) {
     // 当前页靠近开头，显示前面的页码
@@ -61,7 +61,7 @@ const visiblePages = computed(() => {
     // 当前页在中间，以当前页为中心显示
     start = current - half
     end = current + half
-    
+
     // 调整范围以保持显示的页码数量一致
     const diff = middleCount - (end - start)
     if (diff > 0) {
@@ -72,29 +72,29 @@ const visiblePages = computed(() => {
       }
     }
   }
-  
+
   // 添加左侧省略号
   if (start > 2) {
     pages.push('...')
   }
-  
+
   // 添加中间页码
   for (let i = start; i <= end; i++) {
     if (i > 1 && i < total) {
       pages.push(i)
     }
   }
-  
+
   // 添加右侧省略号
   if (end < total - 1) {
     pages.push('...')
   }
-  
+
   // 始终显示最后一页
   if (total > 1) {
     pages.push(total)
   }
-  
+
   return pages
 })
 
@@ -130,7 +130,7 @@ const isEllipsis = (page: number | string): page is string => {
   <div v-if="totalPages > 1" class="pagination">
     <div class="pagination-controls">
       <!-- 上一页 -->
-      <button 
+      <button
         class="pagination-btn"
         :class="{ disabled: !hasPrev }"
         :disabled="!hasPrev"
@@ -138,7 +138,7 @@ const isEllipsis = (page: number | string): page is string => {
       >
         <i class="ri-arrow-left-s-line"></i>
       </button>
-      
+
       <!-- 页码 -->
       <template v-for="page in visiblePages" :key="page">
         <span v-if="isEllipsis(page)" class="pagination-ellipsis">...</span>
@@ -151,9 +151,9 @@ const isEllipsis = (page: number | string): page is string => {
           {{ page }}
         </button>
       </template>
-      
+
       <!-- 下一页 -->
-      <button 
+      <button
         class="pagination-btn"
         :class="{ disabled: !hasNext }"
         :disabled="!hasNext"
@@ -171,14 +171,14 @@ const isEllipsis = (page: number | string): page is string => {
   align-items: center;
   justify-content: center;
   padding: 20px 0;
-  
+
   .pagination-controls {
     display: flex;
     align-items: center;
     gap: 10px;
     flex-wrap: wrap;
   }
-  
+
   .pagination-btn {
     min-width: 40px;
     height: 40px;
@@ -191,29 +191,29 @@ const isEllipsis = (page: number | string): page is string => {
     align-items: center;
     justify-content: center;
     font-size: 1.1rem;
-    
+
     &:hover:not(.disabled):not(.active) {
       color: #fff;
       background: var(--flec-btn-hover);
     }
-    
+
     &.active {
       background: var(--flec-btn);
       color: #fff;
       font-weight: 600;
       cursor: default;
     }
-    
+
     &.disabled {
       opacity: 0.4;
       cursor: not-allowed;
     }
-    
+
     i {
       font-size: 1.5rem;
     }
   }
-  
+
   .pagination-ellipsis {
     color: var(--font-color);
     padding: 0 4px;

@@ -16,7 +16,9 @@ let emojiLoadPromise: Promise<Map<string, string>> | null = null
 /**
  * 加载表情映射表
  */
-export async function loadEmojiMap(emojisUrl: string): Promise<Map<string, string>> {
+export async function loadEmojiMap(
+  emojisUrl: string
+): Promise<Map<string, string>> {
   // 如果已经有缓存，直接返回
   if (emojiMapCache) {
     return emojiMapCache
@@ -75,7 +77,10 @@ export function clearEmojiCache(): void {
 /**
  * 替换文本中的表情占位符为 img 标签
  */
-export function replaceEmojisInText(text: string, emojiMap: Map<string, string>): string {
+export function replaceEmojisInText(
+  text: string,
+  emojiMap: Map<string, string>
+): string {
   return text.replace(/:([^:\s]+):/g, (match, key) => {
     const url = emojiMap.get(key)
     if (url) {

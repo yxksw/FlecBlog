@@ -1,6 +1,13 @@
 <script setup lang="ts">
-import { submitFeedback, getFeedbackByTicketNo } from '@/composables/api/feedback'
-import type { SubmitFeedbackParams, ReportType, Feedback } from '@@/types/feedback'
+import {
+  submitFeedback,
+  getFeedbackByTicketNo
+} from '@/composables/api/feedback'
+import type {
+  SubmitFeedbackParams,
+  ReportType,
+  Feedback
+} from '@@/types/feedback'
 
 interface Emits {
   (e: 'success'): void
@@ -89,7 +96,12 @@ const summaryScreenshotInputRef = ref<HTMLInputElement>()
 const suggestionAttachmentInputRef = ref<HTMLInputElement>()
 
 // 文件数组映射
-type FileArrayKey = 'copyrightProofFiles' | 'copyrightInfringementFiles' | 'inappropriateEvidenceFiles' | 'summaryScreenshotFiles' | 'suggestionAttachmentFiles'
+type FileArrayKey =
+  | 'copyrightProofFiles'
+  | 'copyrightInfringementFiles'
+  | 'inappropriateEvidenceFiles'
+  | 'summaryScreenshotFiles'
+  | 'suggestionAttachmentFiles'
 
 const fileArrayMap: Record<string, FileArrayKey> = {
   copyrightProof: 'copyrightProofFiles',
@@ -100,7 +112,10 @@ const fileArrayMap: Record<string, FileArrayKey> = {
 }
 
 // 处理文件选择
-const handleFileUpload = (event: Event, targetKey: keyof typeof fileArrayMap) => {
+const handleFileUpload = (
+  event: Event,
+  targetKey: keyof typeof fileArrayMap
+) => {
   const target = event.target as HTMLInputElement
   const files = Array.from(target.files || [])
 
@@ -147,7 +162,10 @@ const validateForm = (): boolean => {
       return false
     }
   } else if (formData.reportType === 'inappropriate') {
-    if (formData.inappropriateReasons.length === 0 || !formData.inappropriateDescription.trim()) {
+    if (
+      formData.inappropriateReasons.length === 0 ||
+      !formData.inappropriateDescription.trim()
+    ) {
       warning('请完整填写表单必填项')
       return false
     }
@@ -157,7 +175,10 @@ const validateForm = (): boolean => {
       return false
     }
   } else if (formData.reportType === 'suggestion') {
-    if (!formData.suggestionDescription.trim() || !formData.suggestionReason.trim()) {
+    if (
+      !formData.suggestionDescription.trim() ||
+      !formData.suggestionReason.trim()
+    ) {
       warning('请完整填写表单必填项')
       return false
     }
@@ -170,9 +191,9 @@ const validateForm = (): boolean => {
 const uploadFiles = async (files: File[]): Promise<string[]> => {
   if (files.length === 0) return []
 
-  const uploadPromises = files.map(file => uploadFile(file, '反馈投诉'))
+  const uploadPromises = files.map((file) => uploadFile(file, '反馈投诉'))
   const uploadResults = await Promise.all(uploadPromises)
-  return uploadResults.map(result => result.file_url)
+  return uploadResults.map((result) => result.file_url)
 }
 
 // 提交表单
@@ -185,10 +206,13 @@ const handleSubmit = async () => {
     let allFiles: File[] = []
     let description = ''
     let reason = ''
-    
+
     switch (formData.reportType) {
       case 'copyright':
-        allFiles = [...formData.copyrightProofFiles, ...formData.copyrightInfringementFiles]
+        allFiles = [
+          ...formData.copyrightProofFiles,
+          ...formData.copyrightInfringementFiles
+        ]
         description = formData.copyrightDescription
         // 版权侵权需要记录文件分组信息，存在reason字段
         reason = JSON.stringify({
@@ -205,7 +229,10 @@ const handleSubmit = async () => {
         allFiles = [...formData.summaryScreenshotFiles]
         description = formData.summaryDescription
         // 提交中文标签而不是英文key，保持系统统一
-        reason = summaryIssueTypes.find(item => item.value === formData.summaryIssueType)?.label || formData.summaryIssueType
+        reason =
+          summaryIssueTypes.find(
+            (item) => item.value === formData.summaryIssueType
+          )?.label || formData.summaryIssueType
         break
       case 'suggestion':
         allFiles = [...formData.suggestionAttachmentFiles]
@@ -346,8 +373,13 @@ const formatDate = (date?: string) => {
           <span class="number">*01</span>
           请输入反馈的地址
         </label>
-        <input v-model="formData.reportUrl" type="url" class="input" placeholder="请输入需要反馈的网页地址"
-          :disabled="submitting" />
+        <input
+          v-model="formData.reportUrl"
+          type="url"
+          class="input"
+          placeholder="请输入需要反馈的网页地址"
+          :disabled="submitting"
+        />
       </div>
 
       <!-- 02 反馈类型 -->
@@ -357,9 +389,18 @@ const formatDate = (date?: string) => {
           反馈类型
         </label>
         <div class="radio-group">
-          <label v-for="option in feedbackTypes" :key="option.value" class="radio-item"
-            :class="{ active: formData.reportType === option.value }">
-            <input v-model="formData.reportType" type="radio" :value="option.value" :disabled="submitting" />
+          <label
+            v-for="option in feedbackTypes"
+            :key="option.value"
+            class="radio-item"
+            :class="{ active: formData.reportType === option.value }"
+          >
+            <input
+              v-model="formData.reportType"
+              type="radio"
+              :value="option.value"
+              :disabled="submitting"
+            />
             <span class="radio-label">{{ option.label }}</span>
           </label>
         </div>
@@ -371,10 +412,14 @@ const formatDate = (date?: string) => {
           <span class="number">03</span>
           联系邮箱
         </label>
-        <div class="info-text">
-          提供邮箱可以方便我们与您联系处理结果
-        </div>
-        <input v-model="formData.email" type="email" class="input" placeholder="请输入邮箱地址" :disabled="submitting" />
+        <div class="info-text">提供邮箱可以方便我们与您联系处理结果</div>
+        <input
+          v-model="formData.email"
+          type="email"
+          class="input"
+          placeholder="请输入邮箱地址"
+          :disabled="submitting"
+        />
       </div>
 
       <!-- 内容版权侵权投诉 -->
@@ -384,8 +429,13 @@ const formatDate = (date?: string) => {
             <span class="number">*04</span>
             请输入侵权说明
           </label>
-          <textarea v-model="formData.copyrightDescription" class="textarea" placeholder="请详细说明侵权情况" rows="6"
-            :disabled="submitting"></textarea>
+          <textarea
+            v-model="formData.copyrightDescription"
+            class="textarea"
+            placeholder="请详细说明侵权情况"
+            rows="6"
+            :disabled="submitting"
+          ></textarea>
         </div>
 
         <div class="form-group">
@@ -397,20 +447,37 @@ const formatDate = (date?: string) => {
             可通过提供不限于以下的形式：商标注册书、专利著作权证明、后台截图等
           </div>
           <div class="file-upload-section">
-            <input ref="copyrightProofInputRef" type="file" multiple accept="image/*,.pdf,.doc,.docx" style="display: none"
-              @change="handleFileUpload($event, 'copyrightProof')" />
+            <input
+              ref="copyrightProofInputRef"
+              type="file"
+              multiple
+              accept="image/*,.pdf,.doc,.docx"
+              style="display: none"
+              @change="handleFileUpload($event, 'copyrightProof')"
+            />
             <div class="upload-area" @click="copyrightProofInputRef?.click()">
               <i class="ri-add-line"></i>
-              <span>点击选择<br>图片/文件</span>
+              <span>点击选择<br />图片/文件</span>
             </div>
           </div>
           <!-- 文件列表 -->
-          <div v-if="formData.copyrightProofFiles.length > 0" class="uploaded-files-inline">
+          <div
+            v-if="formData.copyrightProofFiles.length > 0"
+            class="uploaded-files-inline"
+          >
             <div class="file-list">
-              <div v-for="(file, index) in formData.copyrightProofFiles" :key="index" class="file-item">
+              <div
+                v-for="(file, index) in formData.copyrightProofFiles"
+                :key="index"
+                class="file-item"
+              >
                 <i class="ri-file-line"></i>
                 <span class="file-name">{{ file.name }}</span>
-                <button type="button" class="remove-btn" @click="removeFile(index, 'copyrightProof')">
+                <button
+                  type="button"
+                  class="remove-btn"
+                  @click="removeFile(index, 'copyrightProof')"
+                >
                   <i class="ri-close-line"></i>
                 </button>
               </div>
@@ -423,24 +490,42 @@ const formatDate = (date?: string) => {
             <span class="number">*06</span>
             声明侵权的内容
           </label>
-          <div class="info-text">
-            请提供具有时间依据的内容对比材料
-          </div>
+          <div class="info-text">请提供具有时间依据的内容对比材料</div>
           <div class="file-upload-section">
-            <input ref="copyrightInfringementInputRef" type="file" multiple accept="image/*,.pdf,.doc,.docx" style="display: none"
-              @change="handleFileUpload($event, 'copyrightInfringement')" />
-            <div class="upload-area" @click="copyrightInfringementInputRef?.click()">
+            <input
+              ref="copyrightInfringementInputRef"
+              type="file"
+              multiple
+              accept="image/*,.pdf,.doc,.docx"
+              style="display: none"
+              @change="handleFileUpload($event, 'copyrightInfringement')"
+            />
+            <div
+              class="upload-area"
+              @click="copyrightInfringementInputRef?.click()"
+            >
               <i class="ri-add-line"></i>
-              <span>点击选择<br>图片/文件</span>
+              <span>点击选择<br />图片/文件</span>
             </div>
           </div>
           <!-- 文件列表 -->
-          <div v-if="formData.copyrightInfringementFiles.length > 0" class="uploaded-files-inline">
+          <div
+            v-if="formData.copyrightInfringementFiles.length > 0"
+            class="uploaded-files-inline"
+          >
             <div class="file-list">
-              <div v-for="(file, index) in formData.copyrightInfringementFiles" :key="index" class="file-item">
+              <div
+                v-for="(file, index) in formData.copyrightInfringementFiles"
+                :key="index"
+                class="file-item"
+              >
                 <i class="ri-file-line"></i>
                 <span class="file-name">{{ file.name }}</span>
-                <button type="button" class="remove-btn" @click="removeFile(index, 'copyrightInfringement')">
+                <button
+                  type="button"
+                  class="remove-btn"
+                  @click="removeFile(index, 'copyrightInfringement')"
+                >
                   <i class="ri-close-line"></i>
                 </button>
               </div>
@@ -457,9 +542,17 @@ const formatDate = (date?: string) => {
             请选择投诉原因
           </label>
           <div class="checkbox-group">
-            <label v-for="reason in inappropriateReasons" :key="reason" class="checkbox-item">
-              <input type="checkbox" :checked="formData.inappropriateReasons.includes(reason)"
-                @change="toggleReason(reason)" :disabled="submitting" />
+            <label
+              v-for="reason in inappropriateReasons"
+              :key="reason"
+              class="checkbox-item"
+            >
+              <input
+                type="checkbox"
+                :checked="formData.inappropriateReasons.includes(reason)"
+                @change="toggleReason(reason)"
+                :disabled="submitting"
+              />
               <span class="checkbox-label">{{ reason }}</span>
             </label>
           </div>
@@ -470,8 +563,13 @@ const formatDate = (date?: string) => {
             <span class="number">*05</span>
             请输入投诉内容
           </label>
-          <textarea v-model="formData.inappropriateDescription" class="textarea" placeholder="请输入" rows="6"
-            :disabled="submitting"></textarea>
+          <textarea
+            v-model="formData.inappropriateDescription"
+            class="textarea"
+            placeholder="请输入"
+            rows="6"
+            :disabled="submitting"
+          ></textarea>
         </div>
 
         <div class="form-group">
@@ -480,20 +578,40 @@ const formatDate = (date?: string) => {
             请上传证据截图
           </label>
           <div class="file-upload-section">
-            <input ref="inappropriateEvidenceInputRef" type="file" multiple accept="image/*,.pdf,.doc,.docx" style="display: none"
-              @change="handleFileUpload($event, 'inappropriateEvidence')" />
-            <div class="upload-area" @click="inappropriateEvidenceInputRef?.click()">
+            <input
+              ref="inappropriateEvidenceInputRef"
+              type="file"
+              multiple
+              accept="image/*,.pdf,.doc,.docx"
+              style="display: none"
+              @change="handleFileUpload($event, 'inappropriateEvidence')"
+            />
+            <div
+              class="upload-area"
+              @click="inappropriateEvidenceInputRef?.click()"
+            >
               <i class="ri-add-line"></i>
-              <span>点击选择<br>图片/文件</span>
+              <span>点击选择<br />图片/文件</span>
             </div>
           </div>
           <!-- 文件列表 -->
-          <div v-if="formData.inappropriateEvidenceFiles.length > 0" class="uploaded-files-inline">
+          <div
+            v-if="formData.inappropriateEvidenceFiles.length > 0"
+            class="uploaded-files-inline"
+          >
             <div class="file-list">
-              <div v-for="(file, index) in formData.inappropriateEvidenceFiles" :key="index" class="file-item">
+              <div
+                v-for="(file, index) in formData.inappropriateEvidenceFiles"
+                :key="index"
+                class="file-item"
+              >
                 <i class="ri-file-line"></i>
                 <span class="file-name">{{ file.name }}</span>
-                <button type="button" class="remove-btn" @click="removeFile(index, 'inappropriateEvidence')">
+                <button
+                  type="button"
+                  class="remove-btn"
+                  @click="removeFile(index, 'inappropriateEvidence')"
+                >
                   <i class="ri-close-line"></i>
                 </button>
               </div>
@@ -513,9 +631,18 @@ const formatDate = (date?: string) => {
             文章摘要由AI模型自动生成，内容已经过人工审核。如发现生成内容有问题，请选择相应的反馈原因。
           </div>
           <div class="radio-group">
-            <label v-for="issueType in summaryIssueTypes" :key="issueType.value" class="radio-item"
-              :class="{ active: formData.summaryIssueType === issueType.value }">
-              <input v-model="formData.summaryIssueType" type="radio" :value="issueType.value" :disabled="submitting" />
+            <label
+              v-for="issueType in summaryIssueTypes"
+              :key="issueType.value"
+              class="radio-item"
+              :class="{ active: formData.summaryIssueType === issueType.value }"
+            >
+              <input
+                v-model="formData.summaryIssueType"
+                type="radio"
+                :value="issueType.value"
+                :disabled="submitting"
+              />
               <span class="radio-label">{{ issueType.label }}</span>
             </label>
           </div>
@@ -526,8 +653,13 @@ const formatDate = (date?: string) => {
             <span class="number">*05</span>
             请输入反馈内容
           </label>
-          <textarea v-model="formData.summaryDescription" class="textarea" placeholder="请输入" rows="6"
-            :disabled="submitting"></textarea>
+          <textarea
+            v-model="formData.summaryDescription"
+            class="textarea"
+            placeholder="请输入"
+            rows="6"
+            :disabled="submitting"
+          ></textarea>
         </div>
 
         <div class="form-group">
@@ -536,20 +668,40 @@ const formatDate = (date?: string) => {
             请上传相关截图
           </label>
           <div class="file-upload-section">
-            <input ref="summaryScreenshotInputRef" type="file" multiple accept="image/*,.pdf,.doc,.docx" style="display: none"
-              @change="handleFileUpload($event, 'summaryScreenshot')" />
-            <div class="upload-area" @click="summaryScreenshotInputRef?.click()">
+            <input
+              ref="summaryScreenshotInputRef"
+              type="file"
+              multiple
+              accept="image/*,.pdf,.doc,.docx"
+              style="display: none"
+              @change="handleFileUpload($event, 'summaryScreenshot')"
+            />
+            <div
+              class="upload-area"
+              @click="summaryScreenshotInputRef?.click()"
+            >
               <i class="ri-add-line"></i>
-              <span>点击选择<br>图片/文件</span>
+              <span>点击选择<br />图片/文件</span>
             </div>
           </div>
           <!-- 文件列表 -->
-          <div v-if="formData.summaryScreenshotFiles.length > 0" class="uploaded-files-inline">
+          <div
+            v-if="formData.summaryScreenshotFiles.length > 0"
+            class="uploaded-files-inline"
+          >
             <div class="file-list">
-              <div v-for="(file, index) in formData.summaryScreenshotFiles" :key="index" class="file-item">
+              <div
+                v-for="(file, index) in formData.summaryScreenshotFiles"
+                :key="index"
+                class="file-item"
+              >
                 <i class="ri-file-line"></i>
                 <span class="file-name">{{ file.name }}</span>
-                <button type="button" class="remove-btn" @click="removeFile(index, 'summaryScreenshot')">
+                <button
+                  type="button"
+                  class="remove-btn"
+                  @click="removeFile(index, 'summaryScreenshot')"
+                >
                   <i class="ri-close-line"></i>
                 </button>
               </div>
@@ -565,8 +717,13 @@ const formatDate = (date?: string) => {
             <span class="number">*04</span>
             请输入功能描述
           </label>
-          <textarea v-model="formData.suggestionDescription" class="textarea" placeholder="请详细描述您希望增加的功能" rows="4"
-            :disabled="submitting"></textarea>
+          <textarea
+            v-model="formData.suggestionDescription"
+            class="textarea"
+            placeholder="请详细描述您希望增加的功能"
+            rows="4"
+            :disabled="submitting"
+          ></textarea>
         </div>
 
         <div class="form-group">
@@ -574,8 +731,13 @@ const formatDate = (date?: string) => {
             <span class="number">*05</span>
             请输入使用场景
           </label>
-          <textarea v-model="formData.suggestionReason" class="textarea" placeholder="请描述该功能的具体使用场景和解决的问题" rows="4"
-            :disabled="submitting"></textarea>
+          <textarea
+            v-model="formData.suggestionReason"
+            class="textarea"
+            placeholder="请描述该功能的具体使用场景和解决的问题"
+            rows="4"
+            :disabled="submitting"
+          ></textarea>
         </div>
 
         <div class="form-group">
@@ -587,20 +749,40 @@ const formatDate = (date?: string) => {
             可上传设计图、示意图等相关文件，帮助我们更好地理解您的建议
           </div>
           <div class="file-upload-section">
-            <input ref="suggestionAttachmentInputRef" type="file" multiple accept="image/*,.pdf,.doc,.docx" style="display: none"
-              @change="handleFileUpload($event, 'suggestionAttachment')" />
-            <div class="upload-area" @click="suggestionAttachmentInputRef?.click()">
+            <input
+              ref="suggestionAttachmentInputRef"
+              type="file"
+              multiple
+              accept="image/*,.pdf,.doc,.docx"
+              style="display: none"
+              @change="handleFileUpload($event, 'suggestionAttachment')"
+            />
+            <div
+              class="upload-area"
+              @click="suggestionAttachmentInputRef?.click()"
+            >
               <i class="ri-add-line"></i>
-              <span>点击选择<br>图片/文件</span>
+              <span>点击选择<br />图片/文件</span>
             </div>
           </div>
           <!-- 文件列表 -->
-          <div v-if="formData.suggestionAttachmentFiles.length > 0" class="uploaded-files-inline">
+          <div
+            v-if="formData.suggestionAttachmentFiles.length > 0"
+            class="uploaded-files-inline"
+          >
             <div class="file-list">
-              <div v-for="(file, index) in formData.suggestionAttachmentFiles" :key="index" class="file-item">
+              <div
+                v-for="(file, index) in formData.suggestionAttachmentFiles"
+                :key="index"
+                class="file-item"
+              >
                 <i class="ri-file-line"></i>
                 <span class="file-name">{{ file.name }}</span>
-                <button type="button" class="remove-btn" @click="removeFile(index, 'suggestionAttachment')">
+                <button
+                  type="button"
+                  class="remove-btn"
+                  @click="removeFile(index, 'suggestionAttachment')"
+                >
                   <i class="ri-close-line"></i>
                 </button>
               </div>
@@ -612,7 +794,10 @@ const formatDate = (date?: string) => {
       <!-- 提交按钮 -->
       <div class="form-actions">
         <button type="submit" class="submit-btn" :disabled="submitting">
-          <i class="ri-send-plane-fill" :class="{ 'ri-loader-4-line ri-spin': submitting }"></i>
+          <i
+            class="ri-send-plane-fill"
+            :class="{ 'ri-loader-4-line ri-spin': submitting }"
+          ></i>
           {{ submitting ? '提交中...' : '提交反馈' }}
         </button>
         <button type="button" class="query-btn" @click="openQueryDialog">
@@ -623,7 +808,11 @@ const formatDate = (date?: string) => {
     </form>
 
     <!-- 工单查询对话框 -->
-    <div v-if="showQueryDialog" class="dialog-overlay" @click.self="closeQueryDialog">
+    <div
+      v-if="showQueryDialog"
+      class="dialog-overlay"
+      @click.self="closeQueryDialog"
+    >
       <div class="dialog-content">
         <div class="dialog-header">
           <h3>工单查询</h3>
@@ -631,23 +820,26 @@ const formatDate = (date?: string) => {
             <i class="ri-close-line"></i>
           </button>
         </div>
-        
+
         <div class="dialog-body">
           <div class="query-input-group">
-            <input 
-              v-model="queryTicketNo" 
-              type="text" 
-              class="query-input" 
+            <input
+              v-model="queryTicketNo"
+              type="text"
+              class="query-input"
               placeholder="请输入工单号，例如：FB20241108001"
               @keyup.enter="handleQueryTicket"
             />
-            <button 
-              type="button" 
-              class="query-search-btn" 
+            <button
+              type="button"
+              class="query-search-btn"
               :disabled="queryLoading"
               @click="handleQueryTicket"
             >
-              <i class="ri-search-line" :class="{ 'ri-loader-4-line ri-spin': queryLoading }"></i>
+              <i
+                class="ri-search-line"
+                :class="{ 'ri-loader-4-line ri-spin': queryLoading }"
+              ></i>
               {{ queryLoading ? '查询中...' : '查询' }}
             </button>
           </div>
@@ -655,12 +847,17 @@ const formatDate = (date?: string) => {
           <!-- 查询结果 -->
           <div v-if="queryResult" class="query-result">
             <div class="result-header">
-              <span class="result-ticket">工单号：{{ queryResult.ticket_no }}</span>
-              <span class="result-status" :class="`status-${queryResult.status}`">
+              <span class="result-ticket"
+                >工单号：{{ queryResult.ticket_no }}</span
+              >
+              <span
+                class="result-status"
+                :class="`status-${queryResult.status}`"
+              >
                 {{ getStatusLabel(queryResult.status) }}
               </span>
             </div>
-            
+
             <div class="result-item">
               <label>反馈时间：</label>
               <span>{{ formatDate(queryResult.feedback_time) }}</span>
@@ -772,8 +969,8 @@ const formatDate = (date?: string) => {
         border-color: var(--theme-color);
       }
 
-      input[type="radio"],
-      input[type="checkbox"] {
+      input[type='radio'],
+      input[type='checkbox'] {
         margin: 0;
       }
 
@@ -783,7 +980,6 @@ const formatDate = (date?: string) => {
         color: var(--font-color);
       }
     }
-
 
     .file-upload-section {
       .upload-area {
@@ -825,10 +1021,8 @@ const formatDate = (date?: string) => {
           line-height: 1.3;
         }
       }
-
     }
   }
-
 
   .uploaded-files-inline {
     margin-top: 0.75rem;

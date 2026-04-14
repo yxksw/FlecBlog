@@ -5,7 +5,12 @@
       <div class="toolbar">
         <h2>系统设置</h2>
         <div class="actions">
-          <el-button type="primary" :loading="saving" :disabled="!canEditSettings" @click="handleSave">
+          <el-button
+            type="primary"
+            :loading="saving"
+            :disabled="!canEditSettings"
+            @click="handleSave"
+          >
             保存配置
           </el-button>
           <el-button @click="loadAllConfigs">重置</el-button>
@@ -16,37 +21,60 @@
       <el-tabs v-model="activeTab" class="setting-tabs">
         <!-- 基本配置标签页 -->
         <el-tab-pane label="基本配置" name="basic">
-          <BasicSettingsTab ref="basicTabRef" v-model:form="basicForm" :loading="loading || !canEditSettings" />
+          <BasicSettingsTab
+            ref="basicTabRef"
+            v-model:form="basicForm"
+            :loading="loading || !canEditSettings"
+          />
         </el-tab-pane>
 
         <!-- 博客配置标签页 -->
         <el-tab-pane label="博客配置" name="blog">
-          <BlogSettingsTab ref="blogTabRef" v-model:form="blogForm" :loading="loading || !canEditSettings" />
+          <BlogSettingsTab
+            ref="blogTabRef"
+            v-model:form="blogForm"
+            :loading="loading || !canEditSettings"
+          />
         </el-tab-pane>
 
         <!-- 通知配置标签页 -->
         <el-tab-pane label="通知配置" name="notification">
-          <NotificationSettingsTab v-model:form="notificationForm" :loading="loading || !canEditSettings" />
+          <NotificationSettingsTab
+            v-model:form="notificationForm"
+            :loading="loading || !canEditSettings"
+          />
         </el-tab-pane>
 
         <!-- 上传配置标签页 -->
         <el-tab-pane label="上传配置" name="upload">
-          <UploadSettingsTab v-model:form="uploadForm" :loading="loading || !canEditSettings" />
+          <UploadSettingsTab
+            v-model:form="uploadForm"
+            :loading="loading || !canEditSettings"
+          />
         </el-tab-pane>
 
         <!-- AI 配置标签页 -->
         <el-tab-pane label="AI 配置" name="ai">
-          <AISettingsTab v-model:form="aiForm" :loading="loading || !canEditSettings" />
+          <AISettingsTab
+            v-model:form="aiForm"
+            :loading="loading || !canEditSettings"
+          />
         </el-tab-pane>
 
         <!-- OAuth 配置标签页 -->
         <el-tab-pane label="OAuth 配置" name="oauth">
-          <OAuthSettingsTab v-model:form="oauthForm" :loading="loading || !canEditSettings" />
+          <OAuthSettingsTab
+            v-model:form="oauthForm"
+            :loading="loading || !canEditSettings"
+          />
         </el-tab-pane>
 
         <!-- 导入导出标签页 -->
         <el-tab-pane label="导入导出" name="import-export">
-          <ImportExportTab :readonly="!canEditSettings" @import-success="handleImportSuccess" />
+          <ImportExportTab
+            :readonly="!canEditSettings"
+            @import-success="handleImportSuccess"
+          />
         </el-tab-pane>
       </el-tabs>
     </el-card>
@@ -125,7 +153,12 @@ const blogForm = ref({
 
   // 社交媒体
   sidebarSocialList: [] as Array<{ name: string; url: string; icon: string }>,
-  footerSocialList: [] as Array<{ name: string; url: string; icon: string; position: string }>,
+  footerSocialList: [] as Array<{
+    name: string
+    url: string
+    icon: string
+    position: string
+  }>,
 
   // 页脚链接
   footerLinksList: [] as Array<{ name: string; url: string }>,
@@ -273,24 +306,40 @@ const loadBlogConfigs = async () => {
       typeof item === 'string' ? { value: item } : item
     )
 
-    blogForm.value.sidebarSocialList = parseJSON(configs.sidebar_social || '', [])
+    blogForm.value.sidebarSocialList = parseJSON(
+      configs.sidebar_social || '',
+      []
+    )
     blogForm.value.footerSocialList = parseJSON(configs.footer_social || '', [])
     blogForm.value.footerLinksList = parseJSON(configs.footer_links || '', [])
 
-    blogForm.value.profileList = Array(6).fill(null).map((_, i) =>
-      parseJSON(configs.about_profile || '', [])[i] || { label: '', value: '', color: '#43a6c6' }
-    )
+    blogForm.value.profileList = Array(6)
+      .fill(null)
+      .map(
+        (_, i) =>
+          parseJSON(configs.about_profile || '', [])[i] || {
+            label: '',
+            value: '',
+            color: '#43a6c6'
+          }
+      )
 
-    blogForm.value.mottoMainList = Array(2).fill(null).map((_, i) =>
-      parseJSON(configs.about_motto_main || '', [])[i] || ''
-    )
+    blogForm.value.mottoMainList = Array(2)
+      .fill(null)
+      .map((_, i) => parseJSON(configs.about_motto_main || '', [])[i] || '')
 
     blogForm.value.socializeList = parseJSON(configs.about_socialize || '', [])
     blogForm.value.creationList = parseJSON(configs.about_creation || '', [])
 
-    blogForm.value.versionsList = Array(3).fill(null).map((_, i) =>
-      parseJSON(configs.about_versions || '', [])[i] || { name: '', version: '' }
-    )
+    blogForm.value.versionsList = Array(3)
+      .fill(null)
+      .map(
+        (_, i) =>
+          parseJSON(configs.about_versions || '', [])[i] || {
+            name: '',
+            version: ''
+          }
+      )
 
     blogForm.value.unionsList = parseJSON(configs.about_unions || '', [])
     blogForm.value.custom_head = configs.custom_head || ''
@@ -342,7 +391,7 @@ const loadUploadConfigs = async () => {
 }
 
 // JSON 解析辅助函数
-const parseJSON = <T>(jsonStr: string, fallback: T): T => {
+const parseJSON = <T,>(jsonStr: string, fallback: T): T => {
   try {
     return jsonStr ? JSON.parse(jsonStr) : fallback
   } catch {
@@ -428,14 +477,20 @@ const handleSave = async () => {
     if (basicUploaders) {
       if (basicUploaders.authorAvatarUploaderRef?.getPendingCount()) {
         uploadPromises.push(
-          basicUploaders.authorAvatarUploaderRef.uploadPendingFile()
-            .then(url => { if (url) basicForm.value.author_avatar = url })
+          basicUploaders.authorAvatarUploaderRef
+            .uploadPendingFile()
+            .then((url) => {
+              if (url) basicForm.value.author_avatar = url
+            })
         )
       }
       if (basicUploaders.authorPhotoUploaderRef?.getPendingCount()) {
         uploadPromises.push(
-          basicUploaders.authorPhotoUploaderRef.uploadPendingFile()
-            .then(url => { if (url) basicForm.value.author_photo = url })
+          basicUploaders.authorPhotoUploaderRef
+            .uploadPendingFile()
+            .then((url) => {
+              if (url) basicForm.value.author_photo = url
+            })
         )
       }
     }
@@ -444,26 +499,36 @@ const handleSave = async () => {
     if (blogUploaders) {
       if (blogUploaders.faviconUploaderRef?.getPendingCount()) {
         uploadPromises.push(
-          blogUploaders.faviconUploaderRef.uploadPendingFile()
-            .then(url => { if (url) blogForm.value.favicon = url })
+          blogUploaders.faviconUploaderRef.uploadPendingFile().then((url) => {
+            if (url) blogForm.value.favicon = url
+          })
         )
       }
       if (blogUploaders.backgroundUploaderRef?.getPendingCount()) {
         uploadPromises.push(
-          blogUploaders.backgroundUploaderRef.uploadPendingFile()
-            .then(url => { if (url) blogForm.value.background_image = url })
+          blogUploaders.backgroundUploaderRef
+            .uploadPendingFile()
+            .then((url) => {
+              if (url) blogForm.value.background_image = url
+            })
         )
       }
       if (blogUploaders.screenshotUploaderRef?.getPendingCount()) {
         uploadPromises.push(
-          blogUploaders.screenshotUploaderRef.uploadPendingFile()
-            .then(url => { if (url) blogForm.value.screenshot = url })
+          blogUploaders.screenshotUploaderRef
+            .uploadPendingFile()
+            .then((url) => {
+              if (url) blogForm.value.screenshot = url
+            })
         )
       }
       if (blogUploaders.aboutExhibitionUploaderRef?.getPendingCount()) {
         uploadPromises.push(
-          blogUploaders.aboutExhibitionUploaderRef.uploadPendingFile()
-            .then(url => { if (url) blogForm.value.about_exhibition = url })
+          blogUploaders.aboutExhibitionUploaderRef
+            .uploadPendingFile()
+            .then((url) => {
+              if (url) blogForm.value.about_exhibition = url
+            })
         )
       }
     }
@@ -471,7 +536,7 @@ const handleSave = async () => {
     // 等待所有上传完成（使用 allSettled 确保即使部分失败也继续）
     if (uploadPromises.length > 0) {
       const results = await Promise.allSettled(uploadPromises)
-      const failedUploads = results.filter(r => r.status === 'rejected')
+      const failedUploads = results.filter((r) => r.status === 'rejected')
       if (failedUploads.length > 0) {
         saving.value = false
         ElMessage.error(`${failedUploads.length} 个文件上传失败，请重试`)
@@ -505,7 +570,9 @@ const handleSave = async () => {
       'blog.background_image': blogForm.value.background_image,
       'blog.screenshot': blogForm.value.screenshot,
       'blog.announcement': blogForm.value.announcement,
-      'blog.typing_texts': JSON.stringify(blogForm.value.typingTextsList.map(item => item.value)),
+      'blog.typing_texts': JSON.stringify(
+        blogForm.value.typingTextsList.map((item) => item.value)
+      ),
       'blog.sidebar_social': JSON.stringify(blogForm.value.sidebarSocialList),
       'blog.footer_social': JSON.stringify(blogForm.value.footerSocialList),
       'blog.footer_links': JSON.stringify(blogForm.value.footerLinksList),
@@ -581,7 +648,8 @@ const handleSave = async () => {
       'oauth.qq.redirect_url': oauthForm.value['qq.redirect_url'],
       'oauth.microsoft.enabled': oauthForm.value['microsoft.enabled'],
       'oauth.microsoft.client_id': oauthForm.value['microsoft.client_id'],
-      'oauth.microsoft.client_secret': oauthForm.value['microsoft.client_secret'],
+      'oauth.microsoft.client_secret':
+        oauthForm.value['microsoft.client_secret'],
       'oauth.microsoft.redirect_url': oauthForm.value['microsoft.redirect_url']
     }
 
@@ -620,7 +688,10 @@ const validTabs = new Set<SettingGroupType | 'import-export'>([
 watch(
   () => route.query.tab,
   (tab) => {
-    if (typeof tab === 'string' && validTabs.has(tab as SettingGroupType | 'import-export')) {
+    if (
+      typeof tab === 'string' &&
+      validTabs.has(tab as SettingGroupType | 'import-export')
+    ) {
       activeTab.value = tab
     }
   },

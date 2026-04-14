@@ -1,5 +1,10 @@
 <script setup lang="ts">
-import { login, register, forgotPassword, resetPassword } from '@/composables/api/user'
+import {
+  login,
+  register,
+  forgotPassword,
+  resetPassword
+} from '@/composables/api/user'
 
 const props = defineProps<{
   modelValue: boolean
@@ -7,7 +12,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   'update:modelValue': [value: boolean]
-  'loginSuccess': []
+  loginSuccess: []
 }>()
 
 const mode = ref<'login' | 'register' | 'forgot'>('login')
@@ -30,7 +35,6 @@ const handleOAuthClick = (provider: string) => {
   window.location.href = getOAuthUrl(provider)
 }
 
-
 const formData = ref({
   email: '',
   nickname: '',
@@ -49,11 +53,15 @@ const showConfirmPassword = ref(false)
 const sendingCode = ref(false)
 const countdown = ref(0)
 
-const { pause: pauseCountdown, resume: startCountdown } = useIntervalFn(() => {
-  if (--countdown.value <= 0) {
-    pauseCountdown()
-  }
-}, 1000, { immediate: false })
+const { pause: pauseCountdown, resume: startCountdown } = useIntervalFn(
+  () => {
+    if (--countdown.value <= 0) {
+      pauseCountdown()
+    }
+  },
+  1000,
+  { immediate: false }
+)
 
 const clearMessages = () => {
   errorMessage.value = ''
@@ -69,7 +77,13 @@ const closeModal = () => {
   emit('update:modelValue', false)
   pauseCountdown()
   setTimeout(() => {
-    formData.value = { email: '', nickname: '', password: '', website: '', code: '' }
+    formData.value = {
+      email: '',
+      nickname: '',
+      password: '',
+      website: '',
+      code: ''
+    }
     confirmPassword.value = ''
     clearMessages()
     countdown.value = 0
@@ -93,9 +107,10 @@ const sendCode = async () => {
     successMessage.value = '验证码已发送'
     countdown.value = 60
     startCountdown()
-    setTimeout(() => successMessage.value = '', 2000)
+    setTimeout(() => (successMessage.value = ''), 2000)
   } catch (error: any) {
-    errorMessage.value = error.message || error.response?.data?.message || '发送失败'
+    errorMessage.value =
+      error.message || error.response?.data?.message || '发送失败'
   } finally {
     sendingCode.value = false
   }
@@ -207,7 +222,8 @@ const handleSubmit = async () => {
       }, 2000)
     }
   } catch (error: any) {
-    errorMessage.value = error.message || error.response?.data?.message || '操作失败，请稍后重试'
+    errorMessage.value =
+      error.message || error.response?.data?.message || '操作失败，请稍后重试'
   } finally {
     loading.value = false
   }
@@ -227,9 +243,32 @@ const handleSubmit = async () => {
           <!-- 标题 -->
           <div class="modal-header">
             <i
-              :class="mode === 'login' ? 'ri-user-line' : mode === 'register' ? 'ri-user-add-line' : 'ri-lock-password-line'"></i>
-            <h2>{{ mode === 'login' ? '欢迎回来' : mode === 'register' ? '创建账户' : '找回密码' }}</h2>
-            <p>{{ mode === 'login' ? '登录到您的账户' : mode === 'register' ? '注册一个新账户' : '输入邮箱获取验证码并设置新密码' }}</p>
+              :class="
+                mode === 'login'
+                  ? 'ri-user-line'
+                  : mode === 'register'
+                    ? 'ri-user-add-line'
+                    : 'ri-lock-password-line'
+              "
+            ></i>
+            <h2>
+              {{
+                mode === 'login'
+                  ? '欢迎回来'
+                  : mode === 'register'
+                    ? '创建账户'
+                    : '找回密码'
+              }}
+            </h2>
+            <p>
+              {{
+                mode === 'login'
+                  ? '登录到您的账户'
+                  : mode === 'register'
+                    ? '注册一个新账户'
+                    : '输入邮箱获取验证码并设置新密码'
+              }}
+            </p>
           </div>
 
           <!-- 表单 -->
@@ -237,26 +276,48 @@ const handleSubmit = async () => {
             <!-- 邮箱（登录） -->
             <div v-if="mode === 'login'" class="form-group">
               <label><i class="ri-mail-line"></i> 邮箱</label>
-              <input v-model="formData.email" type="email" placeholder="请输入邮箱" :disabled="loading"
-                autocomplete="email" />
+              <input
+                v-model="formData.email"
+                type="email"
+                placeholder="请输入邮箱"
+                :disabled="loading"
+                autocomplete="email"
+              />
             </div>
 
             <!-- 邮箱（注册 - 第一行） -->
             <div v-if="mode === 'register'" class="form-group">
               <label><i class="ri-mail-line"></i> 邮箱</label>
-              <input v-model="formData.email" type="email" placeholder="请输入邮箱" :disabled="loading" required
-                autocomplete="email" />
+              <input
+                v-model="formData.email"
+                type="email"
+                placeholder="请输入邮箱"
+                :disabled="loading"
+                required
+                autocomplete="email"
+              />
             </div>
 
             <!-- 昵称和网站地址（注册 - 第二行并排显示） -->
             <div v-if="mode === 'register'" class="form-row">
               <div class="form-group">
                 <label><i class="ri-user-line"></i> 昵称</label>
-                <input v-model="formData.nickname" type="text" placeholder="请输入昵称" :disabled="loading" required />
+                <input
+                  v-model="formData.nickname"
+                  type="text"
+                  placeholder="请输入昵称"
+                  :disabled="loading"
+                  required
+                />
               </div>
               <div class="form-group">
                 <label><i class="ri-global-line"></i> 网站地址（可选）</label>
-                <input v-model="formData.website" type="url" placeholder="https://example.com" :disabled="loading" />
+                <input
+                  v-model="formData.website"
+                  type="url"
+                  placeholder="https://example.com"
+                  :disabled="loading"
+                />
               </div>
             </div>
 
@@ -264,11 +325,26 @@ const handleSubmit = async () => {
             <div v-if="mode === 'forgot'" class="form-group">
               <label><i class="ri-mail-line"></i> 邮箱地址</label>
               <div class="email-input-group">
-                <input v-model="formData.email" type="email" placeholder="请输入注册邮箱" :disabled="loading || sendingCode" />
-                <button type="button" class="send-code-btn" @click="sendCode"
-                  :disabled="sendingCode || countdown > 0 || loading">
+                <input
+                  v-model="formData.email"
+                  type="email"
+                  placeholder="请输入注册邮箱"
+                  :disabled="loading || sendingCode"
+                />
+                <button
+                  type="button"
+                  class="send-code-btn"
+                  @click="sendCode"
+                  :disabled="sendingCode || countdown > 0 || loading"
+                >
                   <i v-if="sendingCode" class="ri-loader-4-line spin"></i>
-                  {{ sendingCode ? '发送中' : countdown > 0 ? `${countdown}s` : '发送验证码' }}
+                  {{
+                    sendingCode
+                      ? '发送中'
+                      : countdown > 0
+                        ? `${countdown}s`
+                        : '发送验证码'
+                  }}
                 </button>
               </div>
             </div>
@@ -276,17 +352,37 @@ const handleSubmit = async () => {
             <!-- 验证码 -->
             <div v-if="mode === 'forgot'" class="form-group">
               <label><i class="ri-shield-check-line"></i> 验证码</label>
-              <input v-model="formData.code" type="text" placeholder="请输入邮件中的验证码" :disabled="loading" />
+              <input
+                v-model="formData.code"
+                type="text"
+                placeholder="请输入邮件中的验证码"
+                :disabled="loading"
+              />
             </div>
 
             <!-- 密码 -->
             <div class="form-group">
-              <label><i class="ri-lock-line"></i> {{ mode === 'forgot' ? '新密码' : '密码' }}</label>
+              <label
+                ><i class="ri-lock-line"></i>
+                {{ mode === 'forgot' ? '新密码' : '密码' }}</label
+              >
               <div class="password-input">
-                <input v-model="formData.password" :type="showPassword ? 'text' : 'password'"
-                  :placeholder="mode === 'login' ? '请输入密码' : '请输入密码（至少6位）'" :disabled="loading" />
-                <button type="button" class="toggle-password" @click="showPassword = !showPassword">
-                  <i :class="showPassword ? 'ri-eye-off-line' : 'ri-eye-line'"></i>
+                <input
+                  v-model="formData.password"
+                  :type="showPassword ? 'text' : 'password'"
+                  :placeholder="
+                    mode === 'login' ? '请输入密码' : '请输入密码（至少6位）'
+                  "
+                  :disabled="loading"
+                />
+                <button
+                  type="button"
+                  class="toggle-password"
+                  @click="showPassword = !showPassword"
+                >
+                  <i
+                    :class="showPassword ? 'ri-eye-off-line' : 'ri-eye-line'"
+                  ></i>
                 </button>
               </div>
             </div>
@@ -295,10 +391,22 @@ const handleSubmit = async () => {
             <div v-if="mode !== 'login'" class="form-group">
               <label><i class="ri-lock-line"></i> 确认密码</label>
               <div class="password-input">
-                <input v-model="confirmPassword" :type="showConfirmPassword ? 'text' : 'password'" placeholder="请再次输入密码"
-                  :disabled="loading" />
-                <button type="button" class="toggle-password" @click="showConfirmPassword = !showConfirmPassword">
-                  <i :class="showConfirmPassword ? 'ri-eye-off-line' : 'ri-eye-line'"></i>
+                <input
+                  v-model="confirmPassword"
+                  :type="showConfirmPassword ? 'text' : 'password'"
+                  placeholder="请再次输入密码"
+                  :disabled="loading"
+                />
+                <button
+                  type="button"
+                  class="toggle-password"
+                  @click="showConfirmPassword = !showConfirmPassword"
+                >
+                  <i
+                    :class="
+                      showConfirmPassword ? 'ri-eye-off-line' : 'ri-eye-line'
+                    "
+                  ></i>
                 </button>
               </div>
             </div>
@@ -321,7 +429,15 @@ const handleSubmit = async () => {
             <!-- 提交按钮 -->
             <button type="submit" class="submit-btn" :disabled="loading">
               <i v-if="loading" class="ri-loader-4-line spin"></i>
-              {{ loading ? '处理中...' : mode === 'login' ? '登录' : mode === 'register' ? '注册' : '重置密码' }}
+              {{
+                loading
+                  ? '处理中...'
+                  : mode === 'login'
+                    ? '登录'
+                    : mode === 'register'
+                      ? '注册'
+                      : '重置密码'
+              }}
             </button>
           </form>
 
@@ -331,24 +447,52 @@ const handleSubmit = async () => {
               <span>其他登录方式</span>
             </div>
             <div class="social-buttons">
-              <button v-if="oauthConfig['github.enabled'] === 'true'" @click="handleOAuthClick('github')"
-                class="social-btn github" :disabled="oauthLoading !== null">
-                <i v-if="oauthLoading === 'github'" class="ri-loader-4-line spin"></i>
+              <button
+                v-if="oauthConfig['github.enabled'] === 'true'"
+                @click="handleOAuthClick('github')"
+                class="social-btn github"
+                :disabled="oauthLoading !== null"
+              >
+                <i
+                  v-if="oauthLoading === 'github'"
+                  class="ri-loader-4-line spin"
+                ></i>
                 <i v-else class="ri-github-fill"></i>
               </button>
-              <button v-if="oauthConfig['google.enabled'] === 'true'" @click="handleOAuthClick('google')"
-                class="social-btn google" :disabled="oauthLoading !== null">
-                <i v-if="oauthLoading === 'google'" class="ri-loader-4-line spin"></i>
+              <button
+                v-if="oauthConfig['google.enabled'] === 'true'"
+                @click="handleOAuthClick('google')"
+                class="social-btn google"
+                :disabled="oauthLoading !== null"
+              >
+                <i
+                  v-if="oauthLoading === 'google'"
+                  class="ri-loader-4-line spin"
+                ></i>
                 <i v-else class="ri-google-fill"></i>
               </button>
-              <button v-if="oauthConfig['qq.enabled'] === 'true'" @click="handleOAuthClick('qq')"
-                class="social-btn qq" :disabled="oauthLoading !== null">
-                <i v-if="oauthLoading === 'qq'" class="ri-loader-4-line spin"></i>
+              <button
+                v-if="oauthConfig['qq.enabled'] === 'true'"
+                @click="handleOAuthClick('qq')"
+                class="social-btn qq"
+                :disabled="oauthLoading !== null"
+              >
+                <i
+                  v-if="oauthLoading === 'qq'"
+                  class="ri-loader-4-line spin"
+                ></i>
                 <i v-else class="ri-qq-fill"></i>
               </button>
-              <button v-if="oauthConfig['microsoft.enabled'] === 'true'" @click="handleOAuthClick('microsoft')"
-                class="social-btn microsoft" :disabled="oauthLoading !== null">
-                <i v-if="oauthLoading === 'microsoft'" class="ri-loader-4-line spin"></i>
+              <button
+                v-if="oauthConfig['microsoft.enabled'] === 'true'"
+                @click="handleOAuthClick('microsoft')"
+                class="social-btn microsoft"
+                :disabled="oauthLoading !== null"
+              >
+                <i
+                  v-if="oauthLoading === 'microsoft'"
+                  class="ri-loader-4-line spin"
+                ></i>
                 <i v-else class="ri-microsoft-fill"></i>
               </button>
             </div>
@@ -356,9 +500,25 @@ const handleSubmit = async () => {
 
           <!-- 底部链接 -->
           <div class="modal-footer">
-            <span>{{ mode === 'login' ? '还没有账号？' : mode === 'register' ? '已有账号？' : '想起密码了？' }}</span>
-            <a @click.prevent="mode === 'login' ? toggleMode() : mode = 'login'">
-              {{ mode === 'login' ? '立即注册' : mode === 'register' ? '立即登录' : '返回登录' }}
+            <span>{{
+              mode === 'login'
+                ? '还没有账号？'
+                : mode === 'register'
+                  ? '已有账号？'
+                  : '想起密码了？'
+            }}</span>
+            <a
+              @click.prevent="
+                mode === 'login' ? toggleMode() : (mode = 'login')
+              "
+            >
+              {{
+                mode === 'login'
+                  ? '立即注册'
+                  : mode === 'register'
+                    ? '立即登录'
+                    : '返回登录'
+              }}
             </a>
           </div>
         </div>
@@ -680,7 +840,7 @@ const handleSubmit = async () => {
 }
 
 .modal-footer {
-  margin-top: .5rem;
+  margin-top: 0.5rem;
   text-align: center;
   font-size: 0.9rem;
   color: var(--theme-meta-color);

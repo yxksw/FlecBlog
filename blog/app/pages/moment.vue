@@ -4,7 +4,9 @@ import type { Moment } from '@@/types/moment'
 import { getMoments } from '@/composables/api/moment'
 
 const { basicConfig, blogConfig } = useSysConfig()
-const avatarUrl = computed(() => basicConfig.value.author_avatar || '/avatar.webp')
+const avatarUrl = computed(
+  () => basicConfig.value.author_avatar || '/avatar.webp'
+)
 const momentsPageSize = computed(() => {
   const configSize = parseInt(blogConfig.value['moments_size'] || '30')
   return configSize > 0 ? configSize : 30
@@ -74,11 +76,14 @@ onMounted(async () => {
   initZoom()
 })
 
-watch(() => moments.value.length, async () => {
-  await nextTick()
-  await waterfall()
-  initZoom()
-})
+watch(
+  () => moments.value.length,
+  async () => {
+    await nextTick()
+    await waterfall()
+    initZoom()
+  }
+)
 
 // 组件卸载时清理
 onUnmounted(() => {
@@ -115,7 +120,12 @@ const handleCommentClick = (moment: Moment) => {
     </div>
 
     <div v-else id="moment-list" class="moment-list">
-      <div v-for="moment in moments" :key="moment.id" class="moment-item" :class="{ 'layout-ready': isLayoutReady }">
+      <div
+        v-for="moment in moments"
+        :key="moment.id"
+        class="moment-item"
+        :class="{ 'layout-ready': isLayoutReady }"
+      >
         <!-- 上部分：头像、作者、时间 -->
         <div class="moment-header">
           <div class="moment-avatar">
@@ -123,7 +133,9 @@ const handleCommentClick = (moment: Moment) => {
           </div>
           <div class="moment-meta">
             <div class="moment-author">{{ basicConfig.author }}</div>
-            <div class="moment-time">{{ formatMomentTime(moment.publish_time) }}</div>
+            <div class="moment-time">
+              {{ formatMomentTime(moment.publish_time) }}
+            </div>
           </div>
         </div>
 
@@ -135,11 +147,21 @@ const handleCommentClick = (moment: Moment) => {
           </div>
 
           <!-- 图片内容 -->
-          <div v-if="moment.content.images?.length" class="moment-images"
-            :class="`images-${Math.min(moment.content.images.length, 6)}`">
-            <div v-for="(image, index) in moment.content.images.slice(0, 6)" :key="index" class="image-item">
+          <div
+            v-if="moment.content.images?.length"
+            class="moment-images"
+            :class="`images-${Math.min(moment.content.images.length, 6)}`"
+          >
+            <div
+              v-for="(image, index) in moment.content.images.slice(0, 6)"
+              :key="index"
+              class="image-item"
+            >
               <NuxtImg :src="image" :alt="`图片 ${index + 1}`" loading="lazy" />
-              <div v-if="index === 5 && moment.content.images.length > 6" class="more-images-overlay">
+              <div
+                v-if="index === 5 && moment.content.images.length > 6"
+                class="more-images-overlay"
+              >
                 <i class="ri-image-line"></i>
                 <span>+{{ moment.content.images.length - 6 }}</span>
               </div>
@@ -148,17 +170,40 @@ const handleCommentClick = (moment: Moment) => {
 
           <!-- 视频内容 -->
           <div v-if="moment.content.video" class="moment-video">
-            <video v-if="!moment.content.video.platform || moment.content.video.platform === 'local'"
-              :src="moment.content.video.url" controls preload="metadata"></video>
+            <video
+              v-if="
+                !moment.content.video.platform ||
+                moment.content.video.platform === 'local'
+              "
+              :src="moment.content.video.url"
+              controls
+              preload="metadata"
+            ></video>
 
-            <iframe v-else-if="moment.content.video.platform === 'bilibili'"
-              :src="`//player.bilibili.com/player.html?bvid=${moment.content.video.video_id}&autoplay=0`" scrolling="no"
-              border="0" frameborder="no" framespacing="0" allowfullscreen="true"></iframe>
+            <iframe
+              v-else-if="moment.content.video.platform === 'bilibili'"
+              :src="`//player.bilibili.com/player.html?bvid=${moment.content.video.video_id}&autoplay=0`"
+              scrolling="no"
+              border="0"
+              frameborder="no"
+              framespacing="0"
+              allowfullscreen="true"
+            ></iframe>
 
-            <iframe v-else-if="moment.content.video.platform === 'youtube'"
-              :src="`https://www.youtube.com/embed/${moment.content.video.video_id}`" frameborder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowfullscreen></iframe>
+            <iframe
+              v-else-if="moment.content.video.platform === 'youtube'"
+              :src="`https://www.youtube.com/embed/${moment.content.video.video_id}`"
+              frameborder="0"
+              allow="
+                accelerometer;
+                autoplay;
+                clipboard-write;
+                encrypted-media;
+                gyroscope;
+                picture-in-picture;
+              "
+              allowfullscreen
+            ></iframe>
           </div>
 
           <!-- 音乐内容 -->
@@ -167,10 +212,20 @@ const handleCommentClick = (moment: Moment) => {
           </div>
 
           <!-- 链接内容 -->
-          <a v-if="moment.content.link" :href="moment.content.link.url" target="_blank" rel="noopener noreferrer"
-            class="moment-link">
-            <NuxtImg v-if="moment.content.link.favicon" :src="moment.content.link.favicon" alt="favicon" loading="lazy"
-              class="link-favicon" />
+          <a
+            v-if="moment.content.link"
+            :href="moment.content.link.url"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="moment-link"
+          >
+            <NuxtImg
+              v-if="moment.content.link.favicon"
+              :src="moment.content.link.favicon"
+              alt="favicon"
+              loading="lazy"
+              class="link-favicon"
+            />
             <div class="link-info">
               <div class="link-title">{{ moment.content.link.title }}</div>
               <div class="link-url">{{ moment.content.link.url }}</div>
@@ -192,7 +247,11 @@ const handleCommentClick = (moment: Moment) => {
             </span>
           </div>
           <div class="moment-actions">
-            <button class="comment-btn" @click="handleCommentClick(moment)" title="评论此动态">
+            <button
+              class="comment-btn"
+              @click="handleCommentClick(moment)"
+              title="评论此动态"
+            >
               <i class="ri-chat-3-line"></i>
             </button>
           </div>
@@ -372,7 +431,7 @@ const handleCommentClick = (moment: Moment) => {
           grid-column: span 3;
         }
 
-        .image-item:nth-child(n+3) {
+        .image-item:nth-child(n + 3) {
           grid-column: span 2;
         }
       }
@@ -682,7 +741,7 @@ const handleCommentClick = (moment: Moment) => {
             grid-column: span 2;
           }
 
-          .image-item:nth-child(n+3) {
+          .image-item:nth-child(n + 3) {
             grid-column: span 1;
           }
         }

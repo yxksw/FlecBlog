@@ -21,11 +21,19 @@ const displayTitle = computed(() => {
 
 <template>
   <div class="nav-menu">
-    <div class="menu-items" :class="{ 'hide': isScrollingDown && isFixed }">
+    <div class="menu-items" :class="{ hide: isScrollingDown && isFixed }">
       <template v-for="menu in flatNavigationMenus" :key="menu.id">
         <!-- 有子菜单的菜单项 -->
-        <div v-if="menu.children && menu.children.length > 0" class="menu-item dropdown">
-          <a v-if="menu.url" :href="menu.url" class="brighten" :aria-label="menu.title">
+        <div
+          v-if="menu.children && menu.children.length > 0"
+          class="menu-item dropdown"
+        >
+          <a
+            v-if="menu.url"
+            :href="menu.url"
+            class="brighten"
+            :aria-label="menu.title"
+          >
             <i v-if="menu.icon" :class="menu.icon"></i>
             <span>{{ menu.title }}</span>
             <i class="ri-arrow-down-s-line arrow-icon"></i>
@@ -55,8 +63,13 @@ const displayTitle = computed(() => {
         </a>
       </template>
     </div>
-    <div class="scroll-title" :class="{ 'show': isScrollingDown && isFixed }">
-      <a href="#" class="scroll-to-top brighten no-after" @click.prevent="scrollToTop" aria-label="回到顶部">
+    <div class="scroll-title" :class="{ show: isScrollingDown && isFixed }">
+      <a
+        href="#"
+        class="scroll-to-top brighten no-after"
+        @click.prevent="scrollToTop"
+        aria-label="回到顶部"
+      >
         <span class="title" aria-hidden="true">{{ displayTitle }}</span>
       </a>
     </div>
@@ -64,7 +77,7 @@ const displayTitle = computed(() => {
 </template>
 
 <style lang="scss" scoped>
-@use "@/assets/css/mixins" as *;
+@use '@/assets/css/mixins' as *;
 
 .nav-menu {
   flex: 3;

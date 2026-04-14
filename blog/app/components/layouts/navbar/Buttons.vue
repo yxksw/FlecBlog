@@ -10,36 +10,42 @@ const isLoggedIn = useAuth()
 const { open: openLogin } = useLoginModal()
 
 // 用户信息
-const { userAvatar, userNickname, userEmail, fetchUserInfo, clearUserInfo } = useUser()
+const { userAvatar, userNickname, userEmail, fetchUserInfo, clearUserInfo } =
+  useUser()
 
 // 通知相关
-const { unreadCount, clearNotifications, fetchNotifications } = useNotifications()
+const { unreadCount, clearNotifications, fetchNotifications } =
+  useNotifications()
 
 let pollingTimer: number | null = null
 
 // 监听登录状态，自动启动/停止轮询（仅在客户端执行）
-watch(isLoggedIn, (loggedIn) => {
-  // 只在客户端执行
-  if (!process.client) return
+watch(
+  isLoggedIn,
+  (loggedIn) => {
+    // 只在客户端执行
+    if (!process.client) return
 
-  // 清理旧定时器
-  if (pollingTimer) {
-    clearInterval(pollingTimer)
-    pollingTimer = null
-  }
+    // 清理旧定时器
+    if (pollingTimer) {
+      clearInterval(pollingTimer)
+      pollingTimer = null
+    }
 
-  if (loggedIn) {
-    // 获取用户信息
-    fetchUserInfo()
-    // 30秒轮询一次未读通知数量
-    pollingTimer = window.setInterval(() => {
-      fetchNotifications({ page: 1, page_size: 1 })
-    }, 30000)
-  } else {
-    clearUserInfo()
-    clearNotifications()
-  }
-}, { immediate: true })
+    if (loggedIn) {
+      // 获取用户信息
+      fetchUserInfo()
+      // 30秒轮询一次未读通知数量
+      pollingTimer = window.setInterval(() => {
+        fetchNotifications({ page: 1, page_size: 1 })
+      }, 30000)
+    } else {
+      clearUserInfo()
+      clearNotifications()
+    }
+  },
+  { immediate: true }
+)
 
 onUnmounted(() => {
   if (pollingTimer) {
@@ -78,38 +84,66 @@ const handleLogout = () => {
 
 <template>
   <div class="nav-button">
-    <button class="brighten" @click="openSearch" aria-label="搜索"><i class="ri-search-line ri-xl"></i></button>
+    <button class="brighten" @click="openSearch" aria-label="搜索">
+      <i class="ri-search-line ri-xl"></i>
+    </button>
     <!-- 主题切换按钮 - 使用 CSS 控制图标显示，避免 SSR 闪烁 -->
-    <button class="brighten theme-toggle" @click="toggleTheme" aria-label="切换主题">
+    <button
+      class="brighten theme-toggle"
+      @click="toggleTheme"
+      aria-label="切换主题"
+    >
       <i class="ri-moon-line ri-xl theme-icon-moon"></i>
       <i class="ri-sun-line ri-xl theme-icon-sun"></i>
     </button>
     <!-- 登录按钮 - 客户端渲染避免 hydration mismatch -->
     <ClientOnly>
-      <button v-if="!isLoggedIn" class="brighten login-btn" @click="openLogin" aria-label="登录">
+      <button
+        v-if="!isLoggedIn"
+        class="brighten login-btn"
+        @click="openLogin"
+        aria-label="登录"
+      >
         <i class="ri-user-line ri-xl"></i>
       </button>
       <div v-else ref="userMenuRef" class="user-menu">
-        <button class="brighten user-btn" @click="toggleUserMenu" aria-label="用户菜单">
+        <button
+          class="brighten user-btn"
+          @click="toggleUserMenu"
+          aria-label="用户菜单"
+        >
           <i class="ri-user-3-fill ri-xl"></i>
         </button>
         <Transition name="dropdown">
           <div v-show="showUserMenu" class="user-dropdown" @click.stop>
             <div class="user-info">
-              <img :src="userAvatar" :alt="userNickname" class="user-avatar-large" />
+              <img
+                :src="userAvatar"
+                :alt="userNickname"
+                class="user-avatar-large"
+              />
               <div class="user-details">
                 <span class="user-nickname">{{ userNickname }}</span>
                 <span class="user-email">{{ userEmail }}</span>
               </div>
             </div>
-            <a href="/profile" class="dropdown-item" @click="showUserMenu = false">
+            <a
+              href="/profile"
+              class="dropdown-item"
+              @click="showUserMenu = false"
+            >
               <i class="ri-user-settings-line"></i>
               个人设置
             </a>
-            <a href="/notifications" class="dropdown-item notification-item" @click="showUserMenu = false">
+            <a
+              href="/notifications"
+              class="dropdown-item notification-item"
+              @click="showUserMenu = false"
+            >
               <i class="ri-notification-3-line"></i>
               <span>通知中心</span>
-              <span v-if="unreadCount > 0" class="notification-badge">{{ unreadCount > 99 ? '99+' : unreadCount
+              <span v-if="unreadCount > 0" class="notification-badge">{{
+                unreadCount > 99 ? '99+' : unreadCount
               }}</span>
             </a>
             <button class="dropdown-item" @click="handleLogout">
@@ -125,7 +159,11 @@ const handleLogout = () => {
         </button>
       </template>
     </ClientOnly>
-    <button class="button-menu brighten" @click="emit('toggleDrawer')" aria-label="打开菜单">
+    <button
+      class="button-menu brighten"
+      @click="emit('toggleDrawer')"
+      aria-label="打开菜单"
+    >
       <i class="ri-menu-line ri-xl"></i>
     </button>
   </div>
@@ -140,7 +178,7 @@ const handleLogout = () => {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  gap: .5rem;
+  gap: 0.5rem;
 
   .button-menu {
     display: none;

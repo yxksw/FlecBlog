@@ -1,5 +1,5 @@
-import request from "@/utils/request";
-import type { Subscriber, SubscriberQuery } from "@/types/subscriber";
+import request from '@/utils/request'
+import type { Subscriber, SubscriberQuery } from '@/types/subscriber'
 
 /**
  * 获取订阅者列表
@@ -7,7 +7,7 @@ import type { Subscriber, SubscriberQuery } from "@/types/subscriber";
  * @returns Promise<SubscriberListResponse>
  */
 export function getSubscribers(params: SubscriberQuery): Promise<any> {
-    return request.get("/admin/subscribers", { params });
+  return request.get('/admin/subscribers', { params })
 }
 
 /**
@@ -16,5 +16,5 @@ export function getSubscribers(params: SubscriberQuery): Promise<any> {
  * @returns Promise<void>
  */
 export function deleteSubscriber(id: number): Promise<void> {
-    return request.delete(`/admin/subscribers/${id}`);
+  return request.delete(`/admin/subscribers/${id}`)
 }

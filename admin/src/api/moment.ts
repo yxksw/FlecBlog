@@ -1,5 +1,10 @@
 import request from '@/utils/request'
-import type { Moment, MomentListData, CreateMomentRequest, UpdateMomentRequest } from '@/types/moment'
+import type {
+  Moment,
+  MomentListData,
+  CreateMomentRequest,
+  UpdateMomentRequest
+} from '@/types/moment'
 import type { PaginationQuery } from '@/types/request'
 
 /**
@@ -35,7 +40,10 @@ export function createMoment(data: CreateMomentRequest): Promise<Moment> {
  * @param data 动态数据
  * @returns Promise<Moment>
  */
-export function updateMoment(id: number, data: UpdateMomentRequest): Promise<Moment> {
+export function updateMoment(
+  id: number,
+  data: UpdateMomentRequest
+): Promise<Moment> {
   return request.put(`/admin/moments/${id}`, data)
 }
 

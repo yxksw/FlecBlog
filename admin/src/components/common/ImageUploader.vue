@@ -1,7 +1,13 @@
 <template>
   <div class="image-uploader">
     <div class="uploader-container" :style="{ width, height }">
-      <el-upload class="uploader-box" :show-file-list="false" :http-request="handleUpload" accept="image/*" :disabled="disabled">
+      <el-upload
+        class="uploader-box"
+        :show-file-list="false"
+        :http-request="handleUpload"
+        accept="image/*"
+        :disabled="disabled"
+      >
         <img v-if="imageUrl" :src="imageUrl" class="preview-image" />
         <div v-else class="upload-placeholder">
           <el-icon :size="40">
@@ -10,7 +16,12 @@
         </div>
       </el-upload>
 
-      <div v-if="imageUrl && !disabled" class="delete-btn" @click.stop="handleDelete" title="删除">
+      <div
+        v-if="imageUrl && !disabled"
+        class="delete-btn"
+        @click.stop="handleDelete"
+        title="删除"
+      >
         <el-icon>
           <Delete />
         </el-icon>
@@ -212,4 +223,3 @@ defineExpose({
   }
 }
 </style>
-

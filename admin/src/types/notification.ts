@@ -1,11 +1,11 @@
-import type { PaginationQuery } from "./request"
+import type { PaginationQuery } from './request'
 
 // 通知类型（后台管理系统）
-export type NotificationType = 
-  | "comment_new"        // 新评论
-  | "feedback_new"       // 反馈投诉
-  | "system_alert"       // 系统告警
-  | "friend_apply"       // 友链申请
+export type NotificationType =
+  | 'comment_new' // 新评论
+  | 'feedback_new' // 反馈投诉
+  | 'system_alert' // 系统告警
+  | 'friend_apply' // 友链申请
 
 // 通知数据类型定义
 export interface CommentNotificationData {
@@ -40,15 +40,20 @@ export interface FriendApplyNotificationData {
 export interface Notification {
   id: number
   type: NotificationType
-  type_text: string  // 类型中文文本（后端提供，前端直接显示）
-  
+  type_text: string // 类型中文文本（后端提供，前端直接显示）
+
   // 前端显示字段（直接使用）
   title: string
   content: string
   link: string
-  
+
   // 详细数据（备用）
-  data: CommentNotificationData | FeedbackNotificationData | SystemAlertNotificationData | FriendApplyNotificationData | Record<string, any>
+  data:
+    | CommentNotificationData
+    | FeedbackNotificationData
+    | SystemAlertNotificationData
+    | FriendApplyNotificationData
+    | Record<string, any>
   target_id?: number
   is_read: boolean
   read_at: string | null

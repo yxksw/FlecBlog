@@ -27,7 +27,7 @@ export interface MomentContent {
 export interface Moment {
   id: number
   content: MomentContent
-  is_publish: boolean  // 是否发布
+  is_publish: boolean // 是否发布
   publish_time: string
   created_at: string
   updated_at: string

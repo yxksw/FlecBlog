@@ -157,7 +157,6 @@ onUnmounted(() => {
 }
 
 @keyframes blink {
-
   0%,
   49% {
     opacity: 1;

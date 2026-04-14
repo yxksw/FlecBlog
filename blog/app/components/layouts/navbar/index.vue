@@ -25,7 +25,10 @@ const toggleDrawer = () => {
       <LayoutsNavbarAggregate />
       <LayoutsNavbarLogo />
     </div>
-    <LayoutsNavbarMenu :is-scrolling-down="isScrollingDown" :is-fixed="isFixed" />
+    <LayoutsNavbarMenu
+      :is-scrolling-down="isScrollingDown"
+      :is-fixed="isFixed"
+    />
     <LayoutsNavbarButtons @toggle-drawer="toggleDrawer" />
   </nav>
 
@@ -62,7 +65,9 @@ const toggleDrawer = () => {
   right: 0;
   z-index: 50;
   background-color: transparent;
-  transition: background-color 0.5s ease, opacity 0.5s ease-out;
+  transition:
+    background-color 0.5s ease,
+    opacity 0.5s ease-out;
 
   .nav-left {
     flex: 1;
@@ -124,4 +129,3 @@ const toggleDrawer = () => {
   }
 }
 </style>
-

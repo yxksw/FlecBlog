@@ -1,5 +1,12 @@
 <script setup lang="ts">
-import { getUserProfile, updateUserProfile, changePassword, setPassword, deactivateAccount, unbindOAuth } from '@/composables/api/user'
+import {
+  getUserProfile,
+  updateUserProfile,
+  changePassword,
+  setPassword,
+  deactivateAccount,
+  unbindOAuth
+} from '@/composables/api/user'
 import type { UserInfo, UserRole } from '@@/types/user'
 
 definePageMeta({})
@@ -36,7 +43,8 @@ const validators = {
     return ''
   },
   website: (val: string) => {
-    if (val && !/^https?:\/\/.+/.test(val)) return '网站地址格式不正确，请以 http:// 或 https:// 开头'
+    if (val && !/^https?:\/\/.+/.test(val))
+      return '网站地址格式不正确，请以 http:// 或 https:// 开头'
     return ''
   },
   badge: (val: string) => {
@@ -116,13 +124,13 @@ const handleEditSubmit = async () => {
   const { nickname, email, website } = editForm.value
 
   const nicknameError = validators.nickname(nickname)
-  if (nicknameError) return editErrors.value.nickname = nicknameError
+  if (nicknameError) return (editErrors.value.nickname = nicknameError)
 
   const emailError = validators.email(email)
-  if (emailError) return editErrors.value.email = emailError
+  if (emailError) return (editErrors.value.email = emailError)
 
   const websiteError = validators.website(website.trim())
-  if (websiteError) return editErrors.value.website = websiteError
+  if (websiteError) return (editErrors.value.website = websiteError)
 
   editLoading.value = true
   try {
@@ -180,12 +188,21 @@ const handleBadgeSubmit = async () => {
 }
 
 // ===== 修改密码对话框 =====
-const passwordForm = ref({ old_password: '', new_password: '', confirm_password: '' })
+const passwordForm = ref({
+  old_password: '',
+  new_password: '',
+  confirm_password: ''
+})
 const passwordLoading = ref(false)
 const passwordErrors = ref<Record<string, string>>({})
 
 watch(showPasswordDialog, (val) => {
-  if (val) passwordForm.value = { old_password: '', new_password: '', confirm_password: '' }
+  if (val)
+    passwordForm.value = {
+      old_password: '',
+      new_password: '',
+      confirm_password: ''
+    }
   passwordErrors.value = {}
 })
 
@@ -193,14 +210,17 @@ const handlePasswordSubmit = async () => {
   passwordErrors.value = {}
   const { old_password, new_password, confirm_password } = passwordForm.value
 
-  if (!old_password) return passwordErrors.value.old_password = '请输入旧密码'
+  if (!old_password) return (passwordErrors.value.old_password = '请输入旧密码')
 
   const pwdError = validators.password(new_password, true)
-  if (pwdError) return passwordErrors.value.new_password = pwdError
+  if (pwdError) return (passwordErrors.value.new_password = pwdError)
 
-  if (!confirm_password) return passwordErrors.value.confirm_password = '请确认新密码'
-  if (new_password !== confirm_password) return passwordErrors.value.confirm_password = '两次输入的密码不一致'
-  if (old_password === new_password) return passwordErrors.value.new_password = '新密码不能与旧密码相同'
+  if (!confirm_password)
+    return (passwordErrors.value.confirm_password = '请确认新密码')
+  if (new_password !== confirm_password)
+    return (passwordErrors.value.confirm_password = '两次输入的密码不一致')
+  if (old_password === new_password)
+    return (passwordErrors.value.new_password = '新密码不能与旧密码相同')
 
   passwordLoading.value = true
   try {
@@ -238,10 +258,12 @@ const handleSetPasswordSubmit = async () => {
   const { password, confirm_password } = setPasswordForm.value
 
   const pwdError = validators.password(password, true)
-  if (pwdError) return setPasswordErrors.value.password = pwdError
+  if (pwdError) return (setPasswordErrors.value.password = pwdError)
 
-  if (!confirm_password) return setPasswordErrors.value.confirm_password = '请确认密码'
-  if (password !== confirm_password) return setPasswordErrors.value.confirm_password = '两次输入的密码不一致'
+  if (!confirm_password)
+    return (setPasswordErrors.value.confirm_password = '请确认密码')
+  if (password !== confirm_password)
+    return (setPasswordErrors.value.confirm_password = '两次输入的密码不一致')
 
   setPasswordLoading.value = true
   try {
@@ -278,39 +300,39 @@ const handleLoginMethodClick = (provider: string, enabled: boolean) => {
   if (provider === 'password') {
     if (!enabled) {
       // 未设置密码，打开设置密码对话框
-      showSetPasswordDialog.value = true;
+      showSetPasswordDialog.value = true
     }
     // 已设置密码时不做任何操作（密码一旦设置不可撤销）
-    return;
+    return
   }
 
   // OAuth 方式处理
   if (enabled) {
     // 已绑定，检查是否可以解绑
-    const loginCount = getLoginMethodCount();
+    const loginCount = getLoginMethodCount()
     if (loginCount <= 1) {
-      showError('至少保留一种登录方式，无法解绑');
-      return;
+      showError('至少保留一种登录方式，无法解绑')
+      return
     }
     // 显示解绑对话框
-    unbindProvider.value = provider;
-    showUnbindDialog.value = true;
+    unbindProvider.value = provider
+    showUnbindDialog.value = true
   } else {
     // 未绑定，跳转绑定
-    bindOAuth(provider);
+    bindOAuth(provider)
   }
 }
 
 // 计算当前登录方式数量
 const getLoginMethodCount = () => {
-  if (!userInfo.value) return 0;
-  let count = 0;
-  if (userInfo.value.has_password) count++;
-  if (userInfo.value.linked_oauths?.includes('github')) count++;
-  if (userInfo.value.linked_oauths?.includes('google')) count++;
-  if (userInfo.value.linked_oauths?.includes('qq')) count++;
-  if (userInfo.value.linked_oauths?.includes('microsoft')) count++;
-  return count;
+  if (!userInfo.value) return 0
+  let count = 0
+  if (userInfo.value.has_password) count++
+  if (userInfo.value.linked_oauths?.includes('github')) count++
+  if (userInfo.value.linked_oauths?.includes('google')) count++
+  if (userInfo.value.linked_oauths?.includes('qq')) count++
+  if (userInfo.value.linked_oauths?.includes('microsoft')) count++
+  return count
 }
 
 // OAuth 绑定 loading 状态
@@ -329,7 +351,12 @@ const bindOAuth = (provider: string) => {
 const unbindLoading = ref(false)
 
 const getProviderName = (provider: string) => {
-  const names: Record<string, string> = { github: 'GitHub', google: 'Google', qq: 'QQ', microsoft: 'Microsoft' }
+  const names: Record<string, string> = {
+    github: 'GitHub',
+    google: 'Google',
+    qq: 'QQ',
+    microsoft: 'Microsoft'
+  }
   return names[provider] || provider
 }
 
@@ -349,8 +376,10 @@ const handleUnbindSubmit = async () => {
 
 const handleDeactivateSubmit = async () => {
   deactivateErrors.value = {}
-  if (!deactivateConfirmed.value) return deactivateErrors.value.confirmed = '请确认您已了解注销账户的后果'
-  if (!deactivatePassword.value) return deactivateErrors.value.password = '请输入密码以确认身份'
+  if (!deactivateConfirmed.value)
+    return (deactivateErrors.value.confirmed = '请确认您已了解注销账户的后果')
+  if (!deactivatePassword.value)
+    return (deactivateErrors.value.password = '请输入密码以确认身份')
 
   deactivateLoading.value = true
   try {
@@ -378,7 +407,7 @@ onMounted(async () => {
     router.push('/')
     return
   }
-  
+
   // 只在客户端获取需要认证的数据
   if (process.client) {
     await fetchProfile()
@@ -417,7 +446,12 @@ onMounted(async () => {
           <div class="info-item">
             <span class="label">头像</span>
             <span class="value">
-              <NuxtImg :src="getAvatarUrl(userInfo)" alt="头像" class="avatar-preview" loading="lazy" />
+              <NuxtImg
+                :src="getAvatarUrl(userInfo)"
+                alt="头像"
+                class="avatar-preview"
+                loading="lazy"
+              />
             </span>
           </div>
           <div class="info-item">
@@ -445,9 +479,15 @@ onMounted(async () => {
           <div class="info-item">
             <span class="label">铭牌标识</span>
             <span class="value">
-              <span v-if="userInfo.badge" class="badge-text">{{ userInfo.badge }}</span>
+              <span v-if="userInfo.badge" class="badge-text">{{
+                userInfo.badge
+              }}</span>
               <span v-else class="empty">未设置</span>
-              <button @click="showBadgeDialog = true" class="btn-icon" title="设置铭牌">
+              <button
+                @click="showBadgeDialog = true"
+                class="btn-icon"
+                title="设置铭牌"
+              >
                 <i class="ri-settings-4-line"></i>
               </button>
             </span>
@@ -457,58 +497,150 @@ onMounted(async () => {
             <span class="value">
               <div class="login-methods">
                 <!-- 密码登录方式 -->
-                <div class="method-icon"
-                  :class="{ enabled: userInfo?.has_password, disabled: !userInfo?.has_password, clickable: !userInfo?.has_password }"
+                <div
+                  class="method-icon"
+                  :class="{
+                    enabled: userInfo?.has_password,
+                    disabled: !userInfo?.has_password,
+                    clickable: !userInfo?.has_password
+                  }"
                   :title="userInfo?.has_password ? '密码登录' : '设置密码'"
-                  @click="handleLoginMethodClick('password', userInfo?.has_password ?? false)">
+                  @click="
+                    handleLoginMethodClick(
+                      'password',
+                      userInfo?.has_password ?? false
+                    )
+                  "
+                >
                   <i class="ri-lock-password-line"></i>
                 </div>
 
                 <!-- GitHub登录方式 -->
-                <div v-if="oauthConfig['github.enabled'] === 'true'" class="method-icon clickable" :class="{
-                  enabled: userInfo?.linked_oauths?.includes('github'),
-                  disabled: !userInfo?.linked_oauths?.includes('github'),
-                  loading: oauthBindLoading === 'github'
-                }"
-                  :title="oauthBindLoading === 'github' ? '绑定中...' : (userInfo?.linked_oauths?.includes('github') ? 'GitHub' : '绑定GitHub')"
-                  @click="oauthBindLoading ? null : handleLoginMethodClick('github', userInfo?.linked_oauths?.includes('github') ?? false)">
-                  <i v-if="oauthBindLoading === 'github'" class="ri-loader-4-line spin"></i>
+                <div
+                  v-if="oauthConfig['github.enabled'] === 'true'"
+                  class="method-icon clickable"
+                  :class="{
+                    enabled: userInfo?.linked_oauths?.includes('github'),
+                    disabled: !userInfo?.linked_oauths?.includes('github'),
+                    loading: oauthBindLoading === 'github'
+                  }"
+                  :title="
+                    oauthBindLoading === 'github'
+                      ? '绑定中...'
+                      : userInfo?.linked_oauths?.includes('github')
+                        ? 'GitHub'
+                        : '绑定GitHub'
+                  "
+                  @click="
+                    oauthBindLoading
+                      ? null
+                      : handleLoginMethodClick(
+                          'github',
+                          userInfo?.linked_oauths?.includes('github') ?? false
+                        )
+                  "
+                >
+                  <i
+                    v-if="oauthBindLoading === 'github'"
+                    class="ri-loader-4-line spin"
+                  ></i>
                   <i v-else class="ri-github-fill"></i>
                 </div>
 
                 <!-- Google登录方式 -->
-                <div v-if="oauthConfig['google.enabled'] === 'true'" class="method-icon clickable" :class="{
-                  enabled: userInfo?.linked_oauths?.includes('google'),
-                  disabled: !userInfo?.linked_oauths?.includes('google'),
-                  loading: oauthBindLoading === 'google'
-                }"
-                  :title="oauthBindLoading === 'google' ? '绑定中...' : (userInfo?.linked_oauths?.includes('google') ? 'Google' : '绑定Google')"
-                  @click="oauthBindLoading ? null : handleLoginMethodClick('google', userInfo?.linked_oauths?.includes('google') ?? false)">
-                  <i v-if="oauthBindLoading === 'google'" class="ri-loader-4-line spin"></i>
+                <div
+                  v-if="oauthConfig['google.enabled'] === 'true'"
+                  class="method-icon clickable"
+                  :class="{
+                    enabled: userInfo?.linked_oauths?.includes('google'),
+                    disabled: !userInfo?.linked_oauths?.includes('google'),
+                    loading: oauthBindLoading === 'google'
+                  }"
+                  :title="
+                    oauthBindLoading === 'google'
+                      ? '绑定中...'
+                      : userInfo?.linked_oauths?.includes('google')
+                        ? 'Google'
+                        : '绑定Google'
+                  "
+                  @click="
+                    oauthBindLoading
+                      ? null
+                      : handleLoginMethodClick(
+                          'google',
+                          userInfo?.linked_oauths?.includes('google') ?? false
+                        )
+                  "
+                >
+                  <i
+                    v-if="oauthBindLoading === 'google'"
+                    class="ri-loader-4-line spin"
+                  ></i>
                   <i v-else class="ri-google-fill"></i>
                 </div>
 
                 <!-- QQ登录方式 -->
-                <div v-if="oauthConfig['qq.enabled'] === 'true'" class="method-icon clickable" :class="{
-                  enabled: userInfo?.linked_oauths?.includes('qq'),
-                  disabled: !userInfo?.linked_oauths?.includes('qq'),
-                  loading: oauthBindLoading === 'qq'
-                }"
-                  :title="oauthBindLoading === 'qq' ? '绑定中...' : (userInfo?.linked_oauths?.includes('qq') ? 'QQ' : '绑定QQ')"
-                  @click="oauthBindLoading ? null : handleLoginMethodClick('qq', userInfo?.linked_oauths?.includes('qq') ?? false)">
-                  <i v-if="oauthBindLoading === 'qq'" class="ri-loader-4-line spin"></i>
+                <div
+                  v-if="oauthConfig['qq.enabled'] === 'true'"
+                  class="method-icon clickable"
+                  :class="{
+                    enabled: userInfo?.linked_oauths?.includes('qq'),
+                    disabled: !userInfo?.linked_oauths?.includes('qq'),
+                    loading: oauthBindLoading === 'qq'
+                  }"
+                  :title="
+                    oauthBindLoading === 'qq'
+                      ? '绑定中...'
+                      : userInfo?.linked_oauths?.includes('qq')
+                        ? 'QQ'
+                        : '绑定QQ'
+                  "
+                  @click="
+                    oauthBindLoading
+                      ? null
+                      : handleLoginMethodClick(
+                          'qq',
+                          userInfo?.linked_oauths?.includes('qq') ?? false
+                        )
+                  "
+                >
+                  <i
+                    v-if="oauthBindLoading === 'qq'"
+                    class="ri-loader-4-line spin"
+                  ></i>
                   <i v-else class="ri-qq-fill"></i>
                 </div>
 
                 <!-- Microsoft登录方式 -->
-                <div v-if="oauthConfig['microsoft.enabled'] === 'true'" class="method-icon clickable" :class="{
-                  enabled: userInfo?.linked_oauths?.includes('microsoft'),
-                  disabled: !userInfo?.linked_oauths?.includes('microsoft'),
-                  loading: oauthBindLoading === 'microsoft'
-                }"
-                  :title="oauthBindLoading === 'microsoft' ? '绑定中...' : (userInfo?.linked_oauths?.includes('microsoft') ? 'Microsoft' : '绑定Microsoft')"
-                  @click="oauthBindLoading ? null : handleLoginMethodClick('microsoft', userInfo?.linked_oauths?.includes('microsoft') ?? false)">
-                  <i v-if="oauthBindLoading === 'microsoft'" class="ri-loader-4-line spin"></i>
+                <div
+                  v-if="oauthConfig['microsoft.enabled'] === 'true'"
+                  class="method-icon clickable"
+                  :class="{
+                    enabled: userInfo?.linked_oauths?.includes('microsoft'),
+                    disabled: !userInfo?.linked_oauths?.includes('microsoft'),
+                    loading: oauthBindLoading === 'microsoft'
+                  }"
+                  :title="
+                    oauthBindLoading === 'microsoft'
+                      ? '绑定中...'
+                      : userInfo?.linked_oauths?.includes('microsoft')
+                        ? 'Microsoft'
+                        : '绑定Microsoft'
+                  "
+                  @click="
+                    oauthBindLoading
+                      ? null
+                      : handleLoginMethodClick(
+                          'microsoft',
+                          userInfo?.linked_oauths?.includes('microsoft') ??
+                            false
+                        )
+                  "
+                >
+                  <i
+                    v-if="oauthBindLoading === 'microsoft'"
+                    class="ri-loader-4-line spin"
+                  ></i>
                   <i v-else class="ri-microsoft-fill"></i>
                 </div>
               </div>
@@ -547,13 +679,27 @@ onMounted(async () => {
           <div class="info-item">
             <div class="action-item">
               <div class="action-info">
-                <span class="action-title">{{ userInfo?.has_password ? '修改密码' : '设置密码' }}</span>
-                <span class="action-desc">{{ userInfo?.has_password ? '修改账户登录密码' : '设置账户登录密码' }}</span>
+                <span class="action-title">{{
+                  userInfo?.has_password ? '修改密码' : '设置密码'
+                }}</span>
+                <span class="action-desc">{{
+                  userInfo?.has_password
+                    ? '修改账户登录密码'
+                    : '设置账户登录密码'
+                }}</span>
               </div>
-              <button v-if="userInfo?.has_password" @click="showPasswordDialog = true" class="btn-secondary">
+              <button
+                v-if="userInfo?.has_password"
+                @click="showPasswordDialog = true"
+                class="btn-secondary"
+              >
                 <i class="ri-lock-password-line"></i> 修改密码
               </button>
-              <button v-else @click="showSetPasswordDialog = true" class="btn-secondary">
+              <button
+                v-else
+                @click="showSetPasswordDialog = true"
+                class="btn-secondary"
+              >
                 <i class="ri-lock-password-line"></i> 设置密码
               </button>
             </div>
@@ -562,7 +708,9 @@ onMounted(async () => {
             <div class="action-item">
               <div class="action-info">
                 <span class="action-title">注销账户</span>
-                <span class="action-desc">永久删除账户及所有数据，此操作不可恢复</span>
+                <span class="action-desc"
+                  >永久删除账户及所有数据，此操作不可恢复</span
+                >
               </div>
               <button @click="showDeactivateDialog = true" class="btn-danger">
                 <i class="ri-delete-bin-line"></i> 注销账户
@@ -574,81 +722,171 @@ onMounted(async () => {
     </div>
 
     <!-- 编辑资料对话框 -->
-    <UiBaseDialog v-model="showEditDialog" @confirm="handleEditSubmit" title="编辑个人信息" style="--dialog-width: 500px"
-      :loading="editLoading" confirm-text="保存">
-      <form @submit.prevent="handleEditSubmit" style="display: flex; flex-direction: column; gap: 20px;">
+    <UiBaseDialog
+      v-model="showEditDialog"
+      @confirm="handleEditSubmit"
+      title="编辑个人信息"
+      style="--dialog-width: 500px"
+      :loading="editLoading"
+      confirm-text="保存"
+    >
+      <form
+        @submit.prevent="handleEditSubmit"
+        style="display: flex; flex-direction: column; gap: 20px"
+      >
         <div class="form-group">
           <label>头像</label>
           <div class="avatar-section">
-            <NuxtImg :src="editForm.avatar || (userInfo ? getAvatarUrl(userInfo) : '')" alt="头像" loading="lazy" />
-            <button type="button" @click="handleAvatarUpload" :disabled="uploading || editLoading">
+            <NuxtImg
+              :src="editForm.avatar || (userInfo ? getAvatarUrl(userInfo) : '')"
+              alt="头像"
+              loading="lazy"
+            />
+            <button
+              type="button"
+              @click="handleAvatarUpload"
+              :disabled="uploading || editLoading"
+            >
               {{ uploading ? '上传中...' : '更换头像' }}
             </button>
           </div>
-          <p v-if="editErrors.avatar" class="error-message">{{ editErrors.avatar }}</p>
+          <p v-if="editErrors.avatar" class="error-message">
+            {{ editErrors.avatar }}
+          </p>
         </div>
 
         <div class="form-group">
           <label class="form-label">昵称</label>
-          <input v-model="editForm.nickname" type="text" class="form-input" :class="{ error: editErrors.nickname }"
-            placeholder="请输入昵称（2-32个字符）" :disabled="editLoading" />
-          <p v-if="editErrors.nickname" class="error-message">{{ editErrors.nickname }}</p>
+          <input
+            v-model="editForm.nickname"
+            type="text"
+            class="form-input"
+            :class="{ error: editErrors.nickname }"
+            placeholder="请输入昵称（2-32个字符）"
+            :disabled="editLoading"
+          />
+          <p v-if="editErrors.nickname" class="error-message">
+            {{ editErrors.nickname }}
+          </p>
         </div>
 
         <div class="form-group">
           <label class="form-label">邮箱</label>
-          <input v-model="editForm.email" type="email" class="form-input" :class="{ error: editErrors.email }"
-            placeholder="请输入邮箱" :disabled="editLoading" />
-          <p v-if="editErrors.email" class="error-message">{{ editErrors.email }}</p>
+          <input
+            v-model="editForm.email"
+            type="email"
+            class="form-input"
+            :class="{ error: editErrors.email }"
+            placeholder="请输入邮箱"
+            :disabled="editLoading"
+          />
+          <p v-if="editErrors.email" class="error-message">
+            {{ editErrors.email }}
+          </p>
         </div>
 
         <div class="form-group">
           <label class="form-label">网站</label>
-          <input v-model="editForm.website" type="url" class="form-input" :class="{ error: editErrors.website }"
-            placeholder="https://example.com（选填）" :disabled="editLoading" />
-          <p v-if="editErrors.website" class="error-message">{{ editErrors.website }}</p>
+          <input
+            v-model="editForm.website"
+            type="url"
+            class="form-input"
+            :class="{ error: editErrors.website }"
+            placeholder="https://example.com（选填）"
+            :disabled="editLoading"
+          />
+          <p v-if="editErrors.website" class="error-message">
+            {{ editErrors.website }}
+          </p>
         </div>
       </form>
     </UiBaseDialog>
 
     <!-- 铭牌设置对话框 -->
-    <UiBaseDialog v-model="showBadgeDialog" @confirm="handleBadgeSubmit" title="设置铭牌标识" :loading="badgeLoading"
-      confirm-text="保存" style="--dialog-width: 400px">
-      <form @submit.prevent="handleBadgeSubmit" style="display: flex; flex-direction: column; gap: 20px;">
+    <UiBaseDialog
+      v-model="showBadgeDialog"
+      @confirm="handleBadgeSubmit"
+      title="设置铭牌标识"
+      :loading="badgeLoading"
+      confirm-text="保存"
+      style="--dialog-width: 400px"
+    >
+      <form
+        @submit.prevent="handleBadgeSubmit"
+        style="display: flex; flex-direction: column; gap: 20px"
+      >
         <div class="form-group">
-          <input v-model="badge" type="text" class="form-input" :class="{ error: badgeError }" placeholder="请输入铭牌内容"
-            :disabled="badgeLoading" />
+          <input
+            v-model="badge"
+            type="text"
+            class="form-input"
+            :class="{ error: badgeError }"
+            placeholder="请输入铭牌内容"
+            :disabled="badgeLoading"
+          />
           <p v-if="badgeError" class="error-message">{{ badgeError }}</p>
         </div>
       </form>
     </UiBaseDialog>
 
     <!-- 修改密码对话框 -->
-    <UiBaseDialog v-model="showPasswordDialog" @confirm="handlePasswordSubmit" title="修改密码" :loading="passwordLoading"
-      confirm-text="确认修改">
-      <form @submit.prevent="handlePasswordSubmit" style="display: flex; flex-direction: column; gap: 20px;">
+    <UiBaseDialog
+      v-model="showPasswordDialog"
+      @confirm="handlePasswordSubmit"
+      title="修改密码"
+      :loading="passwordLoading"
+      confirm-text="确认修改"
+    >
+      <form
+        @submit.prevent="handlePasswordSubmit"
+        style="display: flex; flex-direction: column; gap: 20px"
+      >
         <div class="form-group">
           <label class="form-label">旧密码</label>
-          <input v-model="passwordForm.old_password" type="password" class="form-input"
-            :class="{ error: passwordErrors.old_password }" placeholder="请输入旧密码" :disabled="passwordLoading"
-            autocomplete="current-password" />
-          <p v-if="passwordErrors.old_password" class="error-message">{{ passwordErrors.old_password }}</p>
+          <input
+            v-model="passwordForm.old_password"
+            type="password"
+            class="form-input"
+            :class="{ error: passwordErrors.old_password }"
+            placeholder="请输入旧密码"
+            :disabled="passwordLoading"
+            autocomplete="current-password"
+          />
+          <p v-if="passwordErrors.old_password" class="error-message">
+            {{ passwordErrors.old_password }}
+          </p>
         </div>
 
         <div class="form-group">
           <label class="form-label">新密码</label>
-          <input v-model="passwordForm.new_password" type="password" class="form-input"
-            :class="{ error: passwordErrors.new_password }" placeholder="请输入新密码（6-32个字符）" :disabled="passwordLoading"
-            autocomplete="new-password" />
-          <p v-if="passwordErrors.new_password" class="error-message">{{ passwordErrors.new_password }}</p>
+          <input
+            v-model="passwordForm.new_password"
+            type="password"
+            class="form-input"
+            :class="{ error: passwordErrors.new_password }"
+            placeholder="请输入新密码（6-32个字符）"
+            :disabled="passwordLoading"
+            autocomplete="new-password"
+          />
+          <p v-if="passwordErrors.new_password" class="error-message">
+            {{ passwordErrors.new_password }}
+          </p>
         </div>
 
         <div class="form-group">
           <label class="form-label">确认新密码</label>
-          <input v-model="passwordForm.confirm_password" type="password" class="form-input"
-            :class="{ error: passwordErrors.confirm_password }" placeholder="请再次输入新密码" :disabled="passwordLoading"
-            autocomplete="new-password" />
-          <p v-if="passwordErrors.confirm_password" class="error-message">{{ passwordErrors.confirm_password }}</p>
+          <input
+            v-model="passwordForm.confirm_password"
+            type="password"
+            class="form-input"
+            :class="{ error: passwordErrors.confirm_password }"
+            placeholder="请再次输入新密码"
+            :disabled="passwordLoading"
+            autocomplete="new-password"
+          />
+          <p v-if="passwordErrors.confirm_password" class="error-message">
+            {{ passwordErrors.confirm_password }}
+          </p>
         </div>
 
         <div class="tip">
@@ -659,49 +897,86 @@ onMounted(async () => {
     </UiBaseDialog>
 
     <!-- 注销账户对话框 -->
-    <UiBaseDialog v-model="showDeactivateDialog" @confirm="handleDeactivateSubmit" title="注销账户"
-      style="--dialog-width: 520px" :loading="deactivateLoading" confirm-text="确认注销">
-      <div style="display: flex; flex-direction: column; gap: 24px;">
+    <UiBaseDialog
+      v-model="showDeactivateDialog"
+      @confirm="handleDeactivateSubmit"
+      title="注销账户"
+      style="--dialog-width: 520px"
+      :loading="deactivateLoading"
+      confirm-text="确认注销"
+    >
+      <div style="display: flex; flex-direction: column; gap: 24px">
         <div class="warning">
           <p class="warning-title">⚠️ 请谨慎操作，此操作不可恢复！</p>
           <p>注销账户后，您将无法再登录此账户，您的个人信息将被永久删除。</p>
         </div>
 
-        <form @submit.prevent="handleDeactivateSubmit" style="display: flex; flex-direction: column; gap: 20px;">
+        <form
+          @submit.prevent="handleDeactivateSubmit"
+          style="display: flex; flex-direction: column; gap: 20px"
+        >
           <div class="form-group">
             <label class="checkbox-label">
-              <input v-model="deactivateConfirmed" type="checkbox" :disabled="deactivateLoading" />
+              <input
+                v-model="deactivateConfirmed"
+                type="checkbox"
+                :disabled="deactivateLoading"
+              />
               <span>我已充分了解注销账户的后果，并确认要注销我的账户</span>
             </label>
-            <p v-if="deactivateErrors.confirmed" class="error-message">{{ deactivateErrors.confirmed }}</p>
+            <p v-if="deactivateErrors.confirmed" class="error-message">
+              {{ deactivateErrors.confirmed }}
+            </p>
           </div>
 
           <div class="form-group">
             <label class="form-label">输入密码以确认</label>
-            <input v-model="deactivatePassword" type="password" class="form-input"
-              :class="{ error: deactivateErrors.password }" placeholder="请输入您的账户密码" :disabled="deactivateLoading"
-              autocomplete="current-password" />
-            <p v-if="deactivateErrors.password" class="error-message">{{ deactivateErrors.password }}</p>
+            <input
+              v-model="deactivatePassword"
+              type="password"
+              class="form-input"
+              :class="{ error: deactivateErrors.password }"
+              placeholder="请输入您的账户密码"
+              :disabled="deactivateLoading"
+              autocomplete="current-password"
+            />
+            <p v-if="deactivateErrors.password" class="error-message">
+              {{ deactivateErrors.password }}
+            </p>
           </div>
         </form>
       </div>
     </UiBaseDialog>
 
-
     <!-- 解绑 OAuth 对话框 -->
-    <UiBaseDialog v-model="showUnbindDialog" @confirm="handleUnbindSubmit"
-      :title="`解绑 ${getProviderName(unbindProvider)}`" style="--dialog-width: 400px" :loading="unbindLoading"
-      confirm-text="确认解绑">
-      <div style="display: flex; flex-direction: column; gap: 16px;">
+    <UiBaseDialog
+      v-model="showUnbindDialog"
+      @confirm="handleUnbindSubmit"
+      :title="`解绑 ${getProviderName(unbindProvider)}`"
+      style="--dialog-width: 400px"
+      :loading="unbindLoading"
+      confirm-text="确认解绑"
+    >
+      <div style="display: flex; flex-direction: column; gap: 16px">
         <p>确定要解绑 {{ getProviderName(unbindProvider) }} 登录方式吗？</p>
-        <p class="dialog-hint">解绑后，您将无法使用该方式登录。需至少保留一种登录方式。</p>
+        <p class="dialog-hint">
+          解绑后，您将无法使用该方式登录。需至少保留一种登录方式。
+        </p>
       </div>
     </UiBaseDialog>
 
     <!-- 设置密码对话框（OAuth 用户首次设置密码）-->
-    <UiBaseDialog v-model="showSetPasswordDialog" @confirm="handleSetPasswordSubmit" title="设置密码"
-      :loading="setPasswordLoading" confirm-text="确认设置">
-      <form @submit.prevent="handleSetPasswordSubmit" style="display: flex; flex-direction: column; gap: 20px;">
+    <UiBaseDialog
+      v-model="showSetPasswordDialog"
+      @confirm="handleSetPasswordSubmit"
+      title="设置密码"
+      :loading="setPasswordLoading"
+      confirm-text="确认设置"
+    >
+      <form
+        @submit.prevent="handleSetPasswordSubmit"
+        style="display: flex; flex-direction: column; gap: 20px"
+      >
         <div class="tip">
           <i class="ri-information-line"></i>
           <span>设置密码后可使用邮箱+密码登录</span>
@@ -709,18 +984,33 @@ onMounted(async () => {
 
         <div class="form-group">
           <label class="form-label">设置密码</label>
-          <input v-model="setPasswordForm.password" type="password" class="form-input"
-            :class="{ error: setPasswordErrors.password }" placeholder="请输入密码（6-32个字符）" :disabled="setPasswordLoading"
-            autocomplete="new-password" />
-          <p v-if="setPasswordErrors.password" class="error-message">{{ setPasswordErrors.password }}</p>
+          <input
+            v-model="setPasswordForm.password"
+            type="password"
+            class="form-input"
+            :class="{ error: setPasswordErrors.password }"
+            placeholder="请输入密码（6-32个字符）"
+            :disabled="setPasswordLoading"
+            autocomplete="new-password"
+          />
+          <p v-if="setPasswordErrors.password" class="error-message">
+            {{ setPasswordErrors.password }}
+          </p>
         </div>
 
         <div class="form-group">
           <label class="form-label">确认密码</label>
-          <input v-model="setPasswordForm.confirm_password" type="password" class="form-input"
-            :class="{ error: setPasswordErrors.confirm_password }" placeholder="请再次输入密码" :disabled="setPasswordLoading"
-            autocomplete="new-password" />
-          <p v-if="setPasswordErrors.confirm_password" class="error-message">{{ setPasswordErrors.confirm_password }}
+          <input
+            v-model="setPasswordForm.confirm_password"
+            type="password"
+            class="form-input"
+            :class="{ error: setPasswordErrors.confirm_password }"
+            placeholder="请再次输入密码"
+            :disabled="setPasswordLoading"
+            autocomplete="new-password"
+          />
+          <p v-if="setPasswordErrors.confirm_password" class="error-message">
+            {{ setPasswordErrors.confirm_password }}
           </p>
         </div>
       </form>
@@ -766,7 +1056,6 @@ onMounted(async () => {
   padding: 25px;
   background: var(--flec-card-bg);
   border-radius: 8px;
-
 
   .card-header {
     display: flex;
@@ -1148,7 +1437,7 @@ onMounted(async () => {
     background: #8080800d;
   }
 
-  input[type="checkbox"] {
+  input[type='checkbox'] {
     margin-top: 2px;
     width: 18px;
     height: 18px;

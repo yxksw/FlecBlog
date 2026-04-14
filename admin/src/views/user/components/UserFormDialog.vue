@@ -1,47 +1,101 @@
 <template>
-  <el-dialog v-model="visible" :title="dialogTitle" width="600px" :close-on-click-modal="false">
-    <el-form ref="formRef" :model="formData" :rules="formRules" label-width="100px">
+  <el-dialog
+    v-model="visible"
+    :title="dialogTitle"
+    width="600px"
+    :close-on-click-modal="false"
+  >
+    <el-form
+      ref="formRef"
+      :model="formData"
+      :rules="formRules"
+      label-width="100px"
+    >
       <el-form-item label="邮箱" prop="email">
-        <el-input v-model="formData.email" placeholder="请输入用户邮箱" clearable />
+        <el-input
+          v-model="formData.email"
+          placeholder="请输入用户邮箱"
+          clearable
+        />
       </el-form-item>
 
       <el-form-item label="昵称" prop="nickname">
-        <el-input v-model="formData.nickname" placeholder="请输入用户昵称" clearable />
+        <el-input
+          v-model="formData.nickname"
+          placeholder="请输入用户昵称"
+          clearable
+        />
       </el-form-item>
 
       <el-form-item label="网站" prop="website">
-        <el-input v-model="formData.website" placeholder="请输入用户网站（可选）" clearable />
+        <el-input
+          v-model="formData.website"
+          placeholder="请输入用户网站（可选）"
+          clearable
+        />
       </el-form-item>
 
       <el-form-item label="徽章" prop="badge">
-        <el-input v-model="formData.badge" placeholder="请输入用户徽章（可选）" clearable />
+        <el-input
+          v-model="formData.badge"
+          placeholder="请输入用户徽章（可选）"
+          clearable
+        />
       </el-form-item>
 
       <el-form-item label="密码" prop="password">
-        <el-input v-model="formData.password" type="password" :placeholder="isEdit ? '留空则不修改密码' : '请输入密码'" show-password
-          clearable autocomplete="new-password" />
+        <el-input
+          v-model="formData.password"
+          type="password"
+          :placeholder="isEdit ? '留空则不修改密码' : '请输入密码'"
+          show-password
+          clearable
+          autocomplete="new-password"
+        />
       </el-form-item>
 
       <el-form-item label="头像" prop="avatar">
-        <ImageUploader ref="avatarUploaderRef" v-model="formData.avatar" upload-type="用户头像" width="120px"
-          height="120px" />
+        <ImageUploader
+          ref="avatarUploaderRef"
+          v-model="formData.avatar"
+          upload-type="用户头像"
+          width="120px"
+          height="120px"
+        />
       </el-form-item>
 
       <el-form-item label="角色" prop="role">
-        <el-select v-model="formData.role" placeholder="请选择角色" style="width: 100%">
-          <el-option v-for="option in roleOptions" :key="option.value" :label="option.label" :value="option.value" />
+        <el-select
+          v-model="formData.role"
+          placeholder="请选择角色"
+          style="width: 100%"
+        >
+          <el-option
+            v-for="option in roleOptions"
+            :key="option.value"
+            :label="option.label"
+            :value="option.value"
+          />
         </el-select>
       </el-form-item>
 
       <el-form-item v-if="isEdit" label="状态" prop="is_enabled">
-        <el-switch v-model="formData.is_enabled" active-text="启用" inactive-text="禁用" />
+        <el-switch
+          v-model="formData.is_enabled"
+          active-text="启用"
+          inactive-text="禁用"
+        />
       </el-form-item>
     </el-form>
 
     <template #footer>
       <span class="dialog-footer">
         <el-button @click="handleCancel">取消</el-button>
-        <el-button type="primary" @click="handleSubmit" :loading="submitLoading">
+        <el-button
+          type="primary"
+          @click="handleSubmit"
+          :loading="submitLoading"
+        >
           确定
         </el-button>
       </span>
@@ -83,7 +137,7 @@ const visible = computed({
 })
 
 const isEdit = computed(() => !!props.editUser)
-const dialogTitle = computed(() => isEdit.value ? '编辑用户' : '新增用户')
+const dialogTitle = computed(() => (isEdit.value ? '编辑用户' : '新增用户'))
 const canAssignAdminRole = computed(() => isSuperAdmin())
 const roleOptions = computed<{ label: string; value: UserRoleOption }[]>(() => {
   const options: { label: string; value: UserRoleOption }[] = [
@@ -106,7 +160,8 @@ const submitLoading = ref(false)
 const formRef = ref<FormInstance>()
 const avatarUploaderRef = ref<InstanceType<typeof ImageUploader>>()
 
-const getDefaultRole = (): UserRoleOption => roleOptions.value[0]?.value || 'user'
+const getDefaultRole = (): UserRoleOption =>
+  roleOptions.value[0]?.value || 'user'
 
 // 表单数据
 const formData = ref<UserFormData>({
@@ -139,16 +194,12 @@ const formRules = computed<FormRules>(() => ({
     { required: true, message: '请输入邮箱', trigger: 'blur' },
     { type: 'email', message: '请输入正确的邮箱格式', trigger: 'blur' }
   ],
-  website: [
-    { type: 'url', message: '请输入正确的网址格式', trigger: 'blur' }
-  ],
+  website: [{ type: 'url', message: '请输入正确的网址格式', trigger: 'blur' }],
   nickname: [
     { required: true, message: '请输入昵称', trigger: 'blur' },
     { min: 2, max: 32, message: '昵称长度为2-32个字符', trigger: 'blur' }
   ],
-  role: [
-    { required: true, message: '请选择角色', trigger: 'change' }
-  ]
+  role: [{ required: true, message: '请选择角色', trigger: 'change' }]
 }))
 
 // 重置表单数据
@@ -166,30 +217,34 @@ const resetFormData = () => {
 }
 
 // 监听编辑用户变化
-watch(() => props.editUser, (user) => {
-  if (user) {
-    formData.value = {
-      password: '',
-      email: user.email || '',
-      nickname: user.nickname || '',
-      avatar: user.avatar || '',
-      badge: user.badge || '',
-      website: user.website || '',
-      role: user.role as UserRoleOption,
-      is_enabled: user.is_enabled
+watch(
+  () => props.editUser,
+  (user) => {
+    if (user) {
+      formData.value = {
+        password: '',
+        email: user.email || '',
+        nickname: user.nickname || '',
+        avatar: user.avatar || '',
+        badge: user.badge || '',
+        website: user.website || '',
+        role: user.role as UserRoleOption,
+        is_enabled: user.is_enabled
+      }
+    } else {
+      resetFormData()
     }
-  } else {
-    resetFormData()
-  }
 
-  // 清除表单验证
-  setTimeout(() => {
-    formRef.value?.clearValidate()
-  }, 0)
-}, { immediate: true })
+    // 清除表单验证
+    setTimeout(() => {
+      formRef.value?.clearValidate()
+    }, 0)
+  },
+  { immediate: true }
+)
 
 watch(roleOptions, (options) => {
-  if (!options.some(option => option.value === formData.value.role)) {
+  if (!options.some((option) => option.value === formData.value.role)) {
     formData.value.role = getDefaultRole()
   }
 })

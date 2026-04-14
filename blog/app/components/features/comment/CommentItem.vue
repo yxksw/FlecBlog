@@ -13,8 +13,11 @@ const { userInfo } = useUser()
 const isLoggedIn = useAuth()
 
 /** 判断当前登录用户是否为该评论的作者 */
-const isCommentOwner = computed(() =>
-  isLoggedIn.value && !props.comment.is_deleted && userInfo.value?.id === props.comment.user.id
+const isCommentOwner = computed(
+  () =>
+    isLoggedIn.value &&
+    !props.comment.is_deleted &&
+    userInfo.value?.id === props.comment.user.id
 )
 
 /** 是否正在删除中 */
@@ -43,16 +46,16 @@ const handleDeleteConfirm = async () => {
 }
 
 // 是否正在回复此评论
-const isReplying = computed(() =>
-  context.replyState.replyingToId.value === props.comment.id
+const isReplying = computed(
+  () => context.replyState.replyingToId.value === props.comment.id
 )
 
 // 长评论折叠控制（超过 300 字符）
 const MAX_CONTENT_LENGTH = 300
 const isExpanded = ref(false)
 
-const isLongComment = computed(() =>
-  props.comment.content.length > MAX_CONTENT_LENGTH
+const isLongComment = computed(
+  () => props.comment.content.length > MAX_CONTENT_LENGTH
 )
 
 const displayContent = computed(() => {
@@ -86,13 +89,34 @@ const handleReplyClick = () => {
 </script>
 
 <template>
-  <div class="comment-item" :class="{ 'is-reply': depth > 0 }" :id="`comment-${comment.id}`">
+  <div
+    class="comment-item"
+    :class="{ 'is-reply': depth > 0 }"
+    :id="`comment-${comment.id}`"
+  >
     <!-- 左：头像 -->
     <div class="comment-left">
-      <a v-if="comment.user.website" :href="comment.user.website" target="_blank" rel="noopener noreferrer" class="comment-avatar-link">
-        <NuxtImg :src="getAvatarUrl(comment.user)" :alt="comment.user.nickname" class="comment-avatar" loading="lazy" />
+      <a
+        v-if="comment.user.website"
+        :href="comment.user.website"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="comment-avatar-link"
+      >
+        <NuxtImg
+          :src="getAvatarUrl(comment.user)"
+          :alt="comment.user.nickname"
+          class="comment-avatar"
+          loading="lazy"
+        />
       </a>
-      <NuxtImg v-else :src="getAvatarUrl(comment.user)" :alt="comment.user.nickname" class="comment-avatar" loading="lazy" />
+      <NuxtImg
+        v-else
+        :src="getAvatarUrl(comment.user)"
+        :alt="comment.user.nickname"
+        class="comment-avatar"
+        loading="lazy"
+      />
     </div>
 
     <!-- 右：上中下 -->
@@ -101,43 +125,79 @@ const handleReplyClick = () => {
       <div class="comment-header">
         <span class="comment-author">
           {{ comment.user.nickname }}
-          <span v-if="comment.user.badge" class="comment-badge" :class="comment.user.role">{{ comment.user.badge
-          }}</span>
+          <span
+            v-if="comment.user.badge"
+            class="comment-badge"
+            :class="comment.user.role"
+            >{{ comment.user.badge }}</span
+          >
           <span v-if="comment.reply_user" class="reply-arrow">
             <i class="ri-arrow-right-s-fill"></i>
             {{ comment.reply_user.nickname }}
-            <span v-if="comment.reply_user.badge" class="comment-badge" :class="comment.reply_user.role">{{
-              comment.reply_user.badge }}</span>
+            <span
+              v-if="comment.reply_user.badge"
+              class="comment-badge"
+              :class="comment.reply_user.role"
+              >{{ comment.reply_user.badge }}</span
+            >
           </span>
         </span>
         <span class="comment-time">{{ formatDate(comment.created_at) }}</span>
-        <span v-if="comment.location" class="comment-meta">{{ comment.location }}</span>
+        <span v-if="comment.location" class="comment-meta">{{
+          comment.location
+        }}</span>
         <span v-if="comment.os" class="comment-meta">{{ comment.os }}</span>
-        <span v-if="comment.browser" class="comment-meta">{{ comment.browser }}</span>
+        <span v-if="comment.browser" class="comment-meta">{{
+          comment.browser
+        }}</span>
       </div>
 
       <!-- 中：内容 -->
       <div class="comment-body markdown-body" v-html="renderedContent"></div>
 
       <!-- 长评论展开/折叠按钮 -->
-      <button v-if="isLongComment" class="expand-btn" @click="toggleExpand" aria-label="展开/折叠评论">
+      <button
+        v-if="isLongComment"
+        class="expand-btn"
+        @click="toggleExpand"
+        aria-label="展开/折叠评论"
+      >
         {{ isExpanded ? '收起' : '展开全文' }}
-        <i :class="isExpanded ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line'"></i>
+        <i
+          :class="isExpanded ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line'"
+        ></i>
       </button>
 
       <!-- 下：功能按钮 -->
       <div class="comment-actions">
-        <button class="action-btn" @click="handleReplyClick" aria-label="回复评论">
+        <button
+          class="action-btn"
+          @click="handleReplyClick"
+          aria-label="回复评论"
+        >
           回复
         </button>
-        <button v-if="isCommentOwner" class="action-btn delete-btn" :disabled="isDeleting" @click="handleDeleteClick" aria-label="删除评论">
+        <button
+          v-if="isCommentOwner"
+          class="action-btn delete-btn"
+          :disabled="isDeleting"
+          @click="handleDeleteClick"
+          aria-label="删除评论"
+        >
           {{ isDeleting ? '删除中...' : '删除' }}
         </button>
       </div>
 
       <!-- 回复输入框 -->
-      <div v-if="isReplying" :id="`reply-input-${comment.id}`" class="reply-input-wrapper">
-        <CommentInput :comment-id="comment.id" :reply-to="context.replyState.replyingToNickname.value" />
+      <div
+        v-if="isReplying"
+        :id="`reply-input-${comment.id}`"
+        class="reply-input-wrapper"
+      >
+        <CommentInput
+          :comment-id="comment.id"
+          :reply-to="context.replyState.replyingToNickname.value"
+        />
       </div>
 
       <!-- 子评论插槽 -->

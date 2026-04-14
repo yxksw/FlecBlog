@@ -18,20 +18,34 @@ export function getMaxFileSizeMB(): number {
   }
 }
 
-export function getAllowedFileTypes(type: UploadType): { allowedTypes: string[], typeDescription: string } {
+export function getAllowedFileTypes(type: UploadType): {
+  allowedTypes: string[]
+  typeDescription: string
+} {
   if (type === '反馈投诉') {
     return {
       allowedTypes: [
-        'image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp',
+        'image/jpeg',
+        'image/jpg',
+        'image/png',
+        'image/gif',
+        'image/webp',
         'application/pdf',
         'application/msword',
         'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
       ],
-      typeDescription: 'JPG、PNG、GIF、WebP 格式的图片或 PDF、DOC、DOCX 格式的文档'
+      typeDescription:
+        'JPG、PNG、GIF、WebP 格式的图片或 PDF、DOC、DOCX 格式的文档'
     }
   }
   return {
-    allowedTypes: ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'],
+    allowedTypes: [
+      'image/jpeg',
+      'image/jpg',
+      'image/png',
+      'image/gif',
+      'image/webp'
+    ],
     typeDescription: 'JPG、PNG、GIF、WebP 格式的图片'
   }
 }
@@ -68,10 +82,11 @@ export async function uploadFile(
   const config = useRuntimeConfig()
   const baseURL = config.public.apiUrl
 
-  const response = await $fetch<ApiResponse<UploadResponse>>(
-    '/upload',
-    { baseURL, method: 'POST', body: formData }
-  ).catch((error: any) => {
+  const response = await $fetch<ApiResponse<UploadResponse>>('/upload', {
+    baseURL,
+    method: 'POST',
+    body: formData
+  }).catch((error: any) => {
     throw new Error(error?.data?.message || error?.message || '文件上传失败')
   })
 

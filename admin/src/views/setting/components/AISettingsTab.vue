@@ -3,16 +3,30 @@
     <el-divider content-position="left">基础配置</el-divider>
 
     <el-form-item label="API 端点">
-      <el-input v-model="form.base_url" placeholder="例如 https://api.deepseek.com" :disabled="loading" />
+      <el-input
+        v-model="form.base_url"
+        placeholder="例如 https://api.deepseek.com"
+        :disabled="loading"
+      />
     </el-form-item>
 
     <el-form-item label="API 密钥">
-      <el-input v-model="form.api_key" type="password" show-password placeholder="输入 API Key" :disabled="loading"
-        autocomplete="off" />
+      <el-input
+        v-model="form.api_key"
+        type="password"
+        show-password
+        placeholder="输入 API Key"
+        :disabled="loading"
+        autocomplete="off"
+      />
     </el-form-item>
 
     <el-form-item label="模型名称">
-      <el-input v-model="form.model" placeholder="例如 deepseek-chat" :disabled="loading" />
+      <el-input
+        v-model="form.model"
+        placeholder="例如 deepseek-chat"
+        :disabled="loading"
+      />
     </el-form-item>
 
     <el-form-item label=" ">
@@ -22,27 +36,54 @@
     <el-divider content-position="left">提示词配置</el-divider>
 
     <el-form-item label="文章摘要提示词">
-      <el-input v-model="form.summary_prompt" type="textarea" :rows="5" placeholder="用于生成文章摘要，留空时使用系统默认提示词"
-        :disabled="loading" />
+      <el-input
+        v-model="form.summary_prompt"
+        type="textarea"
+        :rows="5"
+        placeholder="用于生成文章摘要，留空时使用系统默认提示词"
+        :disabled="loading"
+      />
     </el-form-item>
 
     <el-form-item label="AI 总结提示词">
-      <el-input v-model="form.ai_summary_prompt" type="textarea" :rows="5" placeholder="用于生成 AI 总结，留空时使用系统默认提示词"
-        :disabled="loading" />
+      <el-input
+        v-model="form.ai_summary_prompt"
+        type="textarea"
+        :rows="5"
+        placeholder="用于生成 AI 总结，留空时使用系统默认提示词"
+        :disabled="loading"
+      />
     </el-form-item>
 
     <el-form-item label="标题提示词">
-      <el-input v-model="form.title_prompt" type="textarea" :rows="5" placeholder="用于生成标题，留空时使用系统默认提示词"
-        :disabled="loading" />
+      <el-input
+        v-model="form.title_prompt"
+        type="textarea"
+        :rows="5"
+        placeholder="用于生成标题，留空时使用系统默认提示词"
+        :disabled="loading"
+      />
     </el-form-item>
 
     <el-divider content-position="left">MCP</el-divider>
 
     <el-form-item label="Secret">
-      <el-input v-model="form.mcp_secret" type="password" show-password readonly placeholder="系统会自动生成 MCP Secret">
+      <el-input
+        v-model="form.mcp_secret"
+        type="password"
+        show-password
+        readonly
+        placeholder="系统会自动生成 MCP Secret"
+      >
         <template #append>
-          <el-button type="warning" plain :disabled="loading || resetting" :loading="resetting"
-            @click="resetSecret">重置</el-button>
+          <el-button
+            type="warning"
+            plain
+            :disabled="loading || resetting"
+            :loading="resetting"
+            @click="resetSecret"
+            >重置</el-button
+          >
         </template>
       </el-input>
     </el-form-item>
@@ -84,7 +125,7 @@ async function handleTest() {
     await testAIConfig({
       base_url: form.value.base_url,
       api_key: form.value.api_key,
-      model: form.value.model,
+      model: form.value.model
     })
     ElMessage.success('连接成功，配置可用')
   } catch (e: any) {
@@ -96,11 +137,15 @@ async function handleTest() {
 
 async function resetSecret() {
   try {
-    await ElMessageBox.confirm('重置后现有客户端会立刻失效，确定继续吗？', '重置 MCP Secret', {
-      type: 'warning',
-      confirmButtonText: '确认重置',
-      cancelButtonText: '取消'
-    })
+    await ElMessageBox.confirm(
+      '重置后现有客户端会立刻失效，确定继续吗？',
+      '重置 MCP Secret',
+      {
+        type: 'warning',
+        confirmButtonText: '确认重置',
+        cancelButtonText: '取消'
+      }
+    )
   } catch {
     return
   }

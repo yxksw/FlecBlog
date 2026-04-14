@@ -423,6 +423,8 @@ definitions:
         $ref: '#/definitions/utils.JSONTime'
       id:
         type: integer
+      is_deleted:
+        type: boolean
       location:
         description: 地理位置
         type: string
@@ -1552,8 +1554,6 @@ definitions:
     type: object
   model.Category:
     properties:
-      count:
-        type: integer
       created_at:
         type: string
       description:
@@ -1571,8 +1571,6 @@ definitions:
     type: object
   model.Tag:
     properties:
-      count:
-        type: integer
       created_at:
         type: string
       description:
@@ -2086,15 +2084,20 @@ paths:
     post:
       consumes:
       - multipart/form-data
-      description: 从Hexo等静态博客系统导入文章数据，上传Markdown文件（支持多文件）
+      description: 从Hexo或Markdown格式导入文章数据，支持多文件
       parameters:
-      - description: 来源类型，目前支持：hexo
+      - description: 来源类型，支持：hexo, markdown
         enum:
         - hexo
+        - markdown
         in: formData
         name: source_type
         required: true
         type: string
+      - description: 是否上传文章中的图片（默认false）
+        in: formData
+        name: upload_images
+        type: boolean
       - collectionFormat: csv
         description: 文章文件（.md或.markdown格式，支持多文件）
         in: formData

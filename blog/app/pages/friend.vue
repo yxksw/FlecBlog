@@ -34,7 +34,7 @@ const friendGroups = computed(() => {
   return allGroups.value
     .map((group: FriendGroup) => ({
       ...group,
-      friends: group.friends.filter(f => !f.is_invalid)
+      friends: group.friends.filter((f) => !f.is_invalid)
     }))
     .filter((group: FriendGroup) => group.friends.length > 0)
 })
@@ -44,15 +44,17 @@ const invalidFriendGroups = computed(() => {
   return allGroups.value
     .map((group: FriendGroup) => ({
       ...group,
-      friends: group.friends.filter(f => f.is_invalid)
+      friends: group.friends.filter((f) => f.is_invalid)
     }))
     .filter((group: FriendGroup) => group.friends.length > 0)
 })
 
 // 空状态判断
 const isEmpty = computed(() => {
-  return allGroups.value.length === 0 ||
+  return (
+    allGroups.value.length === 0 ||
     allGroups.value.every((g: FriendGroup) => g.friends.length === 0)
+  )
 })
 </script>
 
@@ -62,23 +64,38 @@ const isEmpty = computed(() => {
 
     <div class="friend-sections">
       <!-- 友链分组 -->
-      <section v-for="group in friendGroups" :key="group.type_id ?? 'uncategorized'" class="friend-section">
+      <section
+        v-for="group in friendGroups"
+        :key="group.type_id ?? 'uncategorized'"
+        class="friend-section"
+      >
         <h2 class="section-title">
           <i class="ri-links-line"></i>
           {{ group.type_name }}
         </h2>
 
         <div class="friend-list">
-          <a v-for="friend in group.friends" :key="friend.id" :href="friend.url" target="_blank" class="friend-card"
-            rel="noopener noreferrer" :title="friend.description">
+          <a
+            v-for="friend in group.friends"
+            :key="friend.id"
+            :href="friend.url"
+            target="_blank"
+            class="friend-card"
+            rel="noopener noreferrer"
+            :title="friend.description"
+          >
             <!-- 网站截图 -->
             <div class="friend-screenshot">
-              <NuxtImg :src="friend.screenshot" :alt="friend.name" loading="lazy"  />
+              <NuxtImg
+                :src="friend.screenshot"
+                :alt="friend.name"
+                loading="lazy"
+              />
             </div>
 
             <!-- 网站信息 -->
             <div class="friend-content">
-              <NuxtImg :src="friend.avatar" :alt="friend.name" loading="lazy"  />
+              <NuxtImg :src="friend.avatar" :alt="friend.name" loading="lazy" />
               <div class="friend-info">
                 <div class="friend-name">{{ friend.name }}</div>
                 <div class="friend-description">{{ friend.description }}</div>
@@ -89,16 +106,23 @@ const isEmpty = computed(() => {
       </section>
 
       <!-- 失效友链 -->
-      <section v-for="group in invalidFriendGroups" :key="'invalid-' + (group.type_id ?? 'uncategorized')"
-        class="friend-section inactive-section">
+      <section
+        v-for="group in invalidFriendGroups"
+        :key="'invalid-' + (group.type_id ?? 'uncategorized')"
+        class="friend-section inactive-section"
+      >
         <h2 class="section-title">
           <i class="ri-links-line"></i>
           失联友链
         </h2>
 
         <div class="inactive-list">
-          <span v-for="friend in group.friends" :key="friend.id" class="inactive-tag"
-            :title="friend.name + ' - ' + friend.description">
+          <span
+            v-for="friend in group.friends"
+            :key="friend.id"
+            class="inactive-tag"
+            :title="friend.name + ' - ' + friend.description"
+          >
             {{ friend.name }}
           </span>
         </div>
@@ -112,9 +136,7 @@ const isEmpty = computed(() => {
     </div>
 
     <!-- 申请友链 -->
-    <h2 id="apply" class="section-title">
-      申请友链
-    </h2>
+    <h2 id="apply" class="section-title">申请友链</h2>
     <FeaturesFriendGuide />
 
     <!-- 评论区域 -->

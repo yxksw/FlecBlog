@@ -7,12 +7,19 @@ import { loadEmojiMap } from '@/composables/useEmojis'
 
 // 组件属性
 const props = defineProps<{
-  targetType: CommentTargetType  // 目标类型 (article/page)
-  targetKey: string | number      // 目标键值 (文章slug或页面key)
+  targetType: CommentTargetType // 目标类型 (article/page)
+  targetKey: string | number // 目标键值 (文章slug或页面key)
 }>()
 
 // 使用评论 store
-const { comments, fetchComments, addComment, removeComment, resetComments, flattenComments } = useComments()
+const {
+  comments,
+  fetchComments,
+  addComment,
+  removeComment,
+  resetComments,
+  flattenComments
+} = useComments()
 
 // 加载表情映射
 const { blogConfig } = useSysConfig()
@@ -55,25 +62,36 @@ const scrollToComment = (hash?: string | null) => {
 }
 
 // 监听目标变化，自动加载评论
-watch(() => [props.targetType, props.targetKey], ([type, key]) => {
-  // 只在 targetKey 有效时才加载评论，避免传递 undefined
-  if (key) {
-    fetchComments(type as CommentTargetType, key as string | number)
-  }
-}, { immediate: true })
+watch(
+  () => [props.targetType, props.targetKey],
+  ([type, key]) => {
+    // 只在 targetKey 有效时才加载评论，避免传递 undefined
+    if (key) {
+      fetchComments(type as CommentTargetType, key as string | number)
+    }
+  },
+  { immediate: true }
+)
 
 // 评论加载完成后滚动一次
-watch(comments, (newComments) => {
-  if (!hasHandledInitialHash && newComments.length > 0) {
-    scrollToComment(route.hash)
-    hasHandledInitialHash = true
-  }
-}, { flush: 'post' })
+watch(
+  comments,
+  (newComments) => {
+    if (!hasHandledInitialHash && newComments.length > 0) {
+      scrollToComment(route.hash)
+      hasHandledInitialHash = true
+    }
+  },
+  { flush: 'post' }
+)
 
 // 监听 hash 变化
-watch(() => route.hash, (hash) => {
-  scrollToComment(hash)
-})
+watch(
+  () => route.hash,
+  (hash) => {
+    scrollToComment(hash)
+  }
+)
 
 // 组件卸载时重置评论
 onUnmounted(resetComments)
@@ -86,13 +104,19 @@ const flatComments = computed(() => flattenComments(comments.value))
 
 // 计算所有评论总数（包括回复）
 const totalCommentsCount = computed(() => {
-  const count = (list: typeof comments.value): number => 
-    list.reduce((total, c) => total + 1 + (c.replies?.length ? count(c.replies) : 0), 0)
+  const count = (list: typeof comments.value): number =>
+    list.reduce(
+      (total, c) => total + 1 + (c.replies?.length ? count(c.replies) : 0),
+      0
+    )
   return count(comments.value)
 })
 
 // 处理评论提交（顶层评论）
-const handleAddComment = async (content: string, guestInfo?: { nickname?: string; email?: string; website?: string }) => {
+const handleAddComment = async (
+  content: string,
+  guestInfo?: { nickname?: string; email?: string; website?: string }
+) => {
   await addComment({
     target_type: props.targetType,
     target_key: props.targetKey,
@@ -102,7 +126,11 @@ const handleAddComment = async (content: string, guestInfo?: { nickname?: string
 }
 
 // 处理回复提交
-const handleAddReply = async (commentId: number, content: string, guestInfo?: { nickname?: string; email?: string; website?: string }) => {
+const handleAddReply = async (
+  commentId: number,
+  content: string,
+  guestInfo?: { nickname?: string; email?: string; website?: string }
+) => {
   await addComment({
     target_type: props.targetType,
     target_key: props.targetKey,
@@ -153,7 +181,9 @@ provideCommentContext({
       <h3 class="comments-title">
         <i class="ri-chat-3-line"></i>
         评论
-        <span class="comments-count" v-if="totalCommentsCount > 0">({{ totalCommentsCount }})</span>
+        <span class="comments-count" v-if="totalCommentsCount > 0"
+          >({{ totalCommentsCount }})</span
+        >
       </h3>
     </div>
 
@@ -250,7 +280,7 @@ provideCommentContext({
     border-radius: 4px;
     overflow-x: auto;
     font-family: 'Consolas', 'Monaco', monospace;
-    
+
     code {
       padding: 0;
       background: transparent;
@@ -265,7 +295,8 @@ provideCommentContext({
     opacity: 0.8;
   }
 
-  ul, ol {
+  ul,
+  ol {
     margin: 0.5em 0;
     padding-left: 1.8em;
   }
@@ -273,7 +304,7 @@ provideCommentContext({
   a {
     color: var(--theme-color);
     text-decoration: none;
-    
+
     &:hover {
       text-decoration: underline;
     }
@@ -283,8 +314,8 @@ provideCommentContext({
     max-width: 100%;
   }
 
-  // 表情图片样式                                                                                                                                                      
-  .emoji-image {                                                                                                                                                       
+  // 表情图片样式
+  .emoji-image {
     display: inline-block;
     width: 36px;
     height: 36px;
@@ -293,4 +324,3 @@ provideCommentContext({
   }
 }
 </style>
-

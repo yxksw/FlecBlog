@@ -46,14 +46,19 @@ export default defineNuxtPlugin({
       if (!headCode) return null
 
       const tags = parseHtmlTags(headCode)
-      const headPayload: { meta: any[]; link: any[]; script: any[]; style: any[] } = {
+      const headPayload: {
+        meta: any[]
+        link: any[]
+        script: any[]
+        style: any[]
+      } = {
         meta: [],
         link: [],
         script: [],
         style: []
       }
 
-      tags.forEach(tag => {
+      tags.forEach((tag) => {
         const { tag: tagName, innerHTML, ...attrs } = tag
 
         switch (tagName) {
@@ -105,17 +110,19 @@ export default defineNuxtPlugin({
       return result
     }
 
-    useHead(computed(() => {
-      const customHead = buildHeadPayload(blogConfig.value.custom_head || '')
-      const fontLink = buildFontLink(blogConfig.value.font || '')
+    useHead(
+      computed(() => {
+        const customHead = buildHeadPayload(blogConfig.value.custom_head || '')
+        const fontLink = buildFontLink(blogConfig.value.font || '')
 
-      return {
-        meta: customHead?.meta || [],
-        link: [...(customHead?.link || []), ...fontLink.link],
-        script: customHead?.script || [],
-        style: [...(customHead?.style || []), ...fontLink.style]
-      }
-    }))
+        return {
+          meta: customHead?.meta || [],
+          link: [...(customHead?.link || []), ...fontLink.link],
+          script: customHead?.script || [],
+          style: [...(customHead?.style || []), ...fontLink.style]
+        }
+      })
+    )
 
     const injectBodyCode = () => {
       const bodyCode = blogConfig.value.custom_body || ''

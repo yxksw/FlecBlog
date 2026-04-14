@@ -12,7 +12,7 @@ export function flattenComments(
 ): Array<{ comment: Comment; depth: number }> {
   const result: Array<{ comment: Comment; depth: number }> = []
 
-  commentList.forEach(comment => {
+  commentList.forEach((comment) => {
     result.push({ comment, depth })
     if (comment.replies && comment.replies.length > 0) {
       result.push(...flattenComments(comment.replies, depth + 1))
@@ -42,7 +42,11 @@ export interface CommentContext {
   // 添加评论（顶层评论）
   addComment: (content: string, guestInfo?: GuestInfo) => Promise<void>
   // 添加回复
-  addReply: (commentId: number, content: string, guestInfo?: GuestInfo) => Promise<void>
+  addReply: (
+    commentId: number,
+    content: string,
+    guestInfo?: GuestInfo
+  ) => Promise<void>
   // 删除评论
   deleteComment: (commentId: number) => Promise<void>
   // 显示登录模态框
@@ -83,19 +87,21 @@ export function useCommentContext() {
  */
 export async function fillComment(content: string) {
   const wrapper = document.querySelector('.comment-input')
-  const textarea = wrapper?.querySelector('textarea') as HTMLTextAreaElement | null
-  
+  const textarea = wrapper?.querySelector(
+    'textarea'
+  ) as HTMLTextAreaElement | null
+
   if (!wrapper || !textarea) return
 
   // 先填充并调整高度
   textarea.value = content
   textarea.dispatchEvent(new Event('input', { bubbles: true }))
-  
+
   // 等待浏览器完成重排（双帧确保稳定）
-  await new Promise(resolve => {
+  await new Promise((resolve) => {
     requestAnimationFrame(() => requestAnimationFrame(resolve))
   })
-  
+
   // 平滑滚动到评论区
   scrollToElement('.comment-input')
   textarea.focus()

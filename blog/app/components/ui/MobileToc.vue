@@ -32,7 +32,9 @@ const scrollTocToActive = (id: string) => {
   if (!tocListRef.value) return
 
   nextTick(() => {
-    const activeButton = tocListRef.value?.querySelector(`[data-toc-id="${id}"]`) as HTMLElement
+    const activeButton = tocListRef.value?.querySelector(
+      `[data-toc-id="${id}"]`
+    ) as HTMLElement
     if (!activeButton) return
 
     const container = tocListRef.value!
@@ -40,7 +42,7 @@ const scrollTocToActive = (id: string) => {
     const buttonTop = activeButton.offsetTop
     const buttonHeight = activeButton.clientHeight
 
-    const targetScroll = buttonTop - (containerHeight / 2) + (buttonHeight / 2)
+    const targetScroll = buttonTop - containerHeight / 2 + buttonHeight / 2
 
     container.scrollTo({
       top: targetScroll,
@@ -70,7 +72,10 @@ const handleScroll = () => {
     const rect = element.getBoundingClientRect()
     const distanceToReference = Math.abs(rect.top - referencePoint)
 
-    if (rect.top <= referencePoint + 50 && distanceToReference < closestDistance) {
+    if (
+      rect.top <= referencePoint + 50 &&
+      distanceToReference < closestDistance
+    ) {
       closestDistance = distanceToReference
       closestHeading = heading
     }
@@ -87,11 +92,14 @@ const handleClose = () => {
   emit('close')
 }
 
-watch(() => props.visible, (newVal) => {
-  if (newVal) {
-    handleScroll()
+watch(
+  () => props.visible,
+  (newVal) => {
+    if (newVal) {
+      handleScroll()
+    }
   }
-})
+)
 
 onMounted(() => {
   useEventListener(window, 'scroll', handleScroll, { passive: true })
@@ -102,7 +110,11 @@ onMounted(() => {
 <template>
   <Teleport to="body">
     <Transition name="toc-popover">
-      <div v-if="visible && hasToc" ref="tocPopoverRef" class="mobile-toc-popover">
+      <div
+        v-if="visible && hasToc"
+        ref="tocPopoverRef"
+        class="mobile-toc-popover"
+      >
         <div class="toc-header">
           <div class="header-left">
             <i class="ri-menu-line"></i>
@@ -112,12 +124,19 @@ onMounted(() => {
         </div>
 
         <nav ref="tocListRef" class="toc-list" aria-label="文章目录">
-          <button v-for="item in toc" :key="item.id" :data-toc-id="item.id" :class="[
-            'toc-item',
-            `toc-level-${item.level}`,
-            { 'active': activeId === item.id }
-          ]" @click="scrollToHeading(item.id)" :aria-label="`跳转到 ${item.text}`"
-            :aria-current="activeId === item.id ? 'location' : undefined">
+          <button
+            v-for="item in toc"
+            :key="item.id"
+            :data-toc-id="item.id"
+            :class="[
+              'toc-item',
+              `toc-level-${item.level}`,
+              { active: activeId === item.id }
+            ]"
+            @click="scrollToHeading(item.id)"
+            :aria-label="`跳转到 ${item.text}`"
+            :aria-current="activeId === item.id ? 'location' : undefined"
+          >
             <span class="toc-text">{{ item.text }}</span>
           </button>
         </nav>
@@ -136,7 +155,9 @@ onMounted(() => {
   max-height: 60vh;
   background: var(--theme-bg-color, #fff);
   border-radius: 12px;
-  box-shadow: 0 6px 30px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.08);
+  box-shadow:
+    0 6px 30px rgba(0, 0, 0, 0.12),
+    0 2px 8px rgba(0, 0, 0, 0.08);
   display: flex;
   flex-direction: column;
   overflow: hidden;

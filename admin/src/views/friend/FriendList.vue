@@ -1,12 +1,20 @@
 <template>
-  <common-list title="友链管理" :data="friendList" :loading="loading" :total="total" v-model:page="queryParams.page"
-    v-model:page-size="queryParams.page_size" create-text="新增友链" @create="handleCreate" @refresh="fetchFriends"
-    @update:page="fetchFriends" @update:pageSize="fetchFriends">
+  <common-list
+    title="友链管理"
+    :data="friendList"
+    :loading="loading"
+    :total="total"
+    v-model:page="queryParams.page"
+    v-model:page-size="queryParams.page_size"
+    create-text="新增友链"
+    @create="handleCreate"
+    @refresh="fetchFriends"
+    @update:page="fetchFriends"
+    @update:pageSize="fetchFriends"
+  >
     <!-- 额外按钮 -->
     <template #toolbar-after>
-      <el-button @click="handleTypeManage">
-        类型管理
-      </el-button>
+      <el-button @click="handleTypeManage"> 类型管理 </el-button>
     </template>
 
     <!-- 表格列 -->
@@ -24,9 +32,27 @@
     <el-table-column label="友链名称" min-width="130">
       <template #default="{ row }">
         <span>{{ row.name }}</span>
-        <el-tag v-if="row.is_invalid" type="warning" size="small" style="margin-left: 8px">失效</el-tag>
-        <el-tag v-else-if="row.accessible > 0" type="danger" size="small" style="margin-left: 8px">异常({{ row.accessible }})</el-tag>
-        <el-tag v-else-if="row.is_pending" type="info" size="small" style="margin-left: 8px">待审核</el-tag>
+        <el-tag
+          v-if="row.is_invalid"
+          type="warning"
+          size="small"
+          style="margin-left: 8px"
+          >失效</el-tag
+        >
+        <el-tag
+          v-else-if="row.accessible > 0"
+          type="danger"
+          size="small"
+          style="margin-left: 8px"
+          >异常({{ row.accessible }})</el-tag
+        >
+        <el-tag
+          v-else-if="row.is_pending"
+          type="info"
+          size="small"
+          style="margin-left: 8px"
+          >待审核</el-tag
+        >
       </template>
     </el-table-column>
 
@@ -54,22 +80,36 @@
 
     <el-table-column label="最新文章" width="180" align="center">
       <template #default="{ row }">
-        <span v-if="row.rss_latime" :class="getRSSTimeClass(row.rss_latime)">{{ formatDateTime(row.rss_latime) }}</span>
+        <span v-if="row.rss_latime" :class="getRSSTimeClass(row.rss_latime)">{{
+          formatDateTime(row.rss_latime)
+        }}</span>
         <span v-else style="color: #999">-</span>
       </template>
     </el-table-column>
 
     <el-table-column label="操作" width="180" align="center" fixed="right">
       <template #default="{ row }">
-        <el-button type="primary" link size="small" @click="handleEdit(row)">编辑</el-button>
-        <el-button type="danger" link size="small" @click="handleDelete(row.id)">删除</el-button>
+        <el-button type="primary" link size="small" @click="handleEdit(row)"
+          >编辑</el-button
+        >
+        <el-button type="danger" link size="small" @click="handleDelete(row.id)"
+          >删除</el-button
+        >
       </template>
     </el-table-column>
 
     <!-- 额外内容 -->
     <template #extra>
-      <friend-form-dialog v-model="dialogVisible" :edit-friend="currentFriend" @success="handleFriendSuccess" />
-      <friend-type-manager ref="typeManagerRef" v-model="typeManagerVisible" @success="fetchFriends" />
+      <friend-form-dialog
+        v-model="dialogVisible"
+        :edit-friend="currentFriend"
+        @success="handleFriendSuccess"
+      />
+      <friend-type-manager
+        ref="typeManagerRef"
+        v-model="typeManagerVisible"
+        @success="fetchFriends"
+      />
     </template>
   </common-list>
 </template>
@@ -104,7 +144,7 @@ const fetchFriends = async () => {
   try {
     const [result] = await Promise.all([
       getFriends(queryParams.value),
-      new Promise(resolve => setTimeout(resolve, 300))
+      new Promise((resolve) => setTimeout(resolve, 300))
     ])
     friendList.value = result.list
     total.value = result.total
@@ -137,20 +177,24 @@ const handleFriendSuccess = () => {
 
 const handleDelete = async (id: number) => {
   try {
-    await ElMessageBox.confirm('确定要删除这个友链吗？', '提示', { type: 'warning' })
+    await ElMessageBox.confirm('确定要删除这个友链吗？', '提示', {
+      type: 'warning'
+    })
     await deleteFriend(id)
     ElMessage.success('删除成功')
     fetchFriends()
     // 同时刷新类型管理器的数据（更新友链数量）
     typeManagerRef.value?.refreshData()
   } catch (error) {
-    if (error !== 'cancel' && error instanceof Error) ElMessage.error(error.message)
+    if (error !== 'cancel' && error instanceof Error)
+      ElMessage.error(error.message)
   }
 }
 
 const getRSSTimeClass = (rssLatime?: string): string => {
   if (!rssLatime) return ''
-  const months = (Date.now() - new Date(rssLatime).getTime()) / (1000 * 60 * 60 * 24 * 30)
+  const months =
+    (Date.now() - new Date(rssLatime).getTime()) / (1000 * 60 * 60 * 24 * 30)
   if (months > 6) return 'rss-danger'
   if (months > 3) return 'rss-warning'
   return ''

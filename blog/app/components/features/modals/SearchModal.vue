@@ -81,12 +81,15 @@ const nextPage = () => {
   if (page.value < totalPages.value) search(page.value + 1)
 }
 
-watch(() => props.modelValue, async (open) => {
-  if (open) {
-    await nextTick()
-    inputRef.value?.focus()
+watch(
+  () => props.modelValue,
+  async (open) => {
+    if (open) {
+      await nextTick()
+      inputRef.value?.focus()
+    }
   }
-})
+)
 </script>
 
 <template>
@@ -97,12 +100,19 @@ watch(() => props.modelValue, async (open) => {
           <!-- 标题栏 -->
           <div class="header">
             <span class="title">搜索</span>
-            <button class="close" @click="close"><i class="ri-close-line"></i></button>
+            <button class="close" @click="close">
+              <i class="ri-close-line"></i>
+            </button>
           </div>
 
           <!-- 搜索栏 -->
           <div class="search">
-            <input ref="inputRef" v-model="keyword" placeholder="输入关键词搜索..." @keyup.esc="close" />
+            <input
+              ref="inputRef"
+              v-model="keyword"
+              placeholder="输入关键词搜索..."
+              @keyup.esc="close"
+            />
             <i v-if="loading" class="ri-loader-4-line spin loading-icon"></i>
           </div>
 
@@ -114,11 +124,26 @@ watch(() => props.modelValue, async (open) => {
             </div>
             <!-- 有结果 -->
             <template v-else-if="articles.length > 0">
-              <NuxtLink v-for="item in articles" :key="item.id" :to="item.url" class="item" @click="close">
-                <NuxtImg v-if="item.cover" :src="item.cover" :alt="item.title" loading="lazy"  />
+              <NuxtLink
+                v-for="item in articles"
+                :key="item.id"
+                :to="item.url"
+                class="item"
+                @click="close"
+              >
+                <NuxtImg
+                  v-if="item.cover"
+                  :src="item.cover"
+                  :alt="item.title"
+                  loading="lazy"
+                />
                 <div class="info">
                   <h3 v-html="highlight(item.title)"></h3>
-                  <p v-if="item.excerpt" class="excerpt" v-html="highlight(item.excerpt)"></p>
+                  <p
+                    v-if="item.excerpt"
+                    class="excerpt"
+                    v-html="highlight(item.excerpt)"
+                  ></p>
                   <div class="meta">
                     <span>{{ formatDate(item.publish_time) }}</span>
                     <span v-if="item.category">{{ item.category.name }}</span>

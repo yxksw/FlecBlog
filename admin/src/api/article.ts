@@ -1,6 +1,12 @@
-import request from "@/utils/request";
-import type { Article, CreateArticleRequest, UpdateArticleRequest, ImportArticlesResult, WeChatExportResult } from "@/types/article";
-import type { PaginationQuery } from "@/types/request";
+import request from '@/utils/request'
+import type {
+  Article,
+  CreateArticleRequest,
+  UpdateArticleRequest,
+  ImportArticlesResult,
+  WeChatExportResult
+} from '@/types/article'
+import type { PaginationQuery } from '@/types/request'
 
 /**
  * 获取文章列表
@@ -8,7 +14,7 @@ import type { PaginationQuery } from "@/types/request";
  * @returns Promise<ArticleListResponse>
  */
 export function getArticles(params: PaginationQuery): Promise<any> {
-  return request.get("/admin/articles", { params });
+  return request.get('/admin/articles', { params })
 }
 
 /**
@@ -17,7 +23,7 @@ export function getArticles(params: PaginationQuery): Promise<any> {
  * @returns Promise<Article>
  */
 export function getArticle(id: number): Promise<Article> {
-  return request.get(`/admin/articles/${id}`);
+  return request.get(`/admin/articles/${id}`)
 }
 
 /**
@@ -26,7 +32,7 @@ export function getArticle(id: number): Promise<Article> {
  * @returns Promise<Article>
  */
 export function createArticle(data: CreateArticleRequest): Promise<Article> {
-  return request.post("/admin/articles", data);
+  return request.post('/admin/articles', data)
 }
 
 /**
@@ -35,8 +41,11 @@ export function createArticle(data: CreateArticleRequest): Promise<Article> {
  * @param data 文章数据
  * @returns Promise<Article>
  */
-export function updateArticle(id: number, data: UpdateArticleRequest): Promise<Article> {
-  return request.put(`/admin/articles/${id}`, data);
+export function updateArticle(
+  id: number,
+  data: UpdateArticleRequest
+): Promise<Article> {
+  return request.put(`/admin/articles/${id}`, data)
 }
 
 /**
@@ -45,7 +54,7 @@ export function updateArticle(id: number, data: UpdateArticleRequest): Promise<A
  * @returns Promise<void>
  */
 export function deleteArticle(id: number): Promise<void> {
-  return request.delete(`/admin/articles/${id}`);
+  return request.delete(`/admin/articles/${id}`)
 }
 
 /**
@@ -53,12 +62,14 @@ export function deleteArticle(id: number): Promise<void> {
  * @param formData 包含文件和参数的 FormData
  * @returns Promise<ImportArticlesResult>
  */
-export function importArticles(formData: FormData): Promise<ImportArticlesResult> {
-  return request.post("/admin/articles/import", formData, {
+export function importArticles(
+  formData: FormData
+): Promise<ImportArticlesResult> {
+  return request.post('/admin/articles/import', formData, {
     headers: {
-      "Content-Type": "multipart/form-data"
+      'Content-Type': 'multipart/form-data'
     }
-  });
+  })
 }
 
 // ==================== 微信公众号导出 ====================
@@ -69,7 +80,7 @@ export function importArticles(formData: FormData): Promise<ImportArticlesResult
  * @returns Promise<WeChatExportResult>
  */
 export function exportToWeChat(id: number): Promise<WeChatExportResult> {
-  return request.post(`/admin/articles/${id}/wechat/export`);
+  return request.post(`/admin/articles/${id}/wechat/export`)
 }
 
 /**
@@ -79,7 +90,7 @@ export function exportToWeChat(id: number): Promise<WeChatExportResult> {
  */
 export function downloadArticleZip(id: number): Promise<Blob> {
   return request.get(`/admin/articles/${id}/download/zip`, {
-    responseType: "blob",
+    responseType: 'blob',
     timeout: 300000
-  });
+  })
 }

@@ -833,9 +833,9 @@ func (s *ArticleService) uploadContentImages(ctx context.Context, content string
 	const maxConcurrency = 10
 	sem := make(chan struct{}, maxConcurrency)
 	results := make(chan struct {
-		oldURL    string
-		newURL    string
-		skip     bool
+		oldURL string
+		newURL string
+		skip   bool
 	}, len(uniqueURLs))
 
 	// 并发上传
@@ -845,7 +845,7 @@ func (s *ArticleService) uploadContentImages(ctx context.Context, content string
 			results <- struct {
 				oldURL string
 				newURL string
-				skip  bool
+				skip   bool
 			}{oldURL: imgURL, skip: true}
 			continue
 		}
@@ -860,14 +860,14 @@ func (s *ArticleService) uploadContentImages(ctx context.Context, content string
 				results <- struct {
 					oldURL string
 					newURL string
-					skip  bool
+					skip   bool
 				}{oldURL: url, skip: true}
 				return
 			}
 			results <- struct {
 				oldURL string
 				newURL string
-				skip  bool
+				skip   bool
 			}{oldURL: url, newURL: uploadedURL, skip: false}
 		}(imgURL)
 	}
@@ -1218,8 +1218,8 @@ func parseMarkdownArticle(filename, content string) (*HexoParsedArticle, error) 
 	lines := strings.Split(content, "\n")
 
 	parsed := &HexoParsedArticle{
-		Title:     "",
-		Tags:      []string{},
+		Title:       "",
+		Tags:        []string{},
 		PublishTime: nil,
 		UpdateTime:  nil,
 	}

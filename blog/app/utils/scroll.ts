@@ -17,7 +17,10 @@ export function scrollToTop(): void {
  * @param selector CSS 选择器
  * @param options 滚动选项
  */
-export function scrollToElement(selector: string, options?: ScrollOptions): void {
+export function scrollToElement(
+  selector: string,
+  options?: ScrollOptions
+): void {
   if (!process.client) return
 
   const { behavior = 'smooth', block = 'center' } = options || {}

@@ -1,15 +1,33 @@
 <template>
-  <common-list title="RSS订阅" :data="articleList" :loading="loading" :total="total" v-model:page="queryParams.page"
-    v-model:page-size="queryParams.page_size" :show-create="false" @refresh="fetchArticles"
-    @update:page="fetchArticles" @update:pageSize="fetchArticles">
+  <common-list
+    title="RSS订阅"
+    :data="articleList"
+    :loading="loading"
+    :total="total"
+    v-model:page="queryParams.page"
+    v-model:page-size="queryParams.page_size"
+    :show-create="false"
+    @refresh="fetchArticles"
+    @update:page="fetchArticles"
+    @update:pageSize="fetchArticles"
+  >
     <!-- 额外按钮 -->
     <template #toolbar-after>
       <el-button type="primary" @click="openSubscriberDialog">
         本站订阅
       </el-button>
-      <el-badge :value="unreadCount" :hidden="unreadCount === 0" :max="99" class="unread-badge">
-        <el-button type="success" :disabled="unreadCount === 0" @click="handleMarkAllRead"
-          v-if="isSuperAdmin">
+      <el-badge
+        :value="unreadCount"
+        :hidden="unreadCount === 0"
+        :max="99"
+        class="unread-badge"
+      >
+        <el-button
+          type="success"
+          :disabled="unreadCount === 0"
+          @click="handleMarkAllRead"
+          v-if="isSuperAdmin"
+        >
           全部已读
         </el-button>
       </el-badge>
@@ -26,7 +44,12 @@
 
     <el-table-column label="文章标题" min-width="300">
       <template #default="{ row }">
-        <a :href="row.link" target="_blank" class="article-link" :class="{ read: row.is_read }">
+        <a
+          :href="row.link"
+          target="_blank"
+          class="article-link"
+          :class="{ read: row.is_read }"
+        >
           {{ row.title }}
         </a>
       </template>
@@ -42,7 +65,9 @@
 
     <el-table-column label="发布时间" width="180" align="center">
       <template #default="{ row }">
-        <span v-if="row.published_at">{{ formatDateTime(row.published_at) }}</span>
+        <span v-if="row.published_at">{{
+          formatDateTime(row.published_at)
+        }}</span>
         <span v-else style="color: #999">-</span>
       </template>
     </el-table-column>
@@ -55,8 +80,13 @@
 
     <el-table-column label="操作" width="120" align="center" fixed="right">
       <template #default="{ row }">
-        <el-button v-if="!row.is_read && isSuperAdmin" type="primary" link size="small"
-          @click="handleMarkRead(row)">
+        <el-button
+          v-if="!row.is_read && isSuperAdmin"
+          type="primary"
+          link
+          size="small"
+          @click="handleMarkRead(row)"
+        >
           标记已读
         </el-button>
         <span v-else style="color: #999">-</span>
@@ -65,8 +95,18 @@
   </common-list>
 
   <!-- 本站订阅弹窗 -->
-  <el-dialog v-model="subscriberDialogVisible" title="本站订阅者" width="700px" destroy-on-close>
-    <el-table :data="subscriberList" v-loading="subscriberLoading" border style="width: 100%">
+  <el-dialog
+    v-model="subscriberDialogVisible"
+    title="本站订阅者"
+    width="700px"
+    destroy-on-close
+  >
+    <el-table
+      :data="subscriberList"
+      v-loading="subscriberLoading"
+      border
+      style="width: 100%"
+    >
       <el-table-column label="邮箱地址" min-width="240">
         <template #default="{ row }">
           <div style="display: flex; align-items: center; gap: 8px">
@@ -91,16 +131,27 @@
       </el-table-column>
       <el-table-column label="操作" width="80" align="center">
         <template #default="{ row }">
-          <el-button type="danger" link size="small" @click="handleDeleteSubscriber(row.id)">
+          <el-button
+            type="danger"
+            link
+            size="small"
+            @click="handleDeleteSubscriber(row.id)"
+          >
             删除
           </el-button>
         </template>
       </el-table-column>
     </el-table>
-    <div style="margin-top: 16px; display: flex; justify-content: flex-end;">
-      <el-pagination v-model:current-page="subscriberQuery.page" v-model:page-size="subscriberQuery.page_size"
-        :total="subscriberTotal" :page-sizes="[10, 20, 50]" layout="total, sizes, prev, pager, next"
-        @current-change="fetchSubscribers" @size-change="fetchSubscribers" />
+    <div style="margin-top: 16px; display: flex; justify-content: flex-end">
+      <el-pagination
+        v-model:current-page="subscriberQuery.page"
+        v-model:page-size="subscriberQuery.page_size"
+        :total="subscriberTotal"
+        :page-sizes="[10, 20, 50]"
+        layout="total, sizes, prev, pager, next"
+        @current-change="fetchSubscribers"
+        @size-change="fetchSubscribers"
+      />
     </div>
   </el-dialog>
 </template>
@@ -112,7 +163,11 @@ import { Message } from '@element-plus/icons-vue'
 import CommonList from '@/components/common/CommonList.vue'
 import type { RssArticle, RssArticleQuery } from '@/types/rssfeed'
 import type { Subscriber } from '@/types/subscriber'
-import { getRssArticles, markRssArticleRead, markAllRssArticlesRead } from '@/api/rssfeed'
+import {
+  getRssArticles,
+  markRssArticleRead,
+  markAllRssArticlesRead
+} from '@/api/rssfeed'
 import { getSubscribers, deleteSubscriber } from '@/api/subscriber'
 import { formatDateTime } from '@/utils/date'
 import { isSuperAdmin as checkSuperAdmin } from '@/utils/auth'
@@ -161,7 +216,9 @@ const handleMarkRead = async (article: RssArticle) => {
  */
 const handleMarkAllRead = async () => {
   try {
-    await ElMessageBox.confirm('确定要将所有未读文章标记为已读吗？', '提示', { type: 'warning' })
+    await ElMessageBox.confirm('确定要将所有未读文章标记为已读吗？', '提示', {
+      type: 'warning'
+    })
     const result = await markAllRssArticlesRead()
     ElMessage.success(`已标记 ${result.affected} 篇文章为已读`)
     fetchArticles()
@@ -209,12 +266,17 @@ const fetchSubscribers = async () => {
  */
 const handleDeleteSubscriber = async (id: number) => {
   try {
-    await ElMessageBox.confirm('确定要删除该订阅者吗？此操作不可恢复。', '提示', { type: 'warning' })
+    await ElMessageBox.confirm(
+      '确定要删除该订阅者吗？此操作不可恢复。',
+      '提示',
+      { type: 'warning' }
+    )
     await deleteSubscriber(id)
     ElMessage.success('删除成功')
     fetchSubscribers()
   } catch (error) {
-    if (error !== 'cancel' && error instanceof Error) ElMessage.error(error.message)
+    if (error !== 'cancel' && error instanceof Error)
+      ElMessage.error(error.message)
   }
 }
 

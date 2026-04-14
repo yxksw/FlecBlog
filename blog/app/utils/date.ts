@@ -36,7 +36,9 @@ export function formatDate(date: string | Date | null | undefined): string {
  * @param date 日期字符串或 Date 对象
  * @returns 相对时间字符串
  */
-export function formatRelativeTime(date: string | Date | null | undefined): string {
+export function formatRelativeTime(
+  date: string | Date | null | undefined
+): string {
   if (!date) return '-'
   return dayjs(date).fromNow()
 }
@@ -46,7 +48,9 @@ export function formatRelativeTime(date: string | Date | null | undefined): stri
  * @param dateString 后端返回的日期字符串
  * @returns Date 对象或 null
  */
-export function parseBackendDate(dateString: string | null | undefined): Date | null {
+export function parseBackendDate(
+  dateString: string | null | undefined
+): Date | null {
   if (!dateString?.trim()) return null
   const parsed = dayjs(dateString, BACKEND_DATE_FORMAT, true)
   return parsed.isValid() ? parsed.toDate() : null
@@ -78,9 +82,9 @@ export function isValidDate(date: string | Date | null | undefined): boolean {
  */
 export function formatFriendly(date: string | Date | null | undefined): string {
   if (!date) return '-'
-  
+
   const target = dayjs(date)
-  
+
   // 始终显示完整的年月日
   return target.format('YYYY年M月D日')
 }
@@ -90,14 +94,16 @@ export function formatFriendly(date: string | Date | null | undefined): string {
  * @param date 日期字符串或 Date 对象
  * @returns 友好时间字符串：n小时前（24小时内）、n天前（3天内）、几月几日（本年）、几年几月几日（非本年）
  */
-export function formatMomentTime(date: string | Date | null | undefined): string {
+export function formatMomentTime(
+  date: string | Date | null | undefined
+): string {
   if (!date) return '-'
 
   const now = dayjs()
   const target = dayjs(date)
   const diffHours = now.diff(target, 'hour')
   const diffDays = now.diff(target, 'day')
-  
+
   // 24小时内显示小时
   if (diffHours < 24) {
     if (diffHours < 1) {
@@ -106,17 +112,17 @@ export function formatMomentTime(date: string | Date | null | undefined): string
     }
     return `${diffHours}小时前`
   }
-  
+
   // 3天内显示天数
   if (diffDays < 3) {
     return `${diffDays}天前`
   }
-  
+
   // 今年的日期显示月日
   if (now.year() === target.year()) {
     return target.format('M月D日')
   }
-  
+
   // 其他年份显示年月日
   return target.format('YYYY年M月D日')
 }

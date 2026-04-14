@@ -20,9 +20,14 @@ useSeoMeta({
     <div class="content">
       <p>本页面旨在帮助你更有效地提问和交流，获得更有价值的回答。</p>
 
-      <p>良好的提问方式不仅能让你更快地解决问题，也能帮助建立更好的技术交流氛围。</p>
+      <p>
+        良好的提问方式不仅能让你更快地解决问题，也能帮助建立更好的技术交流氛围。
+      </p>
 
-      <blockquote><strong>核心理念：</strong>尊重他人的时间，展示你的思考，提供清晰的信息。</blockquote>
+      <blockquote>
+        <strong>核心理念：</strong
+        >尊重他人的时间，展示你的思考，提供清晰的信息。
+      </blockquote>
 
       <h1>为什么需要这个指南</h1>
 
@@ -58,7 +63,9 @@ useSeoMeta({
         <li>检查错误日志和提示信息</li>
       </ul>
 
-      <blockquote>表明你已经做过这些努力，会让回答者更愿意帮助你。比如："我已经搜索过XX，查看过XX文档，尝试了XX方法，但还是遇到XX问题..."</blockquote>
+      <blockquote>
+        表明你已经做过这些努力，会让回答者更愿意帮助你。比如："我已经搜索过XX，查看过XX文档，尝试了XX方法，但还是遇到XX问题..."
+      </blockquote>
 
       <h2>2. 阅读相关内容</h2>
       <ul>
@@ -110,9 +117,13 @@ useSeoMeta({
       <p>"我觉得是XX模块有问题，应该怎么修？"</p>
 
       <p><strong>好的提问：</strong></p>
-      <p>"当我执行XX操作时，系统提示XX错误。我检查了XX部分，发现XX情况。这是什么原因导致的？"</p>
+      <p>
+        "当我执行XX操作时，系统提示XX错误。我检查了XX部分，发现XX情况。这是什么原因导致的？"
+      </p>
 
-      <blockquote>描述你观察到的事实，而不是你的猜测。让有经验的人来帮你诊断。</blockquote>
+      <blockquote>
+        描述你观察到的事实，而不是你的猜测。让有经验的人来帮你诊断。
+      </blockquote>
 
       <h2>话不在多而在精</h2>
 
@@ -165,7 +176,10 @@ useSeoMeta({
       <p><strong>问题：</strong>没有任何有用信息，无法判断问题所在。</p>
 
       <p><strong>好问题：</strong></p>
-      <p class="good-example">"我在使用文章中提到的XX方法时，在第X行出现了'XX错误'。我的环境是Windows 10 + Python 3.9。我尝试了XX方法但没有解决。请问可能是什么原因？"</p>
+      <p class="good-example">
+        "我在使用文章中提到的XX方法时，在第X行出现了'XX错误'。我的环境是Windows
+        10 + Python 3.9。我尝试了XX方法但没有解决。请问可能是什么原因？"
+      </p>
       <p><strong>优点：</strong>提供了环境、错误信息、已做尝试等关键信息。</p>
 
       <h2>案例二：概念理解</h2>
@@ -175,7 +189,9 @@ useSeoMeta({
       <p><strong>问题：</strong>这种问题搜索引擎能更好地回答。</p>
 
       <p><strong>好问题：</strong></p>
-      <p class="good-example">"文章中提到XX概念，我查了资料理解为XX意思。但在YY场景下，我不太明白为什么要用XX而不是ZZ，能否解释一下？"</p>
+      <p class="good-example">
+        "文章中提到XX概念，我查了资料理解为XX意思。但在YY场景下，我不太明白为什么要用XX而不是ZZ，能否解释一下？"
+      </p>
       <p><strong>优点：</strong>表明已经做过研究，问的是更深层次的理解。</p>
 
       <h2>案例三：文章反馈</h2>
@@ -185,7 +201,9 @@ useSeoMeta({
       <p><strong>问题：</strong>既不礼貌也没有建设性。</p>
 
       <p><strong>好问题：</strong></p>
-      <p class="good-example">"文章的XX部分我理解起来有些困难，能否补充说明一下XX和YY之间的关系？或者推荐一些相关资料？"</p>
+      <p class="good-example">
+        "文章的XX部分我理解起来有些困难，能否补充说明一下XX和YY之间的关系？或者推荐一些相关资料？"
+      </p>
       <p><strong>优点：</strong>明确指出不理解的地方，并给出建设性建议。</p>
 
       <h1>如何对待回答</h1>
@@ -231,19 +249,40 @@ useSeoMeta({
 
       <h1>其他说明</h1>
 
-      <p><strong>发现错误：</strong>欢迎指出文章中的错误，最好能说明正确内容，作者将感激不尽。</p>
+      <p>
+        <strong>发现错误：</strong
+        >欢迎指出文章中的错误，最好能说明正确内容，作者将感激不尽。
+      </p>
 
-      <p><strong>私下交流：</strong>如需私下交流，请通过邮件联系（{{ contactEmail }}）。请在邮件中说明来意，理解可能需要几天才能回复。</p>
+      <p>
+        <strong>私下交流：</strong>如需私下交流，请通过邮件联系（{{
+          contactEmail
+        }}）。请在邮件中说明来意，理解可能需要几天才能回复。
+      </p>
 
       <h1>推荐阅读</h1>
 
       <p>本页面的内容参考和改编自以下资源：</p>
 
       <ul>
-        <li><a href="http://www.catb.org/~esr/faqs/smart-questions.html" target="_blank" rel="noopener noreferrer">《How
-            To Ask Questions The Smart Way》</a> by Eric S. Raymond & Rick Moen（提问的智慧）</li>
-        <li><a href="https://github.com/ryanhanwu/How-To-Ask-Questions-The-Smart-Way" target="_blank"
-            rel="noopener noreferrer">《提问的智慧》中文版</a> - GitHub</li>
+        <li>
+          <a
+            href="http://www.catb.org/~esr/faqs/smart-questions.html"
+            target="_blank"
+            rel="noopener noreferrer"
+            >《How To Ask Questions The Smart Way》</a
+          >
+          by Eric S. Raymond & Rick Moen（提问的智慧）
+        </li>
+        <li>
+          <a
+            href="https://github.com/ryanhanwu/How-To-Ask-Questions-The-Smart-Way"
+            target="_blank"
+            rel="noopener noreferrer"
+            >《提问的智慧》中文版</a
+          >
+          - GitHub
+        </li>
       </ul>
 
       <p>强烈建议完整阅读上述文档，它们对在任何技术社区提问都有帮助。</p>
@@ -260,7 +299,9 @@ useSeoMeta({
         <li><strong>分享知识</strong>：有能力时也帮助他人</li>
       </ul>
 
-      <blockquote>好的提问是双赢的开始 —— 你得到帮助，社区积累知识。</blockquote>
+      <blockquote>
+        好的提问是双赢的开始 —— 你得到帮助，社区积累知识。
+      </blockquote>
 
       <p>祝你交流愉快！</p>
 
@@ -270,7 +311,7 @@ useSeoMeta({
 </template>
 
 <style lang="scss" scoped>
-@use "@/assets/css/mixins" as *;
+@use '@/assets/css/mixins' as *;
 
 #page {
   @extend .cardHover;

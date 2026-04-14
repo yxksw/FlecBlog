@@ -33,7 +33,7 @@ export const useUser = () => {
 
   // 计算属性
   const userAvatar = computed(() => getAvatarUrl(userInfo.value || {}))
-  
+
   const userNickname = computed(() => userInfo.value?.nickname || '用户')
   const userEmail = computed(() => userInfo.value?.email || '')
 

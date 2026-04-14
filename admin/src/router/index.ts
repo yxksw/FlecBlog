@@ -119,8 +119,10 @@ const router = createRouter({
 })
 
 router.beforeEach(async (to) => {
-  const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
-  const requiresSuperAdmin = to.matched.some(record => record.meta.requiresSuperAdmin)
+  const requiresAuth = to.matched.some((record) => record.meta.requiresAuth)
+  const requiresSuperAdmin = to.matched.some(
+    (record) => record.meta.requiresSuperAdmin
+  )
   const isAuthenticated = checkAuth()
 
   if (to.path === '/login') {

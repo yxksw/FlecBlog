@@ -1,16 +1,18 @@
-import request from "@/utils/request"
+import request from '@/utils/request'
 import type {
   Feedback,
   FeedbackListData,
   FeedbackUpdateRequest
-} from "@/types/feedback"
-import type { PaginationQuery } from "@/types/request"
+} from '@/types/feedback'
+import type { PaginationQuery } from '@/types/request'
 
 /**
  * 获取反馈列表
  */
-export function getFeedbackList(params: PaginationQuery): Promise<FeedbackListData> {
-  return request.get("/admin/feedback", { params })
+export function getFeedbackList(
+  params: PaginationQuery
+): Promise<FeedbackListData> {
+  return request.get('/admin/feedback', { params })
 }
 
 /**
@@ -23,7 +25,10 @@ export function getFeedbackDetail(id: number): Promise<Feedback> {
 /**
  * 更新反馈
  */
-export function updateFeedback(id: number, data: FeedbackUpdateRequest): Promise<void> {
+export function updateFeedback(
+  id: number,
+  data: FeedbackUpdateRequest
+): Promise<void> {
   return request.put(`/admin/feedback/${id}`, data)
 }
 

@@ -37,7 +37,9 @@ function extractTagAndParams(line: string): { tag: string; params: string[] } {
   const paramsString = match[2]?.trim() || ''
 
   // 简单按空格分割参数
-  const params = paramsString ? paramsString.split(/\s+/).filter(p => p && p !== ':::') : []
+  const params = paramsString
+    ? paramsString.split(/\s+/).filter((p) => p && p !== ':::')
+    : []
 
   return { tag, params }
 }
@@ -53,7 +55,8 @@ function isSelfClosing(line: string): boolean {
 
 // 生成标题 ID（支持中文）
 function generateHeadingId(text: string): string {
-  const id = text.toLowerCase()
+  const id = text
+    .toLowerCase()
     .replace(/[^\u4e00-\u9fa5a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '')
   return id || `heading-${Math.random().toString(36).slice(2, 9)}`
@@ -77,13 +80,23 @@ function getLineStartOffsets(source: string): number[] {
   return offsets
 }
 
-function getOffsetForLine(lineStarts: number[], line: number, sourceLength: number): number {
+function getOffsetForLine(
+  lineStarts: number[],
+  line: number,
+  sourceLength: number
+): number {
   if (line <= 0) return 0
   if (line >= lineStarts.length) return sourceLength
   return lineStarts[line] ?? sourceLength
 }
 
-function setTokenSourceMeta(token: any, sourceStartLine: number, sourceEndLine: number, sourceStartOffset: number, sourceEndOffset: number) {
+function setTokenSourceMeta(
+  token: any,
+  sourceStartLine: number,
+  sourceEndLine: number,
+  sourceStartOffset: number,
+  sourceEndOffset: number
+) {
   token.meta = {
     ...(token.meta || {}),
     sourceStartLine,
@@ -93,12 +106,15 @@ function setTokenSourceMeta(token: any, sourceStartLine: number, sourceEndLine: 
   }
 }
 
-function buildSourceAttrs(meta?: {
-  sourceStartLine?: number
-  sourceEndLine?: number
-  sourceStartOffset?: number
-  sourceEndOffset?: number
-}, kind: 'block' | 'text' = 'block'): string {
+function buildSourceAttrs(
+  meta?: {
+    sourceStartLine?: number
+    sourceEndLine?: number
+    sourceStartOffset?: number
+    sourceEndOffset?: number
+  },
+  kind: 'block' | 'text' = 'block'
+): string {
   if (!meta) return ''
 
   const attrs: string[] = [`data-sync-kind="${kind}"`]
@@ -106,13 +122,18 @@ function buildSourceAttrs(meta?: {
     attrs.push(`data-source-line="${meta.sourceStartLine}"`)
     attrs.push(`data-source-start-line="${meta.sourceStartLine}"`)
   }
-  if (meta.sourceEndLine !== undefined) attrs.push(`data-source-end-line="${meta.sourceEndLine}"`)
-  if (meta.sourceStartOffset !== undefined) attrs.push(`data-source-start-offset="${meta.sourceStartOffset}"`)
-  if (meta.sourceEndOffset !== undefined) attrs.push(`data-source-end-offset="${meta.sourceEndOffset}"`)
+  if (meta.sourceEndLine !== undefined)
+    attrs.push(`data-source-end-line="${meta.sourceEndLine}"`)
+  if (meta.sourceStartOffset !== undefined)
+    attrs.push(`data-source-start-offset="${meta.sourceStartOffset}"`)
+  if (meta.sourceEndOffset !== undefined)
+    attrs.push(`data-source-end-offset="${meta.sourceEndOffset}"`)
   return attrs.length ? ` ${attrs.join(' ')}` : ''
 }
 
-function splitTextIntoChunks(text: string): Array<{ text: string; start: number; end: number }> {
+function splitTextIntoChunks(
+  text: string
+): Array<{ text: string; start: number; end: number }> {
   const chunks: Array<{ text: string; start: number; end: number }> = []
   let start = 0
 
@@ -122,7 +143,8 @@ function splitTextIntoChunks(text: string): Array<{ text: string; start: number;
       const boundary = text.lastIndexOf(' ', end)
       if (boundary > start + 8) end = boundary + 1
     }
-    if (end <= start) end = Math.min(start + INLINE_ANCHOR_CHUNK_SIZE, text.length)
+    if (end <= start)
+      end = Math.min(start + INLINE_ANCHOR_CHUNK_SIZE, text.length)
     chunks.push({ text: text.slice(start, end), start, end })
     start = end
   }
@@ -130,20 +152,34 @@ function splitTextIntoChunks(text: string): Array<{ text: string; start: number;
   return chunks
 }
 
-function renderAnchoredText(text: string, sourceStartOffset?: number, sourceEndOffset?: number, escapeHtml: (value: string) => string = escapeHtmlContent): string {
+function renderAnchoredText(
+  text: string,
+  sourceStartOffset?: number,
+  sourceEndOffset?: number,
+  escapeHtml: (value: string) => string = escapeHtmlContent
+): string {
   const escapedText = escapeHtml(text)
-  if (sourceStartOffset === undefined || sourceEndOffset === undefined || sourceEndOffset <= sourceStartOffset) {
+  if (
+    sourceStartOffset === undefined ||
+    sourceEndOffset === undefined ||
+    sourceEndOffset <= sourceStartOffset
+  ) {
     return escapedText
   }
   if (!text.trim()) return escapedText
 
-  return splitTextIntoChunks(text).map(chunk => {
-    const attrs = buildSourceAttrs({
-      sourceStartOffset: sourceStartOffset + chunk.start,
-      sourceEndOffset: sourceStartOffset + chunk.end
-    }, 'text')
-    return `<span class="sync-text-anchor"${attrs}>${escapeHtml(chunk.text)}</span>`
-  }).join('')
+  return splitTextIntoChunks(text)
+    .map((chunk) => {
+      const attrs = buildSourceAttrs(
+        {
+          sourceStartOffset: sourceStartOffset + chunk.start,
+          sourceEndOffset: sourceStartOffset + chunk.end
+        },
+        'text'
+      )
+      return `<span class="sync-text-anchor"${attrs}>${escapeHtml(chunk.text)}</span>`
+    })
+    .join('')
 }
 
 // ========== 自定义块渲染函数 ==========
@@ -154,7 +190,11 @@ function renderAnchoredText(text: string, sourceStartOffset?: number, sourceEndO
  * @param params - [类型, 标题(可选)]
  * @param lineNum - 源码行号（可选，用于滚动同步）
  */
-function renderNote(content: string, params: string[], sourceAttrs = ''): string {
+function renderNote(
+  content: string,
+  params: string[],
+  sourceAttrs = ''
+): string {
   const type = params[0] || 'info'
   const title = params[1] || ''
 
@@ -169,23 +209,31 @@ function renderNote(content: string, params: string[], sourceAttrs = ''): string
  * @param params - [默认标签名(可选)]
  * @param lineNum - 源码行号（可选，用于滚动同步）
  */
-function renderTabs(tabsData: Array<{ name: string; content: string }>, params: string[], sourceAttrs = ''): string {
+function renderTabs(
+  tabsData: Array<{ name: string; content: string }>,
+  params: string[],
+  sourceAttrs = ''
+): string {
   if (tabsData.length === 0) return ''
 
   const tabsId = `tabs-${Math.random().toString(36).slice(2, 9)}`
   const activeTab = params[0] || tabsData[0]?.name || ''
 
   // 生成标签头
-  const tabHeaders = tabsData.map(tab => {
-    const isActive = tab.name === activeTab ? 'active' : ''
-    return `<button class="custom-tab-btn ${isActive}" onclick="switchTab('${tabsId}', '${tab.name}')">${tab.name}</button>`
-  }).join('')
+  const tabHeaders = tabsData
+    .map((tab) => {
+      const isActive = tab.name === activeTab ? 'active' : ''
+      return `<button class="custom-tab-btn ${isActive}" onclick="switchTab('${tabsId}', '${tab.name}')">${tab.name}</button>`
+    })
+    .join('')
 
   // 生成标签内容
-  const tabContents = tabsData.map(tab => {
-    const isActive = tab.name === activeTab ? 'active' : ''
-    return `<div class="custom-tab-panel ${isActive}" data-tab="${tab.name}">${tab.content}</div>`
-  }).join('')
+  const tabContents = tabsData
+    .map((tab) => {
+      const isActive = tab.name === activeTab ? 'active' : ''
+      return `<div class="custom-tab-panel ${isActive}" data-tab="${tab.name}">${tab.content}</div>`
+    })
+    .join('')
 
   return `<div class="custom-tabs" id="${tabsId}"${sourceAttrs}><div class="custom-tabs-header">${tabHeaders}</div><div class="custom-tabs-content">${tabContents}</div></div>`
 }
@@ -196,7 +244,11 @@ function renderTabs(tabsData: Array<{ name: string; content: string }>, params: 
  * @param params - [标题, open(可选)]
  * @param lineNum - 源码行号（可选，用于滚动同步）
  */
-function renderFold(content: string, params: string[], sourceAttrs = ''): string {
+function renderFold(
+  content: string,
+  params: string[],
+  sourceAttrs = ''
+): string {
   const title = params[0] || '点击展开'
   const open = params[1] === 'true' || params[1] === 'open'
   const foldId = `fold-${Math.random().toString(36).slice(2, 9)}`
@@ -260,7 +312,11 @@ function renderVideo(params: string[], sourceAttrs = ''): string {
   }
 
   // 本地/在线视频URL
-  if (platformOrUrl.startsWith('http://') || platformOrUrl.startsWith('https://') || platformOrUrl.startsWith('/')) {
+  if (
+    platformOrUrl.startsWith('http://') ||
+    platformOrUrl.startsWith('https://') ||
+    platformOrUrl.startsWith('/')
+  ) {
     return `<div class="custom-video"${sourceAttrs}><video src="${platformOrUrl}" controls preload="metadata"></video></div>`
   }
 
@@ -276,24 +332,28 @@ function renderPhotoWall(rows: string[][], sourceAttrs = ''): string {
   if (rows.length === 0) return ''
 
   // 生成每一行的图片
-  const rowsHtml = rows.map(row => {
-    const imagesHtml = row.map(img => {
-      // 处理图片语法：支持 markdown 图片语法和直接 URL
-      let imgSrc = img
-      let imgAlt = ''
+  const rowsHtml = rows
+    .map((row) => {
+      const imagesHtml = row
+        .map((img) => {
+          // 处理图片语法：支持 markdown 图片语法和直接 URL
+          let imgSrc = img
+          let imgAlt = ''
 
-      // 检查是否为 markdown 图片语法 ![alt](url)
-      const imgMatch = img.match(/^!\[(.*?)\]\((.*?)\)$/)
-      if (imgMatch) {
-        imgAlt = imgMatch[1] || ''
-        imgSrc = imgMatch[2] || img
-      }
+          // 检查是否为 markdown 图片语法 ![alt](url)
+          const imgMatch = img.match(/^!\[(.*?)\]\((.*?)\)$/)
+          if (imgMatch) {
+            imgAlt = imgMatch[1] || ''
+            imgSrc = imgMatch[2] || img
+          }
 
-      return `<div class="custom-photo-wall-item"><img src="${imgSrc}" alt="${imgAlt || '图片'}" loading="lazy" /></div>`
-    }).join('')
+          return `<div class="custom-photo-wall-item"><img src="${imgSrc}" alt="${imgAlt || '图片'}" loading="lazy" /></div>`
+        })
+        .join('')
 
-    return `<div class="custom-photo-wall-row">${imagesHtml}</div>`
-  }).join('')
+      return `<div class="custom-photo-wall-row">${imagesHtml}</div>`
+    })
+    .join('')
 
   return `<div class="custom-photo-wall"${sourceAttrs}><div class="custom-photo-wall-container">${rowsHtml}</div></div>`
 }
@@ -341,7 +401,11 @@ function createMarkdownRenderer(): MarkdownIt {
   return instance
 }
 
-function renderFence(token: any, escapeHtml: (value: string) => string, sourceAttrs = ''): string {
+function renderFence(
+  token: any,
+  escapeHtml: (value: string) => string,
+  sourceAttrs = ''
+): string {
   const code = token.content
   const lang = token.info.trim()
 
@@ -354,7 +418,10 @@ function renderFence(token: any, escapeHtml: (value: string) => string, sourceAt
 
   if (lang && hljs.getLanguage(lang)) {
     try {
-      highlightedCode = hljs.highlight(code, { language: lang, ignoreIllegals: true }).value
+      highlightedCode = hljs.highlight(code, {
+        language: lang,
+        ignoreIllegals: true
+      }).value
     } catch {
       highlightedCode = escapeHtml(code)
     }
@@ -365,7 +432,10 @@ function renderFence(token: any, escapeHtml: (value: string) => string, sourceAt
   const numberedLines = highlightedCode
     .replace(/\n$/, '')
     .split('\n')
-    .map((line, index) => `<span class="line-number" data-line="${index + 1}"></span><span class="line-content">${line}</span>`)
+    .map(
+      (line, index) =>
+        `<span class="line-number" data-line="${index + 1}"></span><span class="line-content">${line}</span>`
+    )
     .join('\n')
 
   return `<div class="code-block-container"${sourceAttrs}><div class="code-toolbar"><button class="code-fold-btn" onclick="this.closest('.code-block-container').classList.toggle('collapsed')" title="折叠/展开"><i class="ri-arrow-down-s-line"></i></button><span class="code-lang">${displayLang}</span><button class="code-copy-btn" onclick="copyCodeBlock(this)" title="复制代码"><i class="ri-file-copy-fill"></i></button></div><pre><code>${numberedLines}</code></pre></div>`
@@ -380,115 +450,242 @@ md.renderer.rules.fence = (tokens, idx) => {
 }
 function customBlocksPlugin(md: MarkdownIt) {
   // 块级规则
-  md.block.ruler.before('fence', 'custom_blocks', (state, startLine, endLine, silent) => {
-    const buildBlockSourceAttrs = (fromLine: number, toLine: number) => {
-      const sourceStartOffset = state.bMarks[fromLine] ?? 0
-      const sourceEndOffset = toLine < state.bMarks.length ? (state.bMarks[toLine] ?? state.src.length) : state.src.length
-      return buildSourceAttrs({
-        sourceStartLine: fromLine,
-        sourceEndLine: toLine,
-        sourceStartOffset,
-        sourceEndOffset
-      }, 'block')
-    }
+  md.block.ruler.before(
+    'fence',
+    'custom_blocks',
+    (state, startLine, endLine, silent) => {
+      const buildBlockSourceAttrs = (fromLine: number, toLine: number) => {
+        const sourceStartOffset = state.bMarks[fromLine] ?? 0
+        const sourceEndOffset =
+          toLine < state.bMarks.length
+            ? (state.bMarks[toLine] ?? state.src.length)
+            : state.src.length
+        return buildSourceAttrs(
+          {
+            sourceStartLine: fromLine,
+            sourceEndLine: toLine,
+            sourceStartOffset,
+            sourceEndOffset
+          },
+          'block'
+        )
+      }
 
-    const pos = (state.bMarks[startLine] ?? 0) + (state.tShift[startLine] ?? 0)
-    const max = state.eMarks[startLine] ?? 0
-    const lineText = state.src.slice(pos, max).trim()
+      const pos =
+        (state.bMarks[startLine] ?? 0) + (state.tShift[startLine] ?? 0)
+      const max = state.eMarks[startLine] ?? 0
+      const lineText = state.src.slice(pos, max).trim()
 
-    // 检查是否为自定义块起始标签
-    if (!lineText.startsWith(':::')) {
-      return false
-    }
+      // 检查是否为自定义块起始标签
+      if (!lineText.startsWith(':::')) {
+        return false
+      }
 
-    // 检查是否为自闭合标签
-    if (isSelfClosing(lineText)) {
-      if (silent) return true
+      // 检查是否为自闭合标签
+      if (isSelfClosing(lineText)) {
+        if (silent) return true
 
+        const { tag, params } = extractTagAndParams(lineText)
+
+        // 处理自闭合标签
+        let html = ''
+        if (tag === 'link') {
+          html = renderLinkCard(
+            params,
+            buildBlockSourceAttrs(startLine, startLine + 1)
+          )
+        } else if (tag === 'video') {
+          html = renderVideo(
+            params,
+            buildBlockSourceAttrs(startLine, startLine + 1)
+          )
+        }
+
+        if (html) {
+          const token = state.push('html_block', '', 0)
+          token.content = html
+          token.map = [startLine, startLine + 1]
+          state.line = startLine + 1
+          return true
+        }
+
+        return false
+      }
+
+      // 处理块级标签
       const { tag, params } = extractTagAndParams(lineText)
+      if (!tag) return false
 
-      // 处理自闭合标签
-      let html = ''
-      if (tag === 'link') {
-        html = renderLinkCard(params, buildBlockSourceAttrs(startLine, startLine + 1))
-      } else if (tag === 'video') {
-        html = renderVideo(params, buildBlockSourceAttrs(startLine, startLine + 1))
+      // 查找结束标签
+      const endTagFull = `end${tag}`
+      let nextLine = startLine + 1
+      let foundEnd = false
+      let contentLines: string[] = []
+
+      // 特殊处理 tabs
+      if (tag === 'tabs') {
+        const tabsData: Array<{ name: string; content: string }> = []
+        let currentTab: { name: string; content: string } | null = null
+
+        while (nextLine < endLine) {
+          const linePos = state.bMarks[nextLine] ?? 0
+          const lineMax = state.eMarks[nextLine] ?? 0
+          const line = state.src.slice(linePos, lineMax).trim()
+
+          if (line.startsWith(':::endtabs')) {
+            foundEnd = true
+            break
+          }
+
+          if (line.startsWith(':::tab')) {
+            // 保存上一个 tab
+            if (currentTab) {
+              tabsData.push(currentTab)
+            }
+            // 开始新 tab
+            const tabParams = extractTagAndParams(line).params
+            currentTab = {
+              name: tabParams[0] || `Tab ${tabsData.length + 1}`,
+              content: ''
+            }
+          } else if (line.startsWith(':::endtab')) {
+            // tab 结束，不做处理
+          } else {
+            // tab 内容
+            if (currentTab) {
+              currentTab.content += state.src.slice(linePos, lineMax) + '\n'
+            }
+          }
+          nextLine++
+        }
+
+        // 保存最后一个 tab
+        if (currentTab) {
+          tabsData.push(currentTab)
+        }
+
+        if (foundEnd && tabsData.length > 0) {
+          if (silent) return true
+
+          // 渲染每个 tab 的内容
+          // 注意：嵌套内容会产生错误的行号（从0开始），需要移除
+          const renderedTabs = tabsData.map((tab) => {
+            let content = md.render(tab.content)
+            // 移除嵌套块的同步属性，避免行号/偏移冲突
+            content = stripNestedSyncAttrs(content)
+            return { name: tab.name, content }
+          })
+
+          const html = renderTabs(
+            renderedTabs,
+            params,
+            buildBlockSourceAttrs(startLine, nextLine + 1)
+          )
+
+          const token = state.push('html_block', '', 0)
+          token.content = html
+          token.map = [startLine, nextLine + 1]
+          state.line = nextLine + 1
+          return true
+        }
+
+        return false
       }
 
-      if (html) {
-        const token = state.push('html_block', '', 0)
-        token.content = html
-        token.map = [startLine, startLine + 1]
-        state.line = startLine + 1
-        return true
+      // 特殊处理 photo
+      if (tag === 'photo') {
+        const rows: string[][] = []
+        let currentRow: string[] = []
+
+        while (nextLine < endLine) {
+          const linePos =
+            (state.bMarks[nextLine] ?? 0) + (state.tShift[nextLine] ?? 0)
+          const lineMax = state.eMarks[nextLine] ?? 0
+          const line = state.src.slice(linePos, lineMax).trim()
+
+          if (line === ':::endphoto') {
+            foundEnd = true
+            break
+          }
+
+          // 检查是否为换行标记 :::n
+          if (line === ':::n') {
+            // 保存当前行并开始新行
+            if (currentRow.length > 0) {
+              rows.push(currentRow)
+              currentRow = []
+            }
+          } else {
+            // 解析图片（支持多个图片用空格分隔）
+            const images = line.split(/\s+/).filter((img) => img.trim())
+            currentRow.push(...images)
+          }
+
+          nextLine++
+        }
+
+        // 保存最后一行
+        if (currentRow.length > 0) {
+          rows.push(currentRow)
+        }
+
+        if (foundEnd && rows.length > 0) {
+          if (silent) return true
+
+          const html = renderPhotoWall(
+            rows,
+            buildBlockSourceAttrs(startLine, nextLine + 1)
+          )
+
+          const token = state.push('html_block', '', 0)
+          token.content = html
+          token.map = [startLine, nextLine + 1]
+          state.line = nextLine + 1
+          return true
+        }
+
+        return false
       }
 
-      return false
-    }
-
-    // 处理块级标签
-    const { tag, params } = extractTagAndParams(lineText)
-    if (!tag) return false
-
-    // 查找结束标签
-    const endTagFull = `end${tag}`
-    let nextLine = startLine + 1
-    let foundEnd = false
-    let contentLines: string[] = []
-
-    // 特殊处理 tabs
-    if (tag === 'tabs') {
-      const tabsData: Array<{ name: string; content: string }> = []
-      let currentTab: { name: string; content: string } | null = null
-
+      // 处理其他块级标签（note, fold）
       while (nextLine < endLine) {
         const linePos = state.bMarks[nextLine] ?? 0
         const lineMax = state.eMarks[nextLine] ?? 0
         const line = state.src.slice(linePos, lineMax).trim()
 
-        if (line.startsWith(':::endtabs')) {
+        if (line === `:::${endTagFull}`) {
           foundEnd = true
           break
         }
 
-        if (line.startsWith(':::tab')) {
-          // 保存上一个 tab
-          if (currentTab) {
-            tabsData.push(currentTab)
-          }
-          // 开始新 tab
-          const tabParams = extractTagAndParams(line).params
-          currentTab = { name: tabParams[0] || `Tab ${tabsData.length + 1}`, content: '' }
-        } else if (line.startsWith(':::endtab')) {
-          // tab 结束，不做处理
-        } else {
-          // tab 内容
-          if (currentTab) {
-            currentTab.content += state.src.slice(linePos, lineMax) + '\n'
-          }
-        }
+        contentLines.push(state.src.slice(linePos, lineMax))
         nextLine++
       }
 
-      // 保存最后一个 tab
-      if (currentTab) {
-        tabsData.push(currentTab)
+      if (!foundEnd) return false
+      if (silent) return true
+
+      // 渲染内容
+      // 注意：嵌套内容会产生错误的行号（从0开始），需要移除
+      let content = md.render(contentLines.join('\n'))
+      content = stripNestedSyncAttrs(content)
+
+      let html = ''
+      if (tag === 'note') {
+        html = renderNote(
+          content,
+          params,
+          buildBlockSourceAttrs(startLine, nextLine + 1)
+        )
+      } else if (tag === 'fold') {
+        html = renderFold(
+          content,
+          params,
+          buildBlockSourceAttrs(startLine, nextLine + 1)
+        )
       }
 
-      if (foundEnd && tabsData.length > 0) {
-        if (silent) return true
-
-        // 渲染每个 tab 的内容
-        // 注意：嵌套内容会产生错误的行号（从0开始），需要移除
-        const renderedTabs = tabsData.map(tab => {
-          let content = md.render(tab.content)
-          // 移除嵌套块的同步属性，避免行号/偏移冲突
-          content = stripNestedSyncAttrs(content)
-          return { name: tab.name, content }
-        })
-
-        const html = renderTabs(renderedTabs, params, buildBlockSourceAttrs(startLine, nextLine + 1))
-
+      if (html) {
         const token = state.push('html_block', '', 0)
         token.content = html
         token.map = [startLine, nextLine + 1]
@@ -498,137 +695,202 @@ function customBlocksPlugin(md: MarkdownIt) {
 
       return false
     }
-
-    // 特殊处理 photo
-    if (tag === 'photo') {
-      const rows: string[][] = []
-      let currentRow: string[] = []
-
-      while (nextLine < endLine) {
-        const linePos = (state.bMarks[nextLine] ?? 0) + (state.tShift[nextLine] ?? 0)
-        const lineMax = state.eMarks[nextLine] ?? 0
-        const line = state.src.slice(linePos, lineMax).trim()
-
-        if (line === ':::endphoto') {
-          foundEnd = true
-          break
-        }
-
-        // 检查是否为换行标记 :::n
-        if (line === ':::n') {
-          // 保存当前行并开始新行
-          if (currentRow.length > 0) {
-            rows.push(currentRow)
-            currentRow = []
-          }
-        } else {
-          // 解析图片（支持多个图片用空格分隔）
-          const images = line.split(/\s+/).filter(img => img.trim())
-          currentRow.push(...images)
-        }
-
-        nextLine++
-      }
-
-      // 保存最后一行
-      if (currentRow.length > 0) {
-        rows.push(currentRow)
-      }
-
-      if (foundEnd && rows.length > 0) {
-        if (silent) return true
-
-        const html = renderPhotoWall(rows, buildBlockSourceAttrs(startLine, nextLine + 1))
-
-        const token = state.push('html_block', '', 0)
-        token.content = html
-        token.map = [startLine, nextLine + 1]
-        state.line = nextLine + 1
-        return true
-      }
-
-      return false
-    }
-
-    // 处理其他块级标签（note, fold）
-    while (nextLine < endLine) {
-      const linePos = state.bMarks[nextLine] ?? 0
-      const lineMax = state.eMarks[nextLine] ?? 0
-      const line = state.src.slice(linePos, lineMax).trim()
-
-      if (line === `:::${endTagFull}`) {
-        foundEnd = true
-        break
-      }
-
-      contentLines.push(state.src.slice(linePos, lineMax))
-      nextLine++
-    }
-
-    if (!foundEnd) return false
-    if (silent) return true
-
-    // 渲染内容
-    // 注意：嵌套内容会产生错误的行号（从0开始），需要移除
-    let content = md.render(contentLines.join('\n'))
-    content = stripNestedSyncAttrs(content)
-
-    let html = ''
-    if (tag === 'note') {
-      html = renderNote(content, params, buildBlockSourceAttrs(startLine, nextLine + 1))
-    } else if (tag === 'fold') {
-      html = renderFold(content, params, buildBlockSourceAttrs(startLine, nextLine + 1))
-    }
-
-    if (html) {
-      const token = state.push('html_block', '', 0)
-      token.content = html
-      token.map = [startLine, nextLine + 1]
-      state.line = nextLine + 1
-      return true
-    }
-
-    return false
-  })
+  )
 }
 
 // DOMPurify 配置
 const SANITIZE_CONFIG = {
   ALLOWED_TAGS: [
-    'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'br', 'hr',
-    'strong', 'em', 'u', 's', 'del', 'ins', 'mark', 'code', 'pre',
-    'ul', 'ol', 'li', 'blockquote', 'cite', 'footer',
-    'a', 'img', 'table', 'thead', 'tbody', 'tr', 'th', 'td',
-    'div', 'span', 'sup', 'sub', 'kbd', 'abbr',
-    'input', 'label', 'button', 'i', 'section',
-    'svg', 'path', 'g', 'rect', 'circle', 'ellipse', 'line', 'polygon', 'polyline', 'text', 'foreignObject',
-    'video', 'iframe', 'audio', 'source',
+    'h1',
+    'h2',
+    'h3',
+    'h4',
+    'h5',
+    'h6',
+    'p',
+    'br',
+    'hr',
+    'strong',
+    'em',
+    'u',
+    's',
+    'del',
+    'ins',
+    'mark',
+    'code',
+    'pre',
+    'ul',
+    'ol',
+    'li',
+    'blockquote',
+    'cite',
+    'footer',
+    'a',
+    'img',
+    'table',
+    'thead',
+    'tbody',
+    'tr',
+    'th',
+    'td',
+    'div',
+    'span',
+    'sup',
+    'sub',
+    'kbd',
+    'abbr',
+    'input',
+    'label',
+    'button',
+    'i',
+    'section',
+    'svg',
+    'path',
+    'g',
+    'rect',
+    'circle',
+    'ellipse',
+    'line',
+    'polygon',
+    'polyline',
+    'text',
+    'foreignObject',
+    'video',
+    'iframe',
+    'audio',
+    'source',
     // KaTeX / MathML 标签
-    'math', 'mrow', 'mi', 'mo', 'mn', 'msup', 'msub', 'msubsup', 'mfrac', 'msqrt', 'mroot',
-    'mover', 'munder', 'munderover', 'mtable', 'mtr', 'mtd', 'mtext', 'mspace', 'mpadded',
-    'menclose', 'mstyle', 'merror', 'mfenced', 'mphantom', 'annotation', 'semantics'
+    'math',
+    'mrow',
+    'mi',
+    'mo',
+    'mn',
+    'msup',
+    'msub',
+    'msubsup',
+    'mfrac',
+    'msqrt',
+    'mroot',
+    'mover',
+    'munder',
+    'munderover',
+    'mtable',
+    'mtr',
+    'mtd',
+    'mtext',
+    'mspace',
+    'mpadded',
+    'menclose',
+    'mstyle',
+    'merror',
+    'mfenced',
+    'mphantom',
+    'annotation',
+    'semantics'
   ],
   ALLOWED_ATTR: [
-    'href', 'title', 'target', 'rel', 'src', 'alt', 'width', 'height',
-    'class', 'id', 'colspan', 'rowspan', 'align',
-    'type', 'checked', 'disabled', 'for', 'onclick', 'start',
-    'data-source-line', 'data-source-start-line', 'data-source-end-line',
-    'data-source-start-offset', 'data-source-end-offset', 'data-sync-kind',
-    'd', 'fill', 'stroke', 'stroke-width', 'x', 'y', 'cx', 'cy', 'r', 'rx', 'ry',
-    'x1', 'y1', 'x2', 'y2', 'points', 'transform', 'viewBox', 'xmlns',
-    'text-anchor', 'font-size', 'font-family', 'dominant-baseline', 'data-processed',
-    'controls', 'preload', 'autoplay', 'loop', 'muted', 'poster',
-    'allowfullscreen', 'scrolling', 'border', 'frameborder', 'framespacing', 'allow',
-    'sandbox', 'referrerpolicy',
-    'data-server', 'data-type', 'data-id',
+    'href',
+    'title',
+    'target',
+    'rel',
+    'src',
+    'alt',
+    'width',
+    'height',
+    'class',
+    'id',
+    'colspan',
+    'rowspan',
+    'align',
+    'type',
+    'checked',
+    'disabled',
+    'for',
+    'onclick',
+    'start',
+    'data-source-line',
+    'data-source-start-line',
+    'data-source-end-line',
+    'data-source-start-offset',
+    'data-source-end-offset',
+    'data-sync-kind',
+    'd',
+    'fill',
+    'stroke',
+    'stroke-width',
+    'x',
+    'y',
+    'cx',
+    'cy',
+    'r',
+    'rx',
+    'ry',
+    'x1',
+    'y1',
+    'x2',
+    'y2',
+    'points',
+    'transform',
+    'viewBox',
+    'xmlns',
+    'text-anchor',
+    'font-size',
+    'font-family',
+    'dominant-baseline',
+    'data-processed',
+    'controls',
+    'preload',
+    'autoplay',
+    'loop',
+    'muted',
+    'poster',
+    'allowfullscreen',
+    'scrolling',
+    'border',
+    'frameborder',
+    'framespacing',
+    'allow',
+    'sandbox',
+    'referrerpolicy',
+    'data-server',
+    'data-type',
+    'data-id',
     // KaTeX / MathML 属性
-    'style', 'mathvariant', 'mathcolor', 'mathbackground', 'mathsize',
-    'displaystyle', 'scriptlevel', 'linethickness', 'lspace', 'rspace',
-    'stretchy', 'symmetric', 'largeop', 'movablelimits', 'accent',
-    'minsize', 'maxsize', 'open', 'close', 'separators', 'notation',
-    'encoding', 'definitionurl', 'display', 'xmlns:xlink',
-    'height', 'depth', 'voffset', 'width', 'lspace', 'width',
-    'columnalign', 'rowalign', 'columnspacing', 'rowspacing'
+    'style',
+    'mathvariant',
+    'mathcolor',
+    'mathbackground',
+    'mathsize',
+    'displaystyle',
+    'scriptlevel',
+    'linethickness',
+    'lspace',
+    'rspace',
+    'stretchy',
+    'symmetric',
+    'largeop',
+    'movablelimits',
+    'accent',
+    'minsize',
+    'maxsize',
+    'open',
+    'close',
+    'separators',
+    'notation',
+    'encoding',
+    'definitionurl',
+    'display',
+    'xmlns:xlink',
+    'height',
+    'depth',
+    'voffset',
+    'width',
+    'lspace',
+    'width',
+    'columnalign',
+    'rowalign',
+    'columnspacing',
+    'rowspacing'
   ],
   ALLOW_DATA_ATTR: true,
   ADD_ATTR: ['target', 'onclick', 'allowfullscreen']
@@ -647,10 +909,10 @@ export function renderMarkdown(markdown: string): string {
 function createLineNumberMd(): MarkdownIt {
   const lineMd = createMarkdownRenderer()
 
-  lineMd.core.ruler.push('sync_source_meta', state => {
+  lineMd.core.ruler.push('sync_source_meta', (state) => {
     const lineStarts = getLineStartOffsets(state.src)
 
-    state.tokens.forEach(token => {
+    state.tokens.forEach((token) => {
       if (token.map?.[0] !== undefined) {
         const sourceStartLine = token.map[0]
         const sourceEndLine = token.map[1] ?? sourceStartLine + 1
@@ -663,17 +925,36 @@ function createLineNumberMd(): MarkdownIt {
         )
       }
 
-      if (token.type !== 'inline' || !token.children?.length || token.map?.[0] === undefined) return
+      if (
+        token.type !== 'inline' ||
+        !token.children?.length ||
+        token.map?.[0] === undefined
+      )
+        return
 
       const sourceStartLine = token.map[0]
       const sourceEndLine = token.map[1] ?? sourceStartLine + 1
-      const blockStartOffset = getOffsetForLine(lineStarts, sourceStartLine, state.src.length)
-      const blockEndOffset = getOffsetForLine(lineStarts, sourceEndLine, state.src.length)
+      const blockStartOffset = getOffsetForLine(
+        lineStarts,
+        sourceStartLine,
+        state.src.length
+      )
+      const blockEndOffset = getOffsetForLine(
+        lineStarts,
+        sourceEndLine,
+        state.src.length
+      )
       let cursor = blockStartOffset
 
-      token.children.forEach(child => {
+      token.children.forEach((child) => {
         if (child.type === 'image') {
-          setTokenSourceMeta(child, sourceStartLine, sourceEndLine, blockStartOffset, blockEndOffset)
+          setTokenSourceMeta(
+            child,
+            sourceStartLine,
+            sourceEndLine,
+            blockStartOffset,
+            blockEndOffset
+          )
           return
         }
 
@@ -686,14 +967,26 @@ function createLineNumberMd(): MarkdownIt {
         }
         if (matchIndex === -1 || matchIndex >= blockEndOffset) return
 
-        const matchEnd = Math.min(matchIndex + child.content.length, blockEndOffset)
-        setTokenSourceMeta(child, sourceStartLine, sourceEndLine, matchIndex, matchEnd)
+        const matchEnd = Math.min(
+          matchIndex + child.content.length,
+          blockEndOffset
+        )
+        setTokenSourceMeta(
+          child,
+          sourceStartLine,
+          sourceEndLine,
+          matchIndex,
+          matchEnd
+        )
         cursor = matchEnd
       })
     })
   })
 
-  const applySourceAttrsToToken = (token: any, kind: 'block' | 'text' = 'block') => {
+  const applySourceAttrsToToken = (
+    token: any,
+    kind: 'block' | 'text' = 'block'
+  ) => {
     const meta = token?.meta
     if (!meta) return
 
@@ -701,26 +994,43 @@ function createLineNumberMd(): MarkdownIt {
       token.attrSet('data-source-line', String(meta.sourceStartLine))
       token.attrSet('data-source-start-line', String(meta.sourceStartLine))
     }
-    if (meta.sourceEndLine !== undefined) token.attrSet('data-source-end-line', String(meta.sourceEndLine))
-    if (meta.sourceStartOffset !== undefined) token.attrSet('data-source-start-offset', String(meta.sourceStartOffset))
-    if (meta.sourceEndOffset !== undefined) token.attrSet('data-source-end-offset', String(meta.sourceEndOffset))
+    if (meta.sourceEndLine !== undefined)
+      token.attrSet('data-source-end-line', String(meta.sourceEndLine))
+    if (meta.sourceStartOffset !== undefined)
+      token.attrSet('data-source-start-offset', String(meta.sourceStartOffset))
+    if (meta.sourceEndOffset !== undefined)
+      token.attrSet('data-source-end-offset', String(meta.sourceEndOffset))
     token.attrSet('data-sync-kind', kind)
   }
 
   lineMd.renderer.rules.fence = (tokens, idx) => {
     const token = tokens[idx]
     if (!token) return ''
-    return renderFence(token, lineMd.utils.escapeHtml, buildSourceAttrs(token.meta, 'block'))
+    return renderFence(
+      token,
+      lineMd.utils.escapeHtml,
+      buildSourceAttrs(token.meta, 'block')
+    )
   }
 
-  const blockTags = ['heading_open', 'blockquote_open', 'bullet_list_open', 'ordered_list_open', 'list_item_open', 'table_open', 'hr']
+  const blockTags = [
+    'heading_open',
+    'blockquote_open',
+    'bullet_list_open',
+    'ordered_list_open',
+    'list_item_open',
+    'table_open',
+    'hr'
+  ]
 
-  blockTags.forEach(tag => {
+  blockTags.forEach((tag) => {
     const originalRule = lineMd.renderer.rules[tag]
     lineMd.renderer.rules[tag] = (tokens, idx, options, env, self) => {
       const token = tokens[idx]
       if (token) applySourceAttrsToToken(token, 'block')
-      return originalRule ? originalRule(tokens, idx, options, env, self) : self.renderToken(tokens, idx, options)
+      return originalRule
+        ? originalRule(tokens, idx, options, env, self)
+        : self.renderToken(tokens, idx, options)
     }
   })
 
@@ -731,20 +1041,29 @@ function createLineNumberMd(): MarkdownIt {
       applySourceAttrsToToken(token, 'block')
       token.attrJoin('class', 'preview-collapsible-image')
     }
-    return originalImageRule ? originalImageRule(tokens, idx, options, env, self) : self.renderToken(tokens, idx, options)
+    return originalImageRule
+      ? originalImageRule(tokens, idx, options, env, self)
+      : self.renderToken(tokens, idx, options)
   }
 
   const originalParagraphOpen = lineMd.renderer.rules.paragraph_open
   lineMd.renderer.rules.paragraph_open = (tokens, idx, options, env, self) => {
     const token = tokens[idx]
     if (token) applySourceAttrsToToken(token, 'block')
-    return originalParagraphOpen ? originalParagraphOpen(tokens, idx, options, env, self) : self.renderToken(tokens, idx, options)
+    return originalParagraphOpen
+      ? originalParagraphOpen(tokens, idx, options, env, self)
+      : self.renderToken(tokens, idx, options)
   }
 
   lineMd.renderer.rules.text = (tokens, idx) => {
     const token = tokens[idx]
     if (!token) return ''
-    return renderAnchoredText(token.content, token.meta?.sourceStartOffset, token.meta?.sourceEndOffset, lineMd.utils.escapeHtml)
+    return renderAnchoredText(
+      token.content,
+      token.meta?.sourceStartOffset,
+      token.meta?.sourceEndOffset,
+      lineMd.utils.escapeHtml
+    )
   }
 
   lineMd.renderer.rules.code_inline = (tokens, idx) => {
@@ -851,7 +1170,10 @@ export function countWords(markdown: string): number {
 }
 
 // 计算阅读时长（分钟）
-export function estimateReadingTime(markdown: string, wordsPerMinute = 300): number {
+export function estimateReadingTime(
+  markdown: string,
+  wordsPerMinute = 300
+): number {
   return Math.ceil(countWords(markdown) / wordsPerMinute)
 }
 
@@ -877,10 +1199,22 @@ export function extractToc(markdown: string): TocItem[] {
   cleanedMarkdown = cleanedMarkdown.replace(/^:::link\s+.*?:::$/gm, '')
   cleanedMarkdown = cleanedMarkdown.replace(/^:::video\s+.*?:::$/gm, '')
   // 处理多行自定义块
-  cleanedMarkdown = cleanedMarkdown.replace(/^:::note[\s\S]*?^:::endnote$/gm, '')
-  cleanedMarkdown = cleanedMarkdown.replace(/^:::tabs[\s\S]*?^:::endtabs$/gm, '')
-  cleanedMarkdown = cleanedMarkdown.replace(/^:::fold[\s\S]*?^:::endfold$/gm, '')
-  cleanedMarkdown = cleanedMarkdown.replace(/^:::photo[\s\S]*?^:::endphoto$/gm, '')
+  cleanedMarkdown = cleanedMarkdown.replace(
+    /^:::note[\s\S]*?^:::endnote$/gm,
+    ''
+  )
+  cleanedMarkdown = cleanedMarkdown.replace(
+    /^:::tabs[\s\S]*?^:::endtabs$/gm,
+    ''
+  )
+  cleanedMarkdown = cleanedMarkdown.replace(
+    /^:::fold[\s\S]*?^:::endfold$/gm,
+    ''
+  )
+  cleanedMarkdown = cleanedMarkdown.replace(
+    /^:::photo[\s\S]*?^:::endphoto$/gm,
+    ''
+  )
 
   const headings: TocItem[] = []
 
@@ -911,7 +1245,19 @@ export function renderSimpleMarkdown(markdown: string): string {
   const simpleHtml = simpleMd.render(markdown)
 
   return DOMPurify.sanitize(simpleHtml, {
-    ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'code', 'pre', 'ul', 'ol', 'li', 'blockquote', 'a'],
+    ALLOWED_TAGS: [
+      'p',
+      'br',
+      'strong',
+      'em',
+      'code',
+      'pre',
+      'ul',
+      'ol',
+      'li',
+      'blockquote',
+      'a'
+    ],
     ALLOWED_ATTR: ['href', 'title'],
     ALLOW_DATA_ATTR: false
   })
@@ -927,27 +1273,30 @@ export function copyCodeBlock(button: HTMLElement): void {
 
   // 只提取代码内容，不包含行号
   const codeLines = Array.from(code.querySelectorAll('.line-content'))
-  const codeText = codeLines.map(line => line.textContent || '').join('\n')
+  const codeText = codeLines.map((line) => line.textContent || '').join('\n')
 
   // 复制到剪贴板
-  navigator.clipboard.writeText(codeText).then(() => {
-    // 更新按钮状态
-    const icon = button.querySelector('i')
-    if (icon) {
-      icon.className = 'ri-check-line'
-      button.classList.add('copied')
-    }
-
-    // 2秒后恢复
-    setTimeout(() => {
+  navigator.clipboard
+    .writeText(codeText)
+    .then(() => {
+      // 更新按钮状态
+      const icon = button.querySelector('i')
       if (icon) {
-        icon.className = 'ri-file-copy-fill'
-        button.classList.remove('copied')
+        icon.className = 'ri-check-line'
+        button.classList.add('copied')
       }
-    }, 2000)
-  }).catch(err => {
-    console.error('复制失败:', err)
-  })
+
+      // 2秒后恢复
+      setTimeout(() => {
+        if (icon) {
+          icon.className = 'ri-file-copy-fill'
+          button.classList.remove('copied')
+        }
+      }, 2000)
+    })
+    .catch((err) => {
+      console.error('复制失败:', err)
+    })
 }
 
 // 标签页切换功能
@@ -957,7 +1306,7 @@ export function switchTab(tabsId: string, tabName: string): void {
 
   // 更新标签按钮状态
   const buttons = tabsContainer.querySelectorAll('.custom-tab-btn')
-  buttons.forEach(btn => {
+  buttons.forEach((btn) => {
     if (btn.textContent === tabName) {
       btn.classList.add('active')
     } else {
@@ -967,7 +1316,7 @@ export function switchTab(tabsId: string, tabName: string): void {
 
   // 更新内容面板状态
   const panels = tabsContainer.querySelectorAll('.custom-tab-panel')
-  panels.forEach(panel => {
+  panels.forEach((panel) => {
     const panelElement = panel as HTMLElement
     if (panelElement.dataset.tab === tabName) {
       panel.classList.add('active')
@@ -983,19 +1332,25 @@ export function toggleFold(foldId: string): void {
   if (!foldContainer) return
 
   const isOpening = !foldContainer.classList.contains('open')
-  const contentDiv = foldContainer.querySelector('.custom-fold-content > div') as HTMLElement
+  const contentDiv = foldContainer.querySelector(
+    '.custom-fold-content > div'
+  ) as HTMLElement
 
   if (isOpening && contentDiv) {
     // 展开时：先获取内容的实际高度
     const contentHeight = contentDiv.scrollHeight
     // 设置 max-height 为内容的实际高度
-    const contentContainer = foldContainer.querySelector('.custom-fold-content') as HTMLElement
+    const contentContainer = foldContainer.querySelector(
+      '.custom-fold-content'
+    ) as HTMLElement
     if (contentContainer) {
       contentContainer.style.maxHeight = `${contentHeight}px`
     }
   } else {
     // 折叠时：重置 max-height 为 0
-    const contentContainer = foldContainer.querySelector('.custom-fold-content') as HTMLElement
+    const contentContainer = foldContainer.querySelector(
+      '.custom-fold-content'
+    ) as HTMLElement
     if (contentContainer) {
       contentContainer.style.maxHeight = '0px'
     }
@@ -1006,9 +1361,9 @@ export function toggleFold(foldId: string): void {
 
 // 挂载全局函数供内联 onclick 使用
 if (typeof window !== 'undefined') {
-  (window as any).copyCodeBlock = copyCodeBlock;
-  (window as any).switchTab = switchTab;
-  (window as any).toggleFold = toggleFold
+  ;(window as any).copyCodeBlock = copyCodeBlock
+  ;(window as any).switchTab = switchTab
+  ;(window as any).toggleFold = toggleFold
 }
 
 export default {

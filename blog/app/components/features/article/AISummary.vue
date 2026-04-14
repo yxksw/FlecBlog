@@ -1,9 +1,12 @@
 <script setup lang="ts">
-const props = withDefaults(defineProps<{
-  summary: string
-  modelName?: string
-  chatTitle?: string
-}>(), { modelName: 'AI', chatTitle: 'AI 摘要' })
+const props = withDefaults(
+  defineProps<{
+    summary: string
+    modelName?: string
+    chatTitle?: string
+  }>(),
+  { modelName: 'AI', chatTitle: 'AI 摘要' }
+)
 
 const displayText = ref('正在生成摘要...')
 
@@ -48,7 +51,7 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 .ai-summary {
-  font-size: .9rem;
+  font-size: 0.9rem;
   background: var(--flec-card-bg);
   border-radius: 12px;
   padding: 8px 8px 12px;
@@ -106,7 +109,6 @@ onMounted(() => {
 }
 
 @keyframes blink-underline {
-
   0%,
   100% {
     opacity: 1;

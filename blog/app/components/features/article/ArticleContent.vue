@@ -25,7 +25,10 @@ const renderMermaidDiagrams = async () => {
 
   for (const element of elements) {
     try {
-      const { svg } = await mermaid.render(`mermaid-${Date.now()}`, element.textContent || '')
+      const { svg } = await mermaid.render(
+        `mermaid-${Date.now()}`,
+        element.textContent || ''
+      )
       element.innerHTML = svg
     } catch (error) {
       console.error('Mermaid 渲染失败:', error)
@@ -53,21 +56,28 @@ const initZoom = () => {
   const images = contentEl.querySelectorAll('img')
   if (images.length === 0) return
   if (zoom) zoom.detach()
-  zoom = mediumZoom(images, { margin: 24, background: 'rgba(0, 0, 0, 0.9)', scrollOffset: 48 })
+  zoom = mediumZoom(images, {
+    margin: 24,
+    background: 'rgba(0, 0, 0, 0.9)',
+    scrollOffset: 48
+  })
 }
 
-watch(() => renderedContent.value, async () => {
-  await nextTick()
-  initZoom()
-  await renderMermaidDiagrams()
-})
+watch(
+  () => renderedContent.value,
+  async () => {
+    await nextTick()
+    initZoom()
+    await renderMermaidDiagrams()
+  }
+)
 
 onMounted(() => {
   initMermaid()
 
   // 加载表情数据
   const emojisUrl = blogConfig.value.emojis
-  if (emojisUrl) loadEmojiMap(emojisUrl).then(map => emojiMap.value = map)
+  if (emojisUrl) loadEmojiMap(emojisUrl).then((map) => (emojiMap.value = map))
   nextTick(async () => {
     initZoom()
     await renderMermaidDiagrams()
@@ -75,7 +85,10 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
-  if (zoom) { zoom.detach(); zoom = null }
+  if (zoom) {
+    zoom.detach()
+    zoom = null
+  }
 })
 </script>
 

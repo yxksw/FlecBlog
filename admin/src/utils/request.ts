@@ -1,6 +1,15 @@
 import axios from 'axios'
-import type { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from 'axios'
-import { getAccessToken, getRefreshToken, setTokens, redirectToLogin } from '@/utils/auth'
+import type {
+  AxiosError,
+  AxiosResponse,
+  InternalAxiosRequestConfig
+} from 'axios'
+import {
+  getAccessToken,
+  getRefreshToken,
+  setTokens,
+  redirectToLogin
+} from '@/utils/auth'
 
 interface ApiResponse<T = any> {
   code: number
@@ -11,7 +20,11 @@ interface ApiResponse<T = any> {
 // 获取 API URL（优先使用运行时配置）
 const getApiUrl = () => {
   // @ts-ignore
-  return window.__APP_CONFIG__?.apiUrl || import.meta.env.VITE_API_URL || 'http://localhost:8080/api/v1'
+  return (
+    window.__APP_CONFIG__?.apiUrl ||
+    import.meta.env.VITE_API_URL ||
+    'http://localhost:8080/api/v1'
+  )
 }
 
 // 创建 axios 实例
@@ -31,7 +44,7 @@ let failedQueue: Array<{
 
 // 处理队列中的请求
 const processQueue = (error: any = null) => {
-  failedQueue.forEach(promise => {
+  failedQueue.forEach((promise) => {
     if (error) {
       promise.reject(error)
     } else {
@@ -47,7 +60,7 @@ request.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   if (config.url === '/auth/refresh') {
     return config
   }
-  
+
   // 其他接口带上access token
   const token = getAccessToken()
   if (token) {
@@ -67,10 +80,15 @@ request.interceptors.response.use(
     return code === 0 ? data : Promise.reject(new Error(message || '请求失败'))
   },
   async (error: AxiosError) => {
-    const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean }
-    
+    const originalRequest = error.config as InternalAxiosRequestConfig & {
+      _retry?: boolean
+    }
+
     // 处理 blob 请求的错误响应（后端返回 JSON 错误）
-    if (originalRequest.responseType === 'blob' && error.response?.data instanceof Blob) {
+    if (
+      originalRequest.responseType === 'blob' &&
+      error.response?.data instanceof Blob
+    ) {
       const text = await (error.response.data as Blob).text()
       try {
         const json = JSON.parse(text)
@@ -79,18 +97,20 @@ request.interceptors.response.use(
         return Promise.reject(error)
       }
     }
-    
+
     // 处理401未授权 - 尝试刷新token
     if (error.response?.status === 401 && !originalRequest._retry) {
       if (isRefreshing) {
         // 如果正在刷新，将请求加入队列
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject })
-        }).then(() => {
-          return request(originalRequest)
-        }).catch(err => {
-          return Promise.reject(err)
         })
+          .then(() => {
+            return request(originalRequest)
+          })
+          .catch((err) => {
+            return Promise.reject(err)
+          })
       }
 
       originalRequest._retry = true
@@ -105,16 +125,17 @@ request.interceptors.response.use(
 
       try {
         // 调用refresh接口（返回的已经是data，不是整个response）
-        const data: { access_token: string; refresh_token: string } = await request.post('/auth/refresh', {
-          refresh_token: refresh
-        })
-        
+        const data: { access_token: string; refresh_token: string } =
+          await request.post('/auth/refresh', {
+            refresh_token: refresh
+          })
+
         // 更新token
         setTokens(data.access_token, data.refresh_token)
-        
+
         // 处理队列中的请求
         processQueue()
-        
+
         // 重试原请求
         return request(originalRequest)
       } catch (refreshError) {
@@ -126,7 +147,7 @@ request.interceptors.response.use(
         isRefreshing = false
       }
     }
-    
+
     // 其他错误直接返回
     return Promise.reject(error)
   }

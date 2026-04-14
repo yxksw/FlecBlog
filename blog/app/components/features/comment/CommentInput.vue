@@ -53,10 +53,15 @@ const errors = ref({
 // 计算属性
 const isLoggedIn = useAuth()
 const isReplyMode = computed(() => !!props.replyTo)
-const isUserInfoFilled = computed(() => nickname.value.trim() && email.value.trim())
-const shouldShowSend = computed(() => isLoggedIn.value || isUserInfoFilled.value)
+const isUserInfoFilled = computed(
+  () => nickname.value.trim() && email.value.trim()
+)
+const shouldShowSend = computed(
+  () => isLoggedIn.value || isUserInfoFilled.value
+)
 const mainBtn = computed(() => {
-  if (isSubmitting.value) return { text: '发送中...', icon: 'ri-loader-4-line rotating' }
+  if (isSubmitting.value)
+    return { text: '发送中...', icon: 'ri-loader-4-line rotating' }
   return shouldShowSend.value
     ? { text: '发送', icon: 'ri-send-plane-fill' }
     : { text: '登录', icon: 'ri-login-box-line' }
@@ -67,7 +72,9 @@ const secondaryBtn = computed(() =>
     ? { text: '登录', icon: 'ri-login-box-line' }
     : { text: '发送', icon: 'ri-send-plane-fill' }
 )
-const renderedMarkdown = computed(() => renderSimpleMarkdown(commentContent.value))
+const renderedMarkdown = computed(() =>
+  renderSimpleMarkdown(commentContent.value)
+)
 const guestPrivacyNotice = [
   '游客无需注册即可评论。',
   '你提交的昵称、邮箱、网址和评论内容会保存在服务端，用于展示评论身份、接收回复及必要的安全审计。',
@@ -93,7 +100,8 @@ const validateForm = () => {
       return false
     }
     if (nick.length < 2 || nick.length > 32) {
-      errors.value.nickname = nick.length < 2 ? '昵称至少需要2个字符' : '昵称不能超过32个字符'
+      errors.value.nickname =
+        nick.length < 2 ? '昵称至少需要2个字符' : '昵称不能超过32个字符'
       return false
     }
 
@@ -145,11 +153,13 @@ const handleSubmitComment = async () => {
     }
 
     const content = commentContent.value.trim()
-    const guestInfo = !isLoggedIn.value ? {
-      nickname: nickname.value.trim(),
-      email: email.value.trim(),
-      website: website.value.trim() || undefined
-    } : undefined
+    const guestInfo = !isLoggedIn.value
+      ? {
+          nickname: nickname.value.trim(),
+          email: email.value.trim(),
+          website: website.value.trim() || undefined
+        }
+      : undefined
 
     if (isReplyMode.value && props.commentId) {
       await context.addReply(props.commentId, content, guestInfo)
@@ -158,11 +168,14 @@ const handleSubmitComment = async () => {
     }
 
     if (!isLoggedIn.value) {
-      localStorage.setItem('guest_info', JSON.stringify({
-        nickname: nickname.value.trim(),
-        email: email.value.trim(),
-        website: website.value.trim()
-      }))
+      localStorage.setItem(
+        'guest_info',
+        JSON.stringify({
+          nickname: nickname.value.trim(),
+          email: email.value.trim(),
+          website: website.value.trim()
+        })
+      )
     }
 
     commentContent.value = ''
@@ -171,14 +184,16 @@ const handleSubmitComment = async () => {
 
     if (isLoggedIn.value) triggerOnComment()
   } catch (error: any) {
-    errors.value.email = error.message || error.response?.data?.message || '评论发表失败'
+    errors.value.email =
+      error.message || error.response?.data?.message || '评论发表失败'
   } finally {
     isSubmitting.value = false
   }
 }
 
 const handleLogin = () => context.showLogin()
-const handleMainAction = () => shouldShowSend.value ? handleSubmitComment() : handleLogin()
+const handleMainAction = () =>
+  shouldShowSend.value ? handleSubmitComment() : handleLogin()
 const handleSecondaryAction = (event: Event) => {
   event.stopPropagation()
   showExpandedBtn.value = false
@@ -188,7 +203,7 @@ const toggleExpandedBtn = (event: Event) => {
   event.stopPropagation()
   showExpandedBtn.value = !showExpandedBtn.value
 }
-const togglePreview = () => showPreview.value = !showPreview.value
+const togglePreview = () => (showPreview.value = !showPreview.value)
 
 const handleCancelReply = () => {
   context.replyState.cancelReply()
@@ -211,7 +226,7 @@ const handleFileSelect = (event: Event) => {
   const file = (event.target as HTMLInputElement).files?.[0]
   if (file) {
     insertImagePlaceholder(file)
-      ; (event.target as HTMLInputElement).value = ''
+    ;(event.target as HTMLInputElement).value = ''
   }
 }
 
@@ -246,7 +261,7 @@ const insertImagePlaceholder = (file: File) => {
 
 const handlePaste = (event: ClipboardEvent) => {
   const file = Array.from(event.clipboardData?.items || [])
-    .find(item => item.type.startsWith('image/'))
+    .find((item) => item.type.startsWith('image/'))
     ?.getAsFile()
 
   if (file) {
@@ -321,11 +336,15 @@ onClickOutside(buttonGroupRef, () => {
 })
 
 // 点击外部关闭表情选择器
-onClickOutside(emojiButtonRef, () => {
-  showEmojiPicker.value = false
-}, {
-  ignore: [emojiPickerRef]
-})
+onClickOutside(
+  emojiButtonRef,
+  () => {
+    showEmojiPicker.value = false
+  },
+  {
+    ignore: [emojiPickerRef]
+  }
+)
 
 // 组件卸载时清理 blob URL
 onUnmounted(() => {
@@ -338,24 +357,51 @@ onUnmounted(() => {
     <template v-if="!isLoggedIn">
       <div class="user-info-row">
         <div class="input-wrapper">
-          <input v-model="nickname" type="text" placeholder="昵称 *" :disabled="isSubmitting"
-            :class="{ error: errors.nickname }" @input="clearError('nickname')" />
+          <input
+            v-model="nickname"
+            type="text"
+            placeholder="昵称 *"
+            :disabled="isSubmitting"
+            :class="{ error: errors.nickname }"
+            @input="clearError('nickname')"
+          />
           <transition name="fade">
-            <div v-if="errors.nickname" class="error-tooltip">{{ errors.nickname }}</div>
+            <div v-if="errors.nickname" class="error-tooltip">
+              {{ errors.nickname }}
+            </div>
           </transition>
         </div>
         <div class="input-wrapper">
-          <input v-model="email" type="email" placeholder="邮箱 *" :disabled="isSubmitting"
-            :class="{ error: errors.email }" @input="clearError('email')" />
+          <input
+            v-model="email"
+            type="email"
+            placeholder="邮箱 *"
+            :disabled="isSubmitting"
+            :class="{ error: errors.email }"
+            @input="clearError('email')"
+          />
           <transition name="fade">
-            <div v-if="errors.email" class="error-tooltip">{{ errors.email }}</div>
+            <div v-if="errors.email" class="error-tooltip">
+              {{ errors.email }}
+            </div>
           </transition>
         </div>
         <div class="input-wrapper policy-input">
-          <input v-model="website" type="url" placeholder="网址" :disabled="isSubmitting"
-            :class="{ error: errors.website }" @input="clearError('website')" />
+          <input
+            v-model="website"
+            type="url"
+            placeholder="网址"
+            :disabled="isSubmitting"
+            :class="{ error: errors.website }"
+            @input="clearError('website')"
+          />
           <div class="guest-policy-tip">
-            <button type="button" class="guest-policy-trigger" aria-label="游客评论信息说明" title="游客评论信息说明">
+            <button
+              type="button"
+              class="guest-policy-trigger"
+              aria-label="游客评论信息说明"
+              title="游客评论信息说明"
+            >
               <i class="ri-information-line"></i>
             </button>
             <div class="guest-policy-tooltip" role="note">
@@ -363,22 +409,39 @@ onUnmounted(() => {
             </div>
           </div>
           <transition name="fade">
-            <div v-if="errors.website" class="error-tooltip">{{ errors.website }}</div>
+            <div v-if="errors.website" class="error-tooltip">
+              {{ errors.website }}
+            </div>
           </transition>
         </div>
       </div>
     </template>
 
     <div class="editor-container">
-      <textarea ref="textareaRef" v-model="commentContent" placeholder="写下你的评论...支持 Markdown 语法" rows="3"
-        :disabled="isSubmitting" :class="{ error: errors.content }"
-        @input="clearError('content'); resetTextareaHeight()" @paste="handlePaste" />
+      <textarea
+        ref="textareaRef"
+        v-model="commentContent"
+        placeholder="写下你的评论...支持 Markdown 语法"
+        rows="3"
+        :disabled="isSubmitting"
+        :class="{ error: errors.content }"
+        @input="
+          clearError('content')
+          resetTextareaHeight()
+        "
+        @paste="handlePaste"
+      />
       <transition name="fade">
-        <div v-if="errors.content" class="error-tooltip content-error">{{ errors.content }}</div>
+        <div v-if="errors.content" class="error-tooltip content-error">
+          {{ errors.content }}
+        </div>
       </transition>
       <transition name="expand">
-        <div v-if="showPreview" class="preview-area markdown-body"
-          v-html="renderedMarkdown || '<p class=\'empty-hint\'>暂无内容</p>'"></div>
+        <div
+          v-if="showPreview"
+          class="preview-area markdown-body"
+          v-html="renderedMarkdown || '<p class=\'empty-hint\'>暂无内容</p>'"
+        ></div>
       </transition>
     </div>
 
@@ -386,44 +449,92 @@ onUnmounted(() => {
       <div class="toolbar-left">
         <div v-if="isReplyMode" class="reply-tag">
           <span class="reply-tag-text">回复 {{ replyTo }}</span>
-          <button class="reply-tag-close" @click="handleCancelReply" :disabled="isSubmitting" aria-label="取消回复">
+          <button
+            class="reply-tag-close"
+            @click="handleCancelReply"
+            :disabled="isSubmitting"
+            aria-label="取消回复"
+          >
             <i class="ri-close-line"></i>
           </button>
         </div>
         <div class="emoji-wrapper">
-          <button ref="emojiButtonRef" class="tool-btn" @click="toggleEmojiPicker" title="表情" aria-label="插入表情"
-            :disabled="isSubmitting || isUploading" :class="{ active: showEmojiPicker }">
+          <button
+            ref="emojiButtonRef"
+            class="tool-btn"
+            @click="toggleEmojiPicker"
+            title="表情"
+            aria-label="插入表情"
+            :disabled="isSubmitting || isUploading"
+            :class="{ active: showEmojiPicker }"
+          >
             <i class="ri-emotion-line"></i>
           </button>
         </div>
         <transition name="fade-scale">
-          <FeaturesCommentEmojiPicker v-if="showEmojiPicker" ref="emojiPickerRef" class="emoji-picker-portal"
-            @select="handleEmojiSelect" />
+          <FeaturesCommentEmojiPicker
+            v-if="showEmojiPicker"
+            ref="emojiPickerRef"
+            class="emoji-picker-portal"
+            @select="handleEmojiSelect"
+          />
         </transition>
-        <button class="tool-btn" @click="handleImageUpload" title="图片" aria-label="上传图片"
-          :disabled="isSubmitting || isUploading" :class="{ uploading: isUploading }">
-          <i :class="isUploading ? 'ri-loader-4-line rotating' : 'ri-image-line'"></i>
+        <button
+          class="tool-btn"
+          @click="handleImageUpload"
+          title="图片"
+          aria-label="上传图片"
+          :disabled="isSubmitting || isUploading"
+          :class="{ uploading: isUploading }"
+        >
+          <i
+            :class="isUploading ? 'ri-loader-4-line rotating' : 'ri-image-line'"
+          ></i>
         </button>
-        <input ref="fileInputRef" type="file" accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
-          style="display: none" @change="handleFileSelect" />
-        <button class="tool-btn" @click="togglePreview" :title="showPreview ? '编辑' : 'Markdown预览'"
-          :aria-label="showPreview ? '切换到编辑模式' : '切换到预览模式'" :class="{ active: showPreview }"
-          :disabled="isSubmitting || isUploading">
+        <input
+          ref="fileInputRef"
+          type="file"
+          accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
+          style="display: none"
+          @change="handleFileSelect"
+        />
+        <button
+          class="tool-btn"
+          @click="togglePreview"
+          :title="showPreview ? '编辑' : 'Markdown预览'"
+          :aria-label="showPreview ? '切换到编辑模式' : '切换到预览模式'"
+          :class="{ active: showPreview }"
+          :disabled="isSubmitting || isUploading"
+        >
           <i :class="showPreview ? 'ri-edit-line' : 'ri-eye-line'"></i>
         </button>
       </div>
       <div ref="buttonGroupRef" class="button-group">
-        <button class="submit-btn main-btn" @click="handleMainAction" :disabled="isSubmitting"
-          :aria-label="mainBtn.text">
+        <button
+          class="submit-btn main-btn"
+          @click="handleMainAction"
+          :disabled="isSubmitting"
+          :aria-label="mainBtn.text"
+        >
           <i :class="mainBtn.icon"></i>{{ mainBtn.text }}
         </button>
         <template v-if="!isLoggedIn">
-          <button class="submit-btn expand-btn" @click="toggleExpandedBtn" :disabled="isSubmitting" aria-label="更多选项">
+          <button
+            class="submit-btn expand-btn"
+            @click="toggleExpandedBtn"
+            :disabled="isSubmitting"
+            aria-label="更多选项"
+          >
             <i class="ri-more-2-fill"></i>
           </button>
           <transition name="slide-fade">
-            <button v-if="showExpandedBtn" class="submit-btn secondary-btn" @click="handleSecondaryAction"
-              :disabled="isSubmitting" :aria-label="secondaryBtn.text">
+            <button
+              v-if="showExpandedBtn"
+              class="submit-btn secondary-btn"
+              @click="handleSecondaryAction"
+              :disabled="isSubmitting"
+              :aria-label="secondaryBtn.text"
+            >
               <i :class="secondaryBtn.icon"></i>{{ secondaryBtn.text }}
             </button>
           </transition>
@@ -499,7 +610,6 @@ textarea {
   display: inline-flex;
 }
 
-
 .policy-input {
   input {
     padding-right: 40px;
@@ -526,7 +636,10 @@ textarea {
   align-items: center;
   justify-content: center;
   cursor: help;
-  transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+  transition:
+    color 0.2s ease,
+    border-color 0.2s ease,
+    background-color 0.2s ease;
 
   i {
     font-size: 0.9rem;
@@ -555,7 +668,10 @@ textarea {
   opacity: 0;
   visibility: hidden;
   transform: translateY(-4px);
-  transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease,
+    visibility 0.2s ease;
   z-index: 20;
 
   &::before {
@@ -571,7 +687,7 @@ textarea {
     margin: 0;
   }
 
-  p+p {
+  p + p {
     margin-top: 6px;
   }
 }
@@ -724,7 +840,6 @@ textarea {
 }
 
 .fade-scale {
-
   &-enter-active,
   &-leave-active {
     transition: all 0.2s ease;
@@ -879,7 +994,6 @@ textarea {
 }
 
 .slide-fade {
-
   &-enter-active,
   &-leave-active {
     transition: all 0.2s;

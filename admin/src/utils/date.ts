@@ -36,7 +36,9 @@ export function formatDate(date: string | Date | null | undefined): string {
  * @param dateString 后端返回的日期字符串
  * @returns Date 对象或 null
  */
-export function parseBackendDate(dateString: string | null | undefined): Date | null {
+export function parseBackendDate(
+  dateString: string | null | undefined
+): Date | null {
   if (!dateString || !dateString.trim()) return null
   const parsed = dayjs(dateString, BACKEND_DATE_FORMAT, true)
   return parsed.isValid() ? parsed.toDate() : null
@@ -107,11 +109,15 @@ export function generateDateSeries(
   const dates: string[] = []
   const start = dayjs(startDate)
   const end = dayjs(endDate)
-  
+
   let current = start
   const seen = new Set<string>()
-  
-  while (current.isBefore(end) || current.isSame(end, 'day') || dates.length < minCount) {
+
+  while (
+    current.isBefore(end) ||
+    current.isSame(end, 'day') ||
+    dates.length < minCount
+  ) {
     const dateStr = current.format(format)
     if (!seen.has(dateStr)) {
       dates.push(dateStr)
@@ -119,7 +125,7 @@ export function generateDateSeries(
     }
     current = current.add(1, unit)
   }
-  
+
   return dates
 }
 
@@ -128,14 +134,16 @@ export function generateDateSeries(
  * @param date 日期字符串或 Date 对象
  * @returns 友好时间字符串：n小时前（24小时内）、n天前（3天内）、几月几日（本年）、几年几月几日（非本年）
  */
-export function formatMomentTime(date: string | Date | null | undefined): string {
+export function formatMomentTime(
+  date: string | Date | null | undefined
+): string {
   if (!date) return '-'
-  
+
   const now = dayjs()
   const target = dayjs(date)
   const diffHours = now.diff(target, 'hour')
   const diffDays = now.diff(target, 'day')
-  
+
   // 24小时内显示小时
   if (diffHours < 24) {
     if (diffHours < 1) {
@@ -147,18 +155,17 @@ export function formatMomentTime(date: string | Date | null | undefined): string
     }
     return `${diffHours}小时前`
   }
-  
+
   // 3天内显示天数
   if (diffDays < 3) {
     return `${diffDays}天前`
   }
-  
+
   // 今年的日期显示月日
   if (now.year() === target.year()) {
     return target.format('M月D日')
   }
-  
+
   // 其他年份显示年月日
   return target.format('YYYY年M月D日')
 }
-

@@ -16,7 +16,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits<{
   'update:modelValue': [value: boolean]
-  'confirm': []
+  confirm: []
 }>()
 
 const handleClose = () => {
@@ -37,8 +37,8 @@ const handleConfirm = () => {
           <!-- 头部 -->
           <div v-if="title" class="dialog-header">
             <h3 class="dialog-title">{{ title }}</h3>
-            <button 
-              class="dialog-close" 
+            <button
+              class="dialog-close"
               @click="handleClose"
               :disabled="loading"
             >
@@ -53,7 +53,11 @@ const handleConfirm = () => {
 
           <!-- 底部 -->
           <div v-if="confirmText" class="dialog-footer">
-            <button class="btn btn-primary" @click="handleConfirm" :disabled="loading">
+            <button
+              class="btn btn-primary"
+              @click="handleConfirm"
+              :disabled="loading"
+            >
               <i v-if="loading" class="ri-loader-4-line loading"></i>
               <span>{{ loading ? '处理中..' : confirmText }}</span>
             </button>
@@ -224,7 +228,11 @@ const handleConfirm = () => {
 }
 
 @keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 </style>

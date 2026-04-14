@@ -3,7 +3,12 @@
     <el-divider content-position="left">基础配置</el-divider>
 
     <el-form-item label="存储类型">
-      <el-select v-model="form.storage_type" placeholder="选择存储类型" style="width: 220px" :disabled="loading">
+      <el-select
+        v-model="form.storage_type"
+        placeholder="选择存储类型"
+        style="width: 220px"
+        :disabled="loading"
+      >
         <el-option label="本地存储" value="local" />
         <el-option label="亚马逊 S3" value="s3" />
         <el-option label="阿里云 OSS" value="oss" />
@@ -15,42 +20,88 @@
     </el-form-item>
 
     <el-form-item label="最大文件大小">
-      <el-input-number v-model="form.max_file_size" :min="0" :step="1" :disabled="loading" />
+      <el-input-number
+        v-model="form.max_file_size"
+        :min="0"
+        :step="1"
+        :disabled="loading"
+      />
       <span class="unit-tip">MB</span>
     </el-form-item>
 
     <el-form-item label="文件命名">
-      <el-input v-model="form.path_pattern" placeholder="{timestamp}_{random}{ext}" :disabled="loading" />
+      <el-input
+        v-model="form.path_pattern"
+        placeholder="{timestamp}_{random}{ext}"
+        :disabled="loading"
+      />
     </el-form-item>
 
     <template v-if="form.storage_type !== 'local'">
       <el-form-item :label="accessLabel">
-        <el-input v-model="form.access_key" :placeholder="accessPlaceholder" clearable :disabled="loading" />
+        <el-input
+          v-model="form.access_key"
+          :placeholder="accessPlaceholder"
+          clearable
+          :disabled="loading"
+        />
       </el-form-item>
 
       <el-form-item :label="secretLabel">
-        <el-input v-model="form.secret_key" type="password" show-password :placeholder="secretPlaceholder" clearable
-          :disabled="loading" autocomplete="new-password" />
+        <el-input
+          v-model="form.secret_key"
+          type="password"
+          show-password
+          :placeholder="secretPlaceholder"
+          clearable
+          :disabled="loading"
+          autocomplete="new-password"
+        />
       </el-form-item>
 
       <el-form-item v-if="showRegion" label="地域">
-        <el-input v-model="form.region" :placeholder="regionPlaceholder" clearable :disabled="loading" />
+        <el-input
+          v-model="form.region"
+          :placeholder="regionPlaceholder"
+          clearable
+          :disabled="loading"
+        />
       </el-form-item>
 
       <el-form-item label="存储桶">
-        <el-input v-model="form.bucket" :placeholder="bucketPlaceholder" clearable :disabled="loading" />
+        <el-input
+          v-model="form.bucket"
+          :placeholder="bucketPlaceholder"
+          clearable
+          :disabled="loading"
+        />
       </el-form-item>
 
       <el-form-item v-if="showEndpoint" label="服务端点">
-        <el-input v-model="form.endpoint" :placeholder="endpointPlaceholder" clearable :disabled="loading" />
+        <el-input
+          v-model="form.endpoint"
+          :placeholder="endpointPlaceholder"
+          clearable
+          :disabled="loading"
+        />
       </el-form-item>
 
       <el-form-item label="自定义域名">
-        <el-input v-model="form.domain" :placeholder="domainPlaceholder" clearable :disabled="loading" />
+        <el-input
+          v-model="form.domain"
+          :placeholder="domainPlaceholder"
+          clearable
+          :disabled="loading"
+        />
       </el-form-item>
 
       <el-form-item v-if="showUseSSL" label="启用 HTTPS">
-        <el-switch v-model="form.use_ssl" :active-value="true" :inactive-value="false" :disabled="loading" />
+        <el-switch
+          v-model="form.use_ssl"
+          :active-value="true"
+          :inactive-value="false"
+          :disabled="loading"
+        />
       </el-form-item>
     </template>
   </el-form>
@@ -164,7 +215,13 @@ const endpointPlaceholder = computed(() => {
 
 const showRegion = computed(() => {
   const type = form.value.storage_type
-  return type === 's3' || type === 'cos' || type === 'oss' || type === 'kodo' || type === 'minio'
+  return (
+    type === 's3' ||
+    type === 'cos' ||
+    type === 'oss' ||
+    type === 'kodo' ||
+    type === 'minio'
+  )
 })
 
 const showEndpoint = computed(() => {

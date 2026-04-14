@@ -51,20 +51,31 @@ const handleRemindLater = () => {
 }
 
 // 重置表单
-watch(() => props.modelValue, (val) => {
-  if (val) {
-    email.value = ''
-    emailError.value = ''
+watch(
+  () => props.modelValue,
+  (val) => {
+    if (val) {
+      email.value = ''
+      emailError.value = ''
+    }
   }
-})
+)
 </script>
 
 <template>
   <Teleport to="body">
     <Transition name="modal">
-      <div v-if="modelValue" class="modal-overlay" @click.self="handleRemindLater">
+      <div
+        v-if="modelValue"
+        class="modal-overlay"
+        @click.self="handleRemindLater"
+      >
         <div class="modal-container">
-          <button class="close-btn" @click="handleRemindLater" :disabled="loading">
+          <button
+            class="close-btn"
+            @click="handleRemindLater"
+            :disabled="loading"
+          >
             <i class="ri-close-line"></i>
           </button>
 
@@ -76,7 +87,9 @@ watch(() => props.modelValue, (val) => {
           <div class="modal-body">
             <p class="description">绑定真实邮箱后，您可以：</p>
             <ul class="benefits">
-              <li><i class="ri-notification-3-line"></i>及时接收评论回复通知</li>
+              <li>
+                <i class="ri-notification-3-line"></i>及时接收评论回复通知
+              </li>
               <li><i class="ri-lock-password-line"></i>使用邮箱+密码登录</li>
               <li><i class="ri-key-2-line"></i>找回密码时使用</li>
             </ul>
@@ -95,7 +108,12 @@ watch(() => props.modelValue, (val) => {
               </div>
 
               <div class="form-actions">
-                <button type="button" class="btn-secondary" @click="handleRemindLater" :disabled="loading">
+                <button
+                  type="button"
+                  class="btn-secondary"
+                  @click="handleRemindLater"
+                  :disabled="loading"
+                >
                   稍后再说
                 </button>
                 <button type="submit" class="btn-primary" :disabled="loading">

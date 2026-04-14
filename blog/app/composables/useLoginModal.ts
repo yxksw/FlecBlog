@@ -5,11 +5,11 @@ export const useLoginModal = () => {
   const open = () => {
     showLoginModal.value = true
   }
-  
+
   const close = () => {
     showLoginModal.value = false
   }
-  
+
   return {
     showLoginModal,
     open,

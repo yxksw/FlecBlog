@@ -1,8 +1,17 @@
 <template>
   <div class="notification-bell">
-    <el-popover placement="bottom" :width="450" trigger="click" v-model:visible="visible">
+    <el-popover
+      placement="bottom"
+      :width="450"
+      trigger="click"
+      v-model:visible="visible"
+    >
       <template #reference>
-        <el-badge :value="unreadCount" :hidden="unreadCount === 0" class="bell-badge">
+        <el-badge
+          :value="unreadCount"
+          :hidden="unreadCount === 0"
+          class="bell-badge"
+        >
           <el-button :icon="Bell" circle @click="handleBellClick" />
         </el-badge>
       </template>
@@ -11,21 +20,37 @@
         <!-- 上：标题和全部已读 -->
         <div class="notification-header">
           <span class="title">通知消息</span>
-          <el-button type="primary" size="small" text @click="handleMarkAllRead" v-if="unreadCount > 0">
+          <el-button
+            type="primary"
+            size="small"
+            text
+            @click="handleMarkAllRead"
+            v-if="unreadCount > 0"
+          >
             全部已读
           </el-button>
         </div>
 
         <!-- 中：通知列表 -->
-        <div class="notification-list" v-loading="loading" @scroll="handleScroll">
+        <div
+          class="notification-list"
+          v-loading="loading"
+          @scroll="handleScroll"
+        >
           <div v-if="notifications.length === 0" class="empty">暂无通知</div>
           <div v-else class="notification-items">
-            <div v-for="item in notifications" :key="item.id" class="notification-item"
-              @click="handleNotificationClick(item)">
-
+            <div
+              v-for="item in notifications"
+              :key="item.id"
+              class="notification-item"
+              @click="handleNotificationClick(item)"
+            >
               <!-- 左侧：图标 -->
               <div class="notification-icon">
-                <el-icon :size="24" :color="getNotificationIconColor(item.type)">
+                <el-icon
+                  :size="24"
+                  :color="getNotificationIconColor(item.type)"
+                >
                   <component :is="getNotificationIcon(item.type)" />
                 </el-icon>
               </div>
@@ -39,7 +64,9 @@
                     <span v-if="!item.is_read" class="unread-dot"></span>
                     <span class="notification-title">{{ item.title }}</span>
                   </div>
-                  <div class="notification-time">{{ formatTime(item.created_at) }}</div>
+                  <div class="notification-time">
+                    {{ formatTime(item.created_at) }}
+                  </div>
                 </div>
 
                 <!-- 下方：内容 -->
@@ -49,7 +76,13 @@
 
             <!-- 加载更多 -->
             <div v-if="hasMore" class="load-more">
-              <el-button type="primary" text size="small" :loading="loading" @click="loadNotifications()">
+              <el-button
+                type="primary"
+                text
+                size="small"
+                :loading="loading"
+                @click="loadNotifications()"
+              >
                 {{ loading ? '加载中...' : '查看更多' }}
               </el-button>
             </div>
@@ -60,7 +93,6 @@
             </div>
           </div>
         </div>
-
       </div>
     </el-popover>
   </div>
@@ -70,7 +102,13 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import { Bell, ChatDotRound, QuestionFilled, Warning, Link } from '@element-plus/icons-vue'
+import {
+  Bell,
+  ChatDotRound,
+  QuestionFilled,
+  Warning,
+  Link
+} from '@element-plus/icons-vue'
 import { getNotifications, markAsRead, markAllAsRead } from '@/api/notification'
 import type { Notification, NotificationType } from '@/types/notification'
 import { formatMomentTime } from '@/utils/date'
@@ -105,13 +143,17 @@ const loadNotifications = async (reset = false) => {
     })
 
     // 追加或替换数据
-    notifications.value = reset ? res.list : [...notifications.value, ...res.list]
+    notifications.value = reset
+      ? res.list
+      : [...notifications.value, ...res.list]
 
     const newUnreadCount = res.unread_count || 0
 
     // 检测到新通知时，显示系统通知
     if (newUnreadCount > previousUnreadCount && previousUnreadCount > 0) {
-      const newNotifications = res.list.filter(n => !n.is_read).slice(0, newUnreadCount - previousUnreadCount)
+      const newNotifications = res.list
+        .filter((n) => !n.is_read)
+        .slice(0, newUnreadCount - previousUnreadCount)
       showSystemNotifications(newNotifications)
     }
 
@@ -156,10 +198,12 @@ const handleMarkAllRead = async () => {
 const handleNotificationClick = async (notification: Notification) => {
   // 标记为已读并更新本地状态
   if (!notification.is_read) {
-    markAsRead(notification.id).then(() => {
-      notification.is_read = true
-      unreadCount.value--
-    }).catch(err => console.error('标记已读失败:', err))
+    markAsRead(notification.id)
+      .then(() => {
+        notification.is_read = true
+        unreadCount.value--
+      })
+      .catch((err) => console.error('标记已读失败:', err))
   }
 
   // 跳转
@@ -202,17 +246,21 @@ const requestNotificationPermission = async () => {
   }
 }
 
-
 // 通知图标配置
-const notificationIconConfig: Record<NotificationType, { icon: any, color: string }> = {
+const notificationIconConfig: Record<
+  NotificationType,
+  { icon: any; color: string }
+> = {
   comment_new: { icon: ChatDotRound, color: '#409EFF' },
   feedback_new: { icon: QuestionFilled, color: '#E6A23C' },
   system_alert: { icon: Warning, color: '#F56C6C' },
   friend_apply: { icon: Link, color: '#67C23A' }
 }
 
-const getNotificationIcon = (type: NotificationType) => notificationIconConfig[type]?.icon || Bell
-const getNotificationIconColor = (type: NotificationType) => notificationIconConfig[type]?.color || '#909399'
+const getNotificationIcon = (type: NotificationType) =>
+  notificationIconConfig[type]?.icon || Bell
+const getNotificationIconColor = (type: NotificationType) =>
+  notificationIconConfig[type]?.color || '#909399'
 const formatTime = (time: string) => formatMomentTime(time)
 
 // 定时轮询
@@ -224,14 +272,17 @@ onMounted(() => {
   timer = window.setInterval(() => {
     if (!visible.value) {
       // 只在弹窗关闭时更新徽章数字
-      getNotifications({ page: 1, page_size: 1 }).then(res => {
+      getNotifications({ page: 1, page_size: 1 }).then((res) => {
         const newUnreadCount = res.unread_count || 0
 
         // 检测到新通知时，显示系统通知
         if (newUnreadCount > previousUnreadCount && previousUnreadCount > 0) {
           // 获取最新的未读通知
-          getNotifications({ page: 1, page_size: newUnreadCount - previousUnreadCount }).then(latestRes => {
-            const newNotifications = latestRes.list.filter(n => !n.is_read)
+          getNotifications({
+            page: 1,
+            page_size: newUnreadCount - previousUnreadCount
+          }).then((latestRes) => {
+            const newNotifications = latestRes.list.filter((n) => !n.is_read)
             showSystemNotifications(newNotifications)
           })
         }

@@ -27,7 +27,11 @@ const DEFAULT_DURATION: Record<ToastType, number> = {
  * Toast 消息提示
  */
 export function useToast() {
-  const show = (message: string, type: ToastType = 'info', duration?: number) => {
+  const show = (
+    message: string,
+    type: ToastType = 'info',
+    duration?: number
+  ) => {
     const id = nextId++
     const toast: ToastItem = { id, message, type, show: true }
 
@@ -36,7 +40,7 @@ export function useToast() {
     // 自动移除
     const delay = duration ?? DEFAULT_DURATION[type]
     setTimeout(() => {
-      const index = toasts.value.findIndex(t => t.id === id)
+      const index = toasts.value.findIndex((t) => t.id === id)
       if (index > -1 && toasts.value[index]) {
         toasts.value[index]!.show = false
         setTimeout(() => toasts.value.splice(index, 1), 300)
@@ -47,10 +51,14 @@ export function useToast() {
   }
 
   // 便捷方法
-  const success = (message: string, duration?: number) => show(message, 'success', duration)
-  const error = (message: string, duration?: number) => show(message, 'error', duration)
-  const warning = (message: string, duration?: number) => show(message, 'warning', duration)
-  const info = (message: string, duration?: number) => show(message, 'info', duration)
+  const success = (message: string, duration?: number) =>
+    show(message, 'success', duration)
+  const error = (message: string, duration?: number) =>
+    show(message, 'error', duration)
+  const warning = (message: string, duration?: number) =>
+    show(message, 'warning', duration)
+  const info = (message: string, duration?: number) =>
+    show(message, 'info', duration)
 
   return { toasts, success, error, warning, info }
 }

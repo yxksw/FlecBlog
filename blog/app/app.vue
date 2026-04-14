@@ -18,7 +18,16 @@ const { siteStats } = useStats()
 
 // 使用SSR获取全局数据
 const { data: globalData } = await useAsyncData('global-data', async () => {
-  const [basicConfigData, blogConfigData, oauthConfigData, uploadConfigData, menusData, categoriesData, tagsData, statsData] = await Promise.all([
+  const [
+    basicConfigData,
+    blogConfigData,
+    oauthConfigData,
+    uploadConfigData,
+    menusData,
+    categoriesData,
+    tagsData,
+    statsData
+  ] = await Promise.all([
     getSettingGroup('basic'),
     getSettingGroup('blog'),
     getSettingGroup('oauth'),
@@ -84,14 +93,23 @@ const bgImage = computed(() => blogConfig.value.background_image || '/bg.webp')
 // 刷新时恢复滚动位置
 onMounted(() => {
   const key = 'scroll-y'
-  const nav = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming
+  const nav = performance.getEntriesByType(
+    'navigation'
+  )[0] as PerformanceNavigationTiming
   if (nav?.type === 'reload') {
     const y = +(sessionStorage.getItem(key) || 0)
     if (y > 0) setTimeout(() => window.scrollTo(0, y), 100)
   }
   let t: ReturnType<typeof setTimeout>
   const save = () => sessionStorage.setItem(key, '' + window.scrollY)
-  window.addEventListener('scroll', () => { clearTimeout(t); t = setTimeout(save, 200) }, { passive: true })
+  window.addEventListener(
+    'scroll',
+    () => {
+      clearTimeout(t)
+      t = setTimeout(save, 200)
+    },
+    { passive: true }
+  )
   window.addEventListener('pagehide', save)
 
   // 异步加载 remixicon，避免阻塞首屏渲染
@@ -113,7 +131,7 @@ useSeoMeta({
   twitterCard: 'summary_large_image',
   twitterTitle: () => blogConfig.value.title,
   twitterDescription: () => blogConfig.value.description,
-  twitterImage: () => blogConfig.value.favicon,
+  twitterImage: () => blogConfig.value.favicon
 })
 
 // 页面标题模板和 favicon
@@ -125,7 +143,9 @@ useHead({
     // 首页特殊处理：显示"网站标题 - 网站副标题"
     if (route.path === '/') {
       const subtitle = blogConfig.value.subtitle
-      return subtitle ? `${siteTitle.value} - ${subtitle}` : siteTitle.value || null
+      return subtitle
+        ? `${siteTitle.value} - ${subtitle}`
+        : siteTitle.value || null
     }
 
     // 其他页面：显示"页面标题 | 网站标题"
@@ -167,7 +187,7 @@ useHead({
         '@context': 'https://schema.org',
         '@type': 'WebSite',
         name: blogConfig.value.title,
-        description: blogConfig.value.description,
+        description: blogConfig.value.description
       })
     }
   ]
@@ -190,7 +210,10 @@ useHead({
   <FeaturesModalsLoginModal v-model="showLoginModal" />
 
   <!-- 邮箱绑定弹窗 -->
-  <FeaturesModalsBindEmailModal v-model="showBindEmailModal" @success="onBindSuccess" />
+  <FeaturesModalsBindEmailModal
+    v-model="showBindEmailModal"
+    @success="onBindSuccess"
+  />
 
   <!-- 右键菜单 -->
   <UiContextMenu />

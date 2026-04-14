@@ -36,7 +36,9 @@ const currentLyricIndex = ref(-1)
 // 计算属性
 const currentTrack = computed(() => audioList.value[currentIndex.value] || null)
 const hasPlaylist = computed(() => audioList.value.length > 1)
-const progress = computed(() => duration.value ? (currentTime.value / duration.value) * 100 : 0)
+const progress = computed(() =>
+  duration.value ? (currentTime.value / duration.value) * 100 : 0
+)
 
 // 格式化时间为 mm:ss
 const formatTime = (seconds: number) => {
@@ -60,7 +62,10 @@ const parseLyrics = (lrcText: string): LyricLine[] => {
       const milliseconds = match[3] ? parseInt(match[3].padEnd(3, '0')) : 0
       const text = match[4].trim()
       if (text) {
-        lyricLines.push({ time: minutes * 60 + seconds + milliseconds / 1000, text })
+        lyricLines.push({
+          time: minutes * 60 + seconds + milliseconds / 1000,
+          text
+        })
       }
     }
   }
@@ -81,7 +86,9 @@ const fetchLyrics = async (lrcUrl: string): Promise<string> => {
 const fetchMusicData = async () => {
   try {
     const { server, type, id } = props.music
-    const response = await fetch(`https://api.i-meto.com/meting/api?server=${server}&type=${type}&id=${id}`)
+    const response = await fetch(
+      `https://api.i-meto.com/meting/api?server=${server}&type=${type}&id=${id}`
+    )
     const data = await response.json()
     const list = Array.isArray(data) ? data : [data]
 
@@ -90,13 +97,15 @@ const fetchMusicData = async () => {
       artist: item.artist || item.author || '未知艺术家',
       url: item.url,
       cover: item.pic || item.cover || '',
-      lrc: item.lrc || '',
+      lrc: item.lrc || ''
     }))
 
     // 获取并解析第一首歌的歌词
     if (audioList.value[0]?.lrc) {
       const lrcUrl = audioList.value[0].lrc
-      const lrcText = lrcUrl.startsWith('http') ? await fetchLyrics(lrcUrl) : lrcUrl
+      const lrcText = lrcUrl.startsWith('http')
+        ? await fetchLyrics(lrcUrl)
+        : lrcUrl
       lyrics.value = parseLyrics(lrcText)
     }
     loadError.value = false
@@ -110,7 +119,9 @@ const fetchMusicData = async () => {
 // 播放/暂停切换
 const togglePlay = () => {
   if (!audioRef.value || !currentTrack.value?.url) return
-  isPlaying.value ? audioRef.value.pause() : audioRef.value.play().catch(() => loadError.value = true)
+  isPlaying.value
+    ? audioRef.value.pause()
+    : audioRef.value.play().catch(() => (loadError.value = true))
 }
 
 // 播放指定歌曲
@@ -122,13 +133,15 @@ const playTrack = async (index: number) => {
   // 更新歌词
   const track = audioList.value[index]
   if (track?.lrc) {
-    const lrcText = track.lrc.startsWith('http') ? await fetchLyrics(track.lrc) : track.lrc
+    const lrcText = track.lrc.startsWith('http')
+      ? await fetchLyrics(track.lrc)
+      : track.lrc
     lyrics.value = parseLyrics(lrcText)
   } else {
     lyrics.value = []
   }
   currentLyricIndex.value = -1
-  nextTick(() => audioRef.value?.play().catch(() => { }))
+  nextTick(() => audioRef.value?.play().catch(() => {}))
 }
 
 // 进度条点击跳转
@@ -136,7 +149,9 @@ const seekTo = (e: MouseEvent) => {
   if (!audioRef.value || !duration.value) return
   const target = e.currentTarget as HTMLElement
   const rect = target.getBoundingClientRect()
-  audioRef.value.currentTime = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width)) * duration.value
+  audioRef.value.currentTime =
+    Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width)) *
+    duration.value
 }
 
 // 更新当前歌词行
@@ -190,14 +205,29 @@ onMounted(() => fetchMusicData())
     </div>
 
     <template v-else>
-      <audio ref="audioRef" :src="currentTrack.url" preload="metadata" @timeupdate="onTimeUpdate"
-        @loadedmetadata="onLoadedMetadata" @play="isPlaying = true" @pause="isPlaying = false" @ended="onEnded"
-        @error="loadError = true; isPlaying = false" />
+      <audio
+        ref="audioRef"
+        :src="currentTrack.url"
+        preload="metadata"
+        @timeupdate="onTimeUpdate"
+        @loadedmetadata="onLoadedMetadata"
+        @play="isPlaying = true"
+        @pause="isPlaying = false"
+        @ended="onEnded"
+        @error="
+          loadError = true
+          isPlaying = false
+        "
+      />
 
       <div class="player-main">
         <div class="player-left">
           <div class="player-cover">
-            <img v-if="currentTrack.cover" :src="currentTrack.cover" alt="cover" />
+            <img
+              v-if="currentTrack.cover"
+              :src="currentTrack.cover"
+              alt="cover"
+            />
             <div v-else class="cover-placeholder">
               <i class="ri-music-2-fill"></i>
             </div>
@@ -215,18 +245,34 @@ onMounted(() => fetchMusicData())
           </div>
 
           <div v-if="lyrics.length > 0" class="player-lyrics">
-            <div v-for="(line, index) in lyrics" :key="index" class="lyric-line"
-              :class="{ active: index === currentLyricIndex, next: index === currentLyricIndex + 1 }">
+            <div
+              v-for="(line, index) in lyrics"
+              :key="index"
+              class="lyric-line"
+              :class="{
+                active: index === currentLyricIndex,
+                next: index === currentLyricIndex + 1
+              }"
+            >
               {{ line.text }}
             </div>
           </div>
 
           <div class="player-progress">
             <div class="progress-bar" @click="seekTo">
-              <div class="progress-played" :style="{ width: `${progress}%` }"></div>
+              <div
+                class="progress-played"
+                :style="{ width: `${progress}%` }"
+              ></div>
             </div>
-            <div class="progress-time">{{ formatTime(currentTime) }} / {{ formatTime(duration) }}</div>
-            <button v-if="hasPlaylist" class="ctrl-btn" @click="showPlaylist = !showPlaylist">
+            <div class="progress-time">
+              {{ formatTime(currentTime) }} / {{ formatTime(duration) }}
+            </div>
+            <button
+              v-if="hasPlaylist"
+              class="ctrl-btn"
+              @click="showPlaylist = !showPlaylist"
+            >
               <i class="ri-menu-fill"></i>
             </button>
           </div>
@@ -234,10 +280,18 @@ onMounted(() => fetchMusicData())
       </div>
 
       <div v-if="showPlaylist && hasPlaylist" class="player-playlist">
-        <div v-for="(track, index) in audioList" :key="index" class="playlist-item"
-          :class="{ active: index === currentIndex }" @click="playTrack(index)">
+        <div
+          v-for="(track, index) in audioList"
+          :key="index"
+          class="playlist-item"
+          :class="{ active: index === currentIndex }"
+          @click="playTrack(index)"
+        >
           <span class="item-index">
-            <i v-if="index === currentIndex && isPlaying" class="ri-equalizer-fill"></i>
+            <i
+              v-if="index === currentIndex && isPlaying"
+              class="ri-equalizer-fill"
+            ></i>
             <template v-else>{{ index + 1 }}</template>
           </span>
           <span class="item-name">{{ track.name }}</span>
@@ -322,7 +376,7 @@ onMounted(() => fetchMusicData())
     border: none;
     border-radius: 50%;
     background: rgba(255, 255, 255, 0.9);
-    color: #49B1F5;
+    color: #49b1f5;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -404,7 +458,7 @@ onMounted(() => fetchMusicData())
     padding: 0 4px;
 
     &.active {
-      color: #49B1F5;
+      color: #49b1f5;
       opacity: 1;
       display: block;
       font-weight: 500;
@@ -438,7 +492,7 @@ onMounted(() => fetchMusicData())
   }
 
   &:hover {
-    color: #49B1F5;
+    color: #49b1f5;
   }
 }
 
@@ -456,7 +510,7 @@ onMounted(() => fetchMusicData())
 
     .progress-played {
       height: 100%;
-      background: #49B1F5;
+      background: #49b1f5;
       border-radius: 2px;
       transition: width 0.1s linear;
     }
@@ -506,7 +560,7 @@ onMounted(() => fetchMusicData())
 
       .item-name,
       .item-index {
-        color: #49B1F5;
+        color: #49b1f5;
       }
     }
 

@@ -8,7 +8,8 @@ definePageMeta({
 
 useSeoMeta({
   title: '统计',
-  description: '公开展示本站的文章、评论、友链、分类、标签、动态与访问情况等统计数据'
+  description:
+    '公开展示本站的文章、评论、友链、分类、标签、动态与访问情况等统计数据'
 })
 
 const { blogConfig } = useSysConfig()
@@ -45,7 +46,9 @@ const stats = computed<SiteStats>(() => ({
   ...(data.value ?? {})
 }))
 
-const establishedDate = computed(() => blogConfig.value.established || '2024-01-01')
+const establishedDate = computed(
+  () => blogConfig.value.established || '2024-01-01'
+)
 
 const runningDays = computed(() => {
   const startDate = new Date(establishedDate.value).getTime()
@@ -159,15 +162,20 @@ const visitCards = computed(() => [
     <h1 class="page-title">统计</h1>
 
     <section id="overview" class="content-section">
-
       <div class="overview-grid">
-        <article v-for="item in overviewCards" :key="item.key" class="stat-card">
+        <article
+          v-for="item in overviewCards"
+          :key="item.key"
+          class="stat-card"
+        >
           <div class="stat-card__icon">
             <i :class="item.icon"></i>
           </div>
           <div class="stat-card__content">
             <span class="stat-card__label">{{ item.label }}</span>
-            <strong class="stat-card__value">{{ formatNumber(item.value) }}</strong>
+            <strong class="stat-card__value">{{
+              formatNumber(item.value)
+            }}</strong>
             <span class="stat-card__hint">{{ item.hint }}</span>
           </div>
         </article>
@@ -184,7 +192,11 @@ const visitCards = computed(() => [
         </div>
 
         <div class="traffic-list">
-          <div v-for="item in visitCards" :key="item.label" class="traffic-item">
+          <div
+            v-for="item in visitCards"
+            :key="item.label"
+            class="traffic-item"
+          >
             <span class="traffic-item__label">{{ item.label }}</span>
             <strong class="traffic-item__value">
               {{ formatNumber(item.value) }}
@@ -270,7 +282,9 @@ const visitCards = computed(() => [
   .panel-block {
     padding: 24px;
     border-radius: 22px;
-    background: linear-gradient(180deg, rgba(73, 177, 245, 0.08), transparent 120px), var(--flec-card-bg);
+    background:
+      linear-gradient(180deg, rgba(73, 177, 245, 0.08), transparent 120px),
+      var(--flec-card-bg);
     border: 1px solid var(--flec-border-color);
   }
 
@@ -282,7 +296,6 @@ const visitCards = computed(() => [
       font-size: 1.5rem;
       font-weight: 700;
     }
-
   }
 
   .overview-grid {
@@ -306,7 +319,11 @@ const visitCards = computed(() => [
     width: 52px;
     height: 52px;
     border-radius: 16px;
-    background: linear-gradient(135deg, rgba(73, 177, 245, 0.16), rgba(73, 177, 245, 0.04));
+    background: linear-gradient(
+      135deg,
+      rgba(73, 177, 245, 0.16),
+      rgba(73, 177, 245, 0.04)
+    );
     color: var(--theme-color);
     flex-shrink: 0;
 
@@ -331,7 +348,6 @@ const visitCards = computed(() => [
     font-size: 1.8rem;
     line-height: 1.1;
   }
-
 
   .traffic-list {
     display: grid;
@@ -381,7 +397,6 @@ const visitCards = computed(() => [
     .overview-grid {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
-
   }
 }
 

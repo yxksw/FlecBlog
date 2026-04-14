@@ -17,7 +17,9 @@ const scrollTocToActive = (id: string) => {
   if (!tocListRef.value) return
 
   nextTick(() => {
-    const activeButton = tocListRef.value?.querySelector(`[data-toc-id="${id}"]`) as HTMLElement
+    const activeButton = tocListRef.value?.querySelector(
+      `[data-toc-id="${id}"]`
+    ) as HTMLElement
     if (!activeButton) return
 
     const container = tocListRef.value!
@@ -26,7 +28,7 @@ const scrollTocToActive = (id: string) => {
     const buttonHeight = activeButton.clientHeight
 
     // 计算让按钮居中的滚动位置
-    const targetScroll = buttonTop - (containerHeight / 2) + (buttonHeight / 2)
+    const targetScroll = buttonTop - containerHeight / 2 + buttonHeight / 2
 
     // 平滑滚动到目标位置
     container.scrollTo({
@@ -60,7 +62,10 @@ const handleScroll = () => {
     const distanceToReference = Math.abs(rect.top - referencePoint)
 
     // 只考虑在参考线上方或稍微下方的标题（不超过50px�?    // 且距离参考线最近的
-    if (rect.top <= referencePoint + 50 && distanceToReference < closestDistance) {
+    if (
+      rect.top <= referencePoint + 50 &&
+      distanceToReference < closestDistance
+    ) {
       closestDistance = distanceToReference
       closestHeading = heading
     }
@@ -89,12 +94,19 @@ onMounted(() => {
     </div>
 
     <nav ref="tocListRef" class="toc-list" aria-label="文章目录">
-      <button v-for="item in toc" :key="item.id" :data-toc-id="item.id" :class="[
-        'toc-item',
-        `toc-level-${item.level}`,
-        { 'active': activeId === item.id }
-      ]" @click="scrollToHeading(item.id)" :aria-label="`跳转到 ${item.text}`"
-        :aria-current="activeId === item.id ? 'location' : undefined">
+      <button
+        v-for="item in toc"
+        :key="item.id"
+        :data-toc-id="item.id"
+        :class="[
+          'toc-item',
+          `toc-level-${item.level}`,
+          { active: activeId === item.id }
+        ]"
+        @click="scrollToHeading(item.id)"
+        :aria-label="`跳转到 ${item.text}`"
+        :aria-current="activeId === item.id ? 'location' : undefined"
+      >
         <span class="toc-text">{{ item.text }}</span>
       </button>
     </nav>

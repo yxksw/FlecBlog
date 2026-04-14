@@ -1,6 +1,6 @@
-import request from "@/utils/request";
-import type { Tag, TagListData } from "@/types/tag";
-import type { PaginationQuery } from "@/types/request";
+import request from '@/utils/request'
+import type { Tag, TagListData } from '@/types/tag'
+import type { PaginationQuery } from '@/types/request'
 
 /**
  * 获取标签列表
@@ -8,7 +8,7 @@ import type { PaginationQuery } from "@/types/request";
  * @returns Promise<TagListData>
  */
 export function getTags(params?: PaginationQuery): Promise<TagListData> {
-  return request.get("/admin/tags", { params });
+  return request.get('/admin/tags', { params })
 }
 
 /**
@@ -17,7 +17,7 @@ export function getTags(params?: PaginationQuery): Promise<TagListData> {
  * @returns Promise<Tag>
  */
 export function getTag(id: number): Promise<Tag> {
-  return request.get(`/admin/tags/${id}`);
+  return request.get(`/admin/tags/${id}`)
 }
 
 /**
@@ -26,7 +26,7 @@ export function getTag(id: number): Promise<Tag> {
  * @returns Promise<Tag>
  */
 export function createTag(data: Partial<Tag>): Promise<Tag> {
-  return request.post("/admin/tags", data);
+  return request.post('/admin/tags', data)
 }
 
 /**
@@ -36,7 +36,7 @@ export function createTag(data: Partial<Tag>): Promise<Tag> {
  * @returns Promise<Tag>
  */
 export function updateTag(id: number, data: Partial<Tag>): Promise<Tag> {
-  return request.put(`/admin/tags/${id}`, data);
+  return request.put(`/admin/tags/${id}`, data)
 }
 
 /**
@@ -45,5 +45,5 @@ export function updateTag(id: number, data: Partial<Tag>): Promise<Tag> {
  * @returns Promise<void>
  */
 export function deleteTag(id: number): Promise<void> {
-  return request.delete(`/admin/tags/${id}`);
+  return request.delete(`/admin/tags/${id}`)
 }

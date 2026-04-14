@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-
 definePageMeta({
   showSidebar: false
 })
@@ -10,7 +9,9 @@ useSeoMeta({
 })
 
 const route = useRoute()
-const { public: { apiUrl } } = useRuntimeConfig()
+const {
+  public: { apiUrl }
+} = useRuntimeConfig()
 const { success, error } = useToast()
 
 // 订阅
@@ -67,9 +68,12 @@ const handleSubscribe = async () => {
 const handleUnsubscribe = async (token: string) => {
   unsubscribeLoading.value = true
   try {
-    const res: any = await $fetch(`${apiUrl}/subscribe/unsubscribe?token=${token}`)
+    const res: any = await $fetch(
+      `${apiUrl}/subscribe/unsubscribe?token=${token}`
+    )
     unsubscribeSuccess.value = res.code === 0
-    unsubscribeMessage.value = res.code === 0 ? '退订成功！' : (res.message || '退订失败')
+    unsubscribeMessage.value =
+      res.code === 0 ? '退订成功！' : res.message || '退订失败'
   } catch (error: any) {
     unsubscribeSuccess.value = false
     unsubscribeMessage.value = error.data?.message || '退订失败'
@@ -92,10 +96,13 @@ const closeUnsubscribeDialog = () => {
     <!-- 订阅方式卡片 -->
     <div class="subscribe-list">
       <!-- 公众号订阅 -->
-      <a class="subscribe-item subscribe-wechat" href="#" title="公众号" @click.prevent>
-        <div class="subscribe-description">
-          推送精选文章<br>推送全文
-        </div>
+      <a
+        class="subscribe-item subscribe-wechat"
+        href="#"
+        title="公众号"
+        @click.prevent
+      >
+        <div class="subscribe-description">推送精选文章<br />推送全文</div>
         <div class="subscribe-info-group">
           <div class="subscribe-title">公众号订阅</div>
           <div class="subscribe-info">推荐的订阅方式</div>
@@ -104,10 +111,13 @@ const closeUnsubscribeDialog = () => {
       </a>
 
       <!-- 邮件订阅 -->
-      <a class="subscribe-item subscribe-mail" href="#" title="邮件订阅" @click.prevent="openSubscribeDialog">
-        <div class="subscribe-description">
-          推送全部文章<br>推送简介
-        </div>
+      <a
+        class="subscribe-item subscribe-mail"
+        href="#"
+        title="邮件订阅"
+        @click.prevent="openSubscribeDialog"
+      >
+        <div class="subscribe-description">推送全部文章<br />推送简介</div>
         <div class="subscribe-info-group">
           <div class="subscribe-title">邮件订阅</div>
           <div class="subscribe-info">推荐的订阅方式</div>
@@ -116,10 +126,13 @@ const closeUnsubscribeDialog = () => {
       </a>
 
       <!-- RSS 订阅 -->
-      <a class="subscribe-item subscribe-rss" href="/atom.xml" title="RSS" target="_blank">
-        <div class="subscribe-description">
-          推送全部文章<br>推送简介
-        </div>
+      <a
+        class="subscribe-item subscribe-rss"
+        href="/atom.xml"
+        title="RSS"
+        target="_blank"
+      >
+        <div class="subscribe-description">推送全部文章<br />推送简介</div>
         <div class="subscribe-info-group">
           <div class="subscribe-title">RSS</div>
           <div class="subscribe-info">备用订阅方式</div>
@@ -129,8 +142,8 @@ const closeUnsubscribeDialog = () => {
     </div>
 
     <!-- 订阅弹窗 -->
-    <UiBaseDialog 
-      v-model="showSubscribeDialog" 
+    <UiBaseDialog
+      v-model="showSubscribeDialog"
       title="邮件订阅"
       confirm-text="确认订阅"
       :loading="subscribeLoading"
@@ -138,28 +151,27 @@ const closeUnsubscribeDialog = () => {
     >
       <div class="dialog-content">
         <p class="dialog-desc">
-          订阅后将收到本站最新文章推送<br>
+          订阅后将收到本站最新文章推送<br />
           可随时通过邮件中的退订链接取消订阅
         </p>
-        
+
         <div class="input-group">
           <label for="email">邮箱地址</label>
-          <input 
+          <input
             id="email"
-            v-model="email" 
-            type="email" 
-            placeholder="请输入您的邮箱地址" 
+            v-model="email"
+            type="email"
+            placeholder="请输入您的邮箱地址"
             :disabled="subscribeLoading"
             @keyup.enter="handleSubscribe"
           />
         </div>
-
       </div>
     </UiBaseDialog>
 
     <!-- 退订弹窗 -->
-    <UiBaseDialog 
-      v-model="showUnsubscribeDialog" 
+    <UiBaseDialog
+      v-model="showUnsubscribeDialog"
       title="退订确认"
       confirm-text="确定"
       :close-on-click-outside="!unsubscribeLoading"
@@ -170,9 +182,15 @@ const closeUnsubscribeDialog = () => {
           <i class="ri-loader-4-line loading-icon"></i>
           <p>{{ unsubscribeMessage }}</p>
         </div>
-        
+
         <div v-else class="result-state">
-          <i :class="unsubscribeSuccess ? 'ri-checkbox-circle-line success-icon' : 'ri-close-circle-line error-icon'"></i>
+          <i
+            :class="
+              unsubscribeSuccess
+                ? 'ri-checkbox-circle-line success-icon'
+                : 'ri-close-circle-line error-icon'
+            "
+          ></i>
           <h3>{{ unsubscribeMessage }}</h3>
         </div>
       </div>
@@ -349,7 +367,6 @@ const closeUnsubscribeDialog = () => {
       }
     }
   }
-
 }
 
 // 退订弹窗内容
@@ -379,7 +396,7 @@ const closeUnsubscribeDialog = () => {
     }
 
     .success-icon {
-      color: #4CAF50;
+      color: #4caf50;
     }
 
     .error-icon {
@@ -395,8 +412,12 @@ const closeUnsubscribeDialog = () => {
 }
 
 @keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 // 响应式设计
@@ -436,7 +457,6 @@ const closeUnsubscribeDialog = () => {
       bottom: -110px;
     }
   }
-
 }
 
 @media screen and (max-width: 768px) {
@@ -484,6 +504,5 @@ const closeUnsubscribeDialog = () => {
       bottom: -90px;
     }
   }
-
 }
 </style>

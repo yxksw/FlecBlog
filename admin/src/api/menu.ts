@@ -1,5 +1,10 @@
 import request from '@/utils/request'
-import type { MenuTreeNode, CreateMenuRequest, UpdateMenuRequest, MenuResponse } from '@/types/menu'
+import type {
+  MenuTreeNode,
+  CreateMenuRequest,
+  UpdateMenuRequest,
+  MenuResponse
+} from '@/types/menu'
 
 /**
  * 获取菜单树
@@ -27,14 +32,19 @@ export function getMenuDetail(id: number): Promise<MenuResponse> {
 /**
  * 更新菜单
  */
-export function updateMenu(id: number, data: UpdateMenuRequest): Promise<MenuResponse> {
+export function updateMenu(
+  id: number,
+  data: UpdateMenuRequest
+): Promise<MenuResponse> {
   return request.put(`/admin/menus/${id}`, data)
 }
 
 /**
  * 删除菜单
  */
-export function deleteMenu(id: number, data?: { children_action?: 'delete' | 'upgrade' }): Promise<void> {
+export function deleteMenu(
+  id: number,
+  data?: { children_action?: 'delete' | 'upgrade' }
+): Promise<void> {
   return request.delete(`/admin/menus/${id}`, { data })
 }
-

@@ -11,6 +11,6 @@ const app = createApp(App)
 
 app.use(router)
 app.use(ElementPlus, {
-  locale: zhCn,
+  locale: zhCn
 })
 app.mount('#app')

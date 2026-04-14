@@ -1,5 +1,10 @@
 import request from '@/utils/request'
-import type { FetchLinkRequest, LinkInfo, ParseVideoRequest, VideoInfo } from '@/types/tools'
+import type {
+  FetchLinkRequest,
+  LinkInfo,
+  ParseVideoRequest,
+  VideoInfo
+} from '@/types/tools'
 
 /**
  * 工具API模块 - 用于视频解析、链接元数据获取等通用工具功能
@@ -11,7 +16,7 @@ import type { FetchLinkRequest, LinkInfo, ParseVideoRequest, VideoInfo } from '@
  * @returns Promise<LinkInfo>
  */
 export function fetchLinkInfo(data: FetchLinkRequest): Promise<LinkInfo> {
-  return request.post("/admin/tools/fetch-linkmeta", data)
+  return request.post('/admin/tools/fetch-linkmeta', data)
 }
 
 /**
@@ -20,7 +25,7 @@ export function fetchLinkInfo(data: FetchLinkRequest): Promise<LinkInfo> {
  * @returns Promise<VideoInfo>
  */
 export function parseVideo(data: ParseVideoRequest): Promise<VideoInfo> {
-  return request.post("/admin/tools/parse-video", data)
+  return request.post('/admin/tools/parse-video', data)
 }
 
 /**
@@ -28,6 +33,8 @@ export function parseVideo(data: ParseVideoRequest): Promise<VideoInfo> {
  * @param data 图片URL
  * @returns Promise<{ content_type: string, content_length: number, data: string }>
  */
-export function downloadImage(data: { url: string }): Promise<{ content_type: string, content_length: number, data: string }> {
-  return request.post("/admin/tools/download-image", data)
+export function downloadImage(data: {
+  url: string
+}): Promise<{ content_type: string; content_length: number; data: string }> {
+  return request.post('/admin/tools/download-image', data)
 }

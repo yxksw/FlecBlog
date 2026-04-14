@@ -1,5 +1,8 @@
 <template>
-  <div class="codemirror-editor-wrapper" :class="{ 'is-fullscreen': isBrowserFullscreen || isPageFullscreen }">
+  <div
+    class="codemirror-editor-wrapper"
+    :class="{ 'is-fullscreen': isBrowserFullscreen || isPageFullscreen }"
+  >
     <!-- 工具栏 -->
     <div class="editor-toolbar">
       <template v-for="(item, index) in toolbarItems" :key="index">
@@ -16,12 +19,22 @@
                 <i :class="item.icon"></i>
               </button>
             </template>
-            <div style="padding: 8px 0;">
-              <el-input v-model="onlineImageUrl" placeholder="输入图片URL，按回车下载" size="small" clearable
-                @keyup.enter="handleOnlineImageDownload" style="width: 100%;">
+            <div style="padding: 8px 0">
+              <el-input
+                v-model="onlineImageUrl"
+                placeholder="输入图片URL，按回车下载"
+                size="small"
+                clearable
+                @keyup.enter="handleOnlineImageDownload"
+                style="width: 100%"
+              >
                 <template #append>
-                  <el-button @click="handleOnlineImageDownload" :loading="downloadingImage"
-                    :disabled="!onlineImageUrl.trim()" size="small">
+                  <el-button
+                    @click="handleOnlineImageDownload"
+                    :loading="downloadingImage"
+                    :disabled="!onlineImageUrl.trim()"
+                    size="small"
+                  >
                     下载
                   </el-button>
                 </template>
@@ -31,27 +44,55 @@
         </template>
         <!-- 表情选择器按钮 -->
         <template v-else-if="item.title === '表情'">
-          <el-popover :width="320" trigger="click" placement="bottom" v-model:visible="emojiState.visible"
-            @show="handleEmojiPickerShow">
+          <el-popover
+            :width="320"
+            trigger="click"
+            placement="bottom"
+            v-model:visible="emojiState.visible"
+            @show="handleEmojiPickerShow"
+          >
             <template #reference>
-              <button :title="item.title" class="toolbar-btn" :class="{ active: emojiState.visible }">
+              <button
+                :title="item.title"
+                class="toolbar-btn"
+                :class="{ active: emojiState.visible }"
+              >
                 <i :class="item.icon"></i>
               </button>
             </template>
             <!-- 表情内容 -->
             <div class="emoji-wrap">
               <div class="emoji-bar">
-                <button v-for="(group, index) in emojiState.groups" :key="index" class="emoji-tab"
-                  :class="{ active: emojiState.activeTab === index }" @click="emojiState.activeTab = index">
+                <button
+                  v-for="(group, index) in emojiState.groups"
+                  :key="index"
+                  class="emoji-tab"
+                  :class="{ active: emojiState.activeTab === index }"
+                  @click="emojiState.activeTab = index"
+                >
                   {{ group.name }}
                 </button>
               </div>
               <div class="emoji-list">
-                <div v-for="(group, index) in emojiState.groups" v-show="emojiState.activeTab === index" :key="index"
-                  class="emoji-group" :class="{ 'emoji-text': group.type === 'emoticon' }">
-                  <button v-for="item in group.items" :key="item.key" class="emoji-btn" :title="item.key"
-                    @click="selectEmoji(item, group.type)">
-                    <img v-if="group.type === 'image'" :src="item.val" :alt="item.key" />
+                <div
+                  v-for="(group, index) in emojiState.groups"
+                  v-show="emojiState.activeTab === index"
+                  :key="index"
+                  class="emoji-group"
+                  :class="{ 'emoji-text': group.type === 'emoticon' }"
+                >
+                  <button
+                    v-for="item in group.items"
+                    :key="item.key"
+                    class="emoji-btn"
+                    :title="item.key"
+                    @click="selectEmoji(item, group.type)"
+                  >
+                    <img
+                      v-if="group.type === 'image'"
+                      :src="item.val"
+                      :alt="item.key"
+                    />
                     <span v-else>{{ item.val }}</span>
                   </button>
                 </div>
@@ -60,34 +101,55 @@
           </el-popover>
         </template>
         <!-- 普通按钮 -->
-        <button v-else @click="item.action" :title="item.title" :class="{
-          active: item.isActive?.(),
-          'mobile-only': item.mobileOnly
-        }" class="toolbar-btn">
+        <button
+          v-else
+          @click="item.action"
+          :title="item.title"
+          :class="{
+            active: item.isActive?.(),
+            'mobile-only': item.mobileOnly
+          }"
+          class="toolbar-btn"
+        >
           <i v-if="item.icon" :class="item.icon"></i>
           <span v-else>{{ item.label }}</span>
         </button>
       </template>
 
-      <input ref="imageInputRef" type="file" accept="image/*" multiple style="display: none"
-        @change="handleImageSelect" />
+      <input
+        ref="imageInputRef"
+        type="file"
+        accept="image/*"
+        multiple
+        style="display: none"
+        @change="handleImageSelect"
+      />
     </div>
 
     <!-- 编辑器主体 -->
     <div class="editor-container">
       <!-- 编辑器面板 -->
-      <div class="editor-pane" :class="{
-        'full-width': viewMode === 'editor',
-        'hidden': viewMode === 'preview'
-      }" @mousedown="handleEditorPaneMouseDown">
+      <div
+        class="editor-pane"
+        :class="{
+          'full-width': viewMode === 'editor',
+          hidden: viewMode === 'preview'
+        }"
+        @mousedown="handleEditorPaneMouseDown"
+      >
         <div ref="editorRef" class="cm-host"></div>
       </div>
 
       <!-- 预览面板 -->
-      <div v-show="viewMode !== 'editor'" ref="previewPaneRef" class="preview-pane" :class="{
-        'full-width': viewMode === 'preview',
-        'html-mode': viewMode === 'html'
-      }">
+      <div
+        v-show="viewMode !== 'editor'"
+        ref="previewPaneRef"
+        class="preview-pane"
+        :class="{
+          'full-width': viewMode === 'preview',
+          'html-mode': viewMode === 'html'
+        }"
+      >
         <div v-if="viewMode === 'html'" class="html-code">
           <pre><code>{{ renderedHtml }}</code></pre>
         </div>
@@ -103,8 +165,12 @@
           </button>
         </div>
         <div class="toc-content">
-          <div v-for="(heading, index) in tableOfContents" :key="index" :class="`toc-item toc-level-${heading.level}`"
-            @click="scrollToHeading(heading)">
+          <div
+            v-for="(heading, index) in tableOfContents"
+            :key="index"
+            :class="`toc-item toc-level-${heading.level}`"
+            @click="scrollToHeading(heading)"
+          >
             {{ heading.text }}
           </div>
           <div v-if="tableOfContents.length === 0" class="toc-empty">
@@ -125,7 +191,16 @@
 </template>
 
 <script setup lang="ts">
-import { ref, shallowRef, reactive, computed, onMounted, onBeforeUnmount, watch, nextTick } from 'vue'
+import {
+  ref,
+  shallowRef,
+  reactive,
+  computed,
+  onMounted,
+  onBeforeUnmount,
+  watch,
+  nextTick
+} from 'vue'
 import { ElMessage } from 'element-plus'
 import { uploadFile } from '@/api/file'
 import { getSettingGroup } from '@/api/sysconfig'
@@ -138,7 +213,12 @@ import {
   type TocItem
 } from '@/utils/markdown'
 import { EditorView, keymap, showPanel } from '@codemirror/view'
-import { EditorState, StateField, StateEffect, RangeSetBuilder } from '@codemirror/state'
+import {
+  EditorState,
+  StateField,
+  StateEffect,
+  RangeSetBuilder
+} from '@codemirror/state'
 import { Decoration } from '@codemirror/view'
 import type { Panel, DecorationSet } from '@codemirror/view'
 import { defaultKeymap, history, historyKeymap } from '@codemirror/commands'
@@ -150,15 +230,25 @@ import mermaid from 'mermaid'
 const setSearchQuery = StateEffect.define<string>()
 const setSearchIndex = StateEffect.define<number>()
 
-const searchStateField = StateField.define<{ matches: { from: number; to: number }[]; idx: number }>({
+const searchStateField = StateField.define<{
+  matches: { from: number; to: number }[]
+  idx: number
+}>({
   create: () => ({ matches: [], idx: 0 }),
   update: (v, tr) => {
     for (const e of tr.effects) {
       if (e.is(setSearchQuery)) {
         if (!e.value) return { matches: [], idx: 0 }
         const matches: { from: number; to: number }[] = []
-        const cursor = new SearchCursor(tr.state.doc, e.value, 0, undefined, s => s.toLowerCase())
-        while (!cursor.next().done) matches.push({ from: cursor.value.from, to: cursor.value.to })
+        const cursor = new SearchCursor(
+          tr.state.doc,
+          e.value,
+          0,
+          undefined,
+          (s) => s.toLowerCase()
+        )
+        while (!cursor.next().done)
+          matches.push({ from: cursor.value.from, to: cursor.value.to })
         return { matches, idx: 0 }
       }
       if (e.is(setSearchIndex)) return { ...v, idx: e.value }
@@ -173,17 +263,26 @@ const searchDecorations = StateField.define<DecorationSet>({
     const { matches, idx } = tr.state.field(searchStateField)
     if (!matches.length) return Decoration.none
     const builder = new RangeSetBuilder<Decoration>()
-    matches.forEach((m, i) => builder.add(m.from, m.to, Decoration.mark({ class: i === idx ? 'cm-searchMatch-selected' : 'cm-searchMatch' })))
+    matches.forEach((m, i) =>
+      builder.add(
+        m.from,
+        m.to,
+        Decoration.mark({
+          class: i === idx ? 'cm-searchMatch-selected' : 'cm-searchMatch'
+        })
+      )
+    )
     return builder.finish()
   },
-  provide: f => EditorView.decorations.from(f)
+  provide: (f) => EditorView.decorations.from(f)
 })
 
 let searchPanel: { dom: HTMLElement; show: () => void } | null = null
 
 function createSearchPanel(view: EditorView): Panel {
   const dom = document.createElement('div')
-  dom.style.cssText = 'display:none;align-items:center;padding:8px;background:#f5f5f5;border-top:1px solid #ddd'
+  dom.style.cssText =
+    'display:none;align-items:center;padding:8px;background:#f5f5f5;border-top:1px solid #ddd'
   dom.innerHTML = `
     <input placeholder="查找..." style="width:180px;padding:4px 8px;border:1px solid #ddd;border-radius:4px;outline:none">
     <span style="margin:0 8px;color:#666;font-size:13px"></span>
@@ -191,11 +290,25 @@ function createSearchPanel(view: EditorView): Panel {
     <button style="padding:4px 8px;border:1px solid #ddd;border-radius:4px;background:#fff;cursor:pointer;margin-left:4px">↓</button>
     <button style="padding:4px 8px;border:1px solid #ddd;border-radius:4px;background:#fff;cursor:pointer;margin-left:8px">×</button>
   `
-  const [input, count, prev, next, close] = [dom.querySelector('input')!, dom.querySelector('span')!, ...dom.querySelectorAll('button')] as [HTMLInputElement, HTMLSpanElement, HTMLButtonElement, HTMLButtonElement, HTMLButtonElement]
+  const [input, count, prev, next, close] = [
+    dom.querySelector('input')!,
+    dom.querySelector('span')!,
+    ...dom.querySelectorAll('button')
+  ] as [
+    HTMLInputElement,
+    HTMLSpanElement,
+    HTMLButtonElement,
+    HTMLButtonElement,
+    HTMLButtonElement
+  ]
 
   const update = () => {
     const { matches, idx } = view.state.field(searchStateField)
-    count.textContent = matches.length ? `${idx + 1}/${matches.length}` : input.value ? '无匹配' : ''
+    count.textContent = matches.length
+      ? `${idx + 1}/${matches.length}`
+      : input.value
+        ? '无匹配'
+        : ''
   }
 
   const search = () => {
@@ -216,9 +329,16 @@ function createSearchPanel(view: EditorView): Panel {
   }
 
   input.oninput = search
-  input.onkeydown = e => {
-    if (e.key === 'Enter') { e.preventDefault(); go(e.shiftKey ? -1 : 1) }
-    if (e.key === 'Escape') { view.dispatch({ effects: setSearchQuery.of('') }); input.value = ''; update() }
+  input.onkeydown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault()
+      go(e.shiftKey ? -1 : 1)
+    }
+    if (e.key === 'Escape') {
+      view.dispatch({ effects: setSearchQuery.of('') })
+      input.value = ''
+      update()
+    }
   }
   prev.onclick = () => go(-1)
   next.onclick = () => go(1)
@@ -228,7 +348,14 @@ function createSearchPanel(view: EditorView): Panel {
     dom.style.display = 'none'
   }
 
-  searchPanel = { dom, show: () => { dom.style.display = 'flex'; input.focus(); input.select() } }
+  searchPanel = {
+    dom,
+    show: () => {
+      dom.style.display = 'flex'
+      input.focus()
+      input.select()
+    }
+  }
   return { dom, top: false }
 }
 
@@ -263,8 +390,13 @@ type ViewMode = 'split' | 'editor' | 'preview' | 'html'
 const SCROLL_EPSILON = 1
 const PREVIEW_SYNC_DURATION = 90
 
-const props = withDefaults(defineProps<{ modelValue: string }>(), { modelValue: '' })
-const emit = defineEmits<{ 'update:modelValue': [value: string], 'save': [content: string] }>()
+const props = withDefaults(defineProps<{ modelValue: string }>(), {
+  modelValue: ''
+})
+const emit = defineEmits<{
+  'update:modelValue': [value: string]
+  save: [content: string]
+}>()
 
 // Refs
 const editorRef = ref<HTMLElement>()
@@ -280,7 +412,11 @@ const downloadingImage = ref(false)
 // 表情选择器状态
 const emojiState = reactive({
   visible: false,
-  groups: [] as Array<{ name: string; type: 'emoji' | 'image' | 'emoticon'; items: Array<{ key: string; val: string }> }>,
+  groups: [] as Array<{
+    name: string
+    type: 'emoji' | 'image' | 'emoticon'
+    items: Array<{ key: string; val: string }>
+  }>,
   activeTab: 0,
   emojiMap: new Map<string, string>()
 })
@@ -305,7 +441,10 @@ const renderMermaidDiagrams = async () => {
 
   for (const element of elements) {
     try {
-      const { svg } = await mermaid.render(`mermaid-${Date.now()}`, element.textContent || '')
+      const { svg } = await mermaid.render(
+        `mermaid-${Date.now()}`,
+        element.textContent || ''
+      )
       element.innerHTML = svg
     } catch (error) {
       console.error('Mermaid 渲染失败:', error)
@@ -330,16 +469,21 @@ const invalidateScrollCache = () => {
   cachedPreviewAnchors = null
 }
 
-const clampNumber = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value))
+const clampNumber = (value: number, min: number, max: number) =>
+  Math.min(max, Math.max(min, value))
 
 const getPreviewElementTop = (element: HTMLElement, container: HTMLElement) => {
   const elementRect = element.getBoundingClientRect()
   const containerRect = container.getBoundingClientRect()
-  const paddingTop = Number.parseFloat(getComputedStyle(container).paddingTop || '0') || 0
+  const paddingTop =
+    Number.parseFloat(getComputedStyle(container).paddingTop || '0') || 0
   return elementRect.top - containerRect.top + container.scrollTop - paddingTop
 }
 
-const getPreviewElementDepth = (element: HTMLElement, container: HTMLElement) => {
+const getPreviewElementDepth = (
+  element: HTMLElement,
+  container: HTMLElement
+) => {
   let depth = 0
   let current = element.parentElement
 
@@ -357,10 +501,20 @@ const getPreviewAnchors = (): PreviewAnchor[] => {
   const preview = previewPaneRef.value
   if (!preview) return []
 
-  const anchors = Array.from(preview.querySelectorAll<HTMLElement>('[data-source-start-offset][data-source-end-offset]'))
+  const anchors = Array.from(
+    preview.querySelectorAll<HTMLElement>(
+      '[data-source-start-offset][data-source-end-offset]'
+    )
+  )
     .map((element) => {
-      const startOffset = Number.parseInt(element.dataset.sourceStartOffset || '', 10)
-      const endOffset = Number.parseInt(element.dataset.sourceEndOffset || '', 10)
+      const startOffset = Number.parseInt(
+        element.dataset.sourceStartOffset || '',
+        10
+      )
+      const endOffset = Number.parseInt(
+        element.dataset.sourceEndOffset || '',
+        10
+      )
       if (Number.isNaN(startOffset) || Number.isNaN(endOffset)) return null
 
       const rect = element.getBoundingClientRect()
@@ -370,15 +524,19 @@ const getPreviewAnchors = (): PreviewAnchor[] => {
         top: Math.max(0, getPreviewElementTop(element, preview)),
         height: Math.max(1, rect.height, element.offsetHeight),
         depth: getPreviewElementDepth(element, preview),
-        kind: (element.dataset.syncKind === 'text' ? 'text' : 'block') as 'block' | 'text'
+        kind: (element.dataset.syncKind === 'text' ? 'text' : 'block') as
+          | 'block'
+          | 'text'
       } satisfies PreviewAnchor
     })
     .filter((anchor): anchor is PreviewAnchor => !!anchor)
     .sort((left, right) => {
-      if (left.startOffset !== right.startOffset) return left.startOffset - right.startOffset
+      if (left.startOffset !== right.startOffset)
+        return left.startOffset - right.startOffset
       const leftSourceSpan = left.endOffset - left.startOffset
       const rightSourceSpan = right.endOffset - right.startOffset
-      if (leftSourceSpan !== rightSourceSpan) return leftSourceSpan - rightSourceSpan
+      if (leftSourceSpan !== rightSourceSpan)
+        return leftSourceSpan - rightSourceSpan
       if (left.top !== right.top) return left.top - right.top
       if (left.depth !== right.depth) return right.depth - left.depth
       if (left.kind === right.kind) return 0
@@ -405,26 +563,35 @@ const getEditorTopSourceOffset = () => {
   return editor.lineBlockAtHeight(editorScroller.scrollTop).from
 }
 
-const getAnchorSourceSpan = (anchor: PreviewAnchor) => Math.max(0, anchor.endOffset - anchor.startOffset)
+const getAnchorSourceSpan = (anchor: PreviewAnchor) =>
+  Math.max(0, anchor.endOffset - anchor.startOffset)
 
-const compareAnchorSpecificity = (left: PreviewAnchor, right: PreviewAnchor) => {
+const compareAnchorSpecificity = (
+  left: PreviewAnchor,
+  right: PreviewAnchor
+) => {
   if (left.kind !== right.kind) return left.kind === 'text' ? 1 : -1
 
   const leftSourceSpan = getAnchorSourceSpan(left)
   const rightSourceSpan = getAnchorSourceSpan(right)
-  if (leftSourceSpan !== rightSourceSpan) return rightSourceSpan - leftSourceSpan
+  if (leftSourceSpan !== rightSourceSpan)
+    return rightSourceSpan - leftSourceSpan
 
   if (left.depth !== right.depth) return left.depth - right.depth
   if (left.height !== right.height) return right.height - left.height
   return right.top - left.top
 }
 
-const findBestContainingAnchor = (sourceOffset: number, anchors: PreviewAnchor[]) => {
+const findBestContainingAnchor = (
+  sourceOffset: number,
+  anchors: PreviewAnchor[]
+) => {
   let bestAnchor: PreviewAnchor | null = null
   let bestIndex = -1
 
   anchors.forEach((anchor, index) => {
-    if (sourceOffset < anchor.startOffset || sourceOffset > anchor.endOffset) return
+    if (sourceOffset < anchor.startOffset || sourceOffset > anchor.endOffset)
+      return
 
     if (!bestAnchor || compareAnchorSpecificity(anchor, bestAnchor) > 0) {
       bestAnchor = anchor
@@ -435,7 +602,11 @@ const findBestContainingAnchor = (sourceOffset: number, anchors: PreviewAnchor[]
   return bestAnchor ? { anchor: bestAnchor, index: bestIndex } : null
 }
 
-const getAnchorVisualSpan = (anchor: PreviewAnchor, anchors: PreviewAnchor[], anchorIndex: number) => {
+const getAnchorVisualSpan = (
+  anchor: PreviewAnchor,
+  anchors: PreviewAnchor[],
+  anchorIndex: number
+) => {
   let visualSpan = Math.max(1, anchor.height)
 
   for (let index = anchorIndex + 1; index < anchors.length; index++) {
@@ -449,19 +620,38 @@ const getAnchorVisualSpan = (anchor: PreviewAnchor, anchors: PreviewAnchor[], an
   return visualSpan
 }
 
-const mapWithinAnchor = (sourceOffset: number, anchor: PreviewAnchor, anchors: PreviewAnchor[], anchorIndex: number) => {
+const mapWithinAnchor = (
+  sourceOffset: number,
+  anchor: PreviewAnchor,
+  anchors: PreviewAnchor[],
+  anchorIndex: number
+) => {
   const sourceSpan = getAnchorSourceSpan(anchor)
   if (sourceSpan <= 0) return anchor.top
 
-  const progress = clampNumber((sourceOffset - anchor.startOffset) / sourceSpan, 0, 1)
-  return anchor.top + getAnchorVisualSpan(anchor, anchors, anchorIndex) * progress
+  const progress = clampNumber(
+    (sourceOffset - anchor.startOffset) / sourceSpan,
+    0,
+    1
+  )
+  return (
+    anchor.top + getAnchorVisualSpan(anchor, anchors, anchorIndex) * progress
+  )
 }
 
-const mapSourceOffsetToPreviewTop = (sourceOffset: number, anchors: PreviewAnchor[]) => {
+const mapSourceOffsetToPreviewTop = (
+  sourceOffset: number,
+  anchors: PreviewAnchor[]
+) => {
   if (!anchors.length) return 0
   const containingAnchor = findBestContainingAnchor(sourceOffset, anchors)
   if (containingAnchor) {
-    return mapWithinAnchor(sourceOffset, containingAnchor.anchor, anchors, containingAnchor.index)
+    return mapWithinAnchor(
+      sourceOffset,
+      containingAnchor.anchor,
+      anchors,
+      containingAnchor.index
+    )
   }
 
   let previousIndex = -1
@@ -469,20 +659,37 @@ const mapSourceOffsetToPreviewTop = (sourceOffset: number, anchors: PreviewAncho
 
   anchors.forEach((anchor, index) => {
     if (anchor.endOffset <= sourceOffset) previousIndex = index
-    if (nextIndex === -1 && anchor.startOffset >= sourceOffset) nextIndex = index
+    if (nextIndex === -1 && anchor.startOffset >= sourceOffset)
+      nextIndex = index
   })
 
-  if (previousIndex === -1) return mapWithinAnchor(sourceOffset, anchors[0]!, anchors, 0)
-  if (nextIndex === -1) return mapWithinAnchor(sourceOffset, anchors[anchors.length - 1]!, anchors, anchors.length - 1)
+  if (previousIndex === -1)
+    return mapWithinAnchor(sourceOffset, anchors[0]!, anchors, 0)
+  if (nextIndex === -1)
+    return mapWithinAnchor(
+      sourceOffset,
+      anchors[anchors.length - 1]!,
+      anchors,
+      anchors.length - 1
+    )
 
   const previous = anchors[previousIndex]!
   const next = anchors[nextIndex]!
-  const previousTop = mapWithinAnchor(previous.endOffset, previous, anchors, previousIndex)
+  const previousTop = mapWithinAnchor(
+    previous.endOffset,
+    previous,
+    anchors,
+    previousIndex
+  )
   const nextTop = mapWithinAnchor(next.startOffset, next, anchors, nextIndex)
   const sourceGap = next.startOffset - previous.endOffset
   if (sourceGap <= 0) return nextTop
 
-  const progress = clampNumber((sourceOffset - previous.endOffset) / sourceGap, 0, 1)
+  const progress = clampNumber(
+    (sourceOffset - previous.endOffset) / sourceGap,
+    0,
+    1
+  )
   return previousTop + (nextTop - previousTop) * progress
 }
 
@@ -515,7 +722,8 @@ const startPreviewTween = (preview: HTMLElement, targetTop: number) => {
   const startTop = preview.scrollTop
   if (Math.abs(startTop - targetTop) <= SCROLL_EPSILON) {
     stopPreviewTween()
-    if (Math.abs(startTop - targetTop) > 0) setPreviewScrollTop(preview, targetTop)
+    if (Math.abs(startTop - targetTop) > 0)
+      setPreviewScrollTop(preview, targetTop)
     return
   }
 
@@ -535,13 +743,27 @@ const startPreviewTween = (preview: HTMLElement, targetTop: number) => {
       return
     }
 
-    const maxScrollTop = Math.max(0, currentPreview.scrollHeight - currentPreview.clientHeight)
+    const maxScrollTop = Math.max(
+      0,
+      currentPreview.scrollHeight - currentPreview.clientHeight
+    )
     const clampedTargetTop = clampNumber(latestTargetTop, 0, maxScrollTop)
-    const progress = clampNumber((now - startTime) / PREVIEW_SYNC_DURATION, 0, 1)
-    const nextTop = startTop + (clampedTargetTop - startTop) * easeOutCubic(progress)
-    setPreviewScrollTop(currentPreview, progress >= 1 ? clampedTargetTop : nextTop)
+    const progress = clampNumber(
+      (now - startTime) / PREVIEW_SYNC_DURATION,
+      0,
+      1
+    )
+    const nextTop =
+      startTop + (clampedTargetTop - startTop) * easeOutCubic(progress)
+    setPreviewScrollTop(
+      currentPreview,
+      progress >= 1 ? clampedTargetTop : nextTop
+    )
 
-    if (progress < 1 && Math.abs(clampedTargetTop - currentPreview.scrollTop) > SCROLL_EPSILON) {
+    if (
+      progress < 1 &&
+      Math.abs(clampedTargetTop - currentPreview.scrollTop) > SCROLL_EPSILON
+    ) {
       previewTweenFrame = requestAnimationFrame(animate)
       return
     }
@@ -562,7 +784,10 @@ const syncPreviewToEditorTop = () => {
   const anchors = getPreviewAnchors()
   if (!anchors.length) return
 
-  const targetTop = mapSourceOffsetToPreviewTop(getEditorTopSourceOffset(), anchors)
+  const targetTop = mapSourceOffsetToPreviewTop(
+    getEditorTopSourceOffset(),
+    anchors
+  )
   const maxScrollTop = Math.max(0, preview.scrollHeight - preview.clientHeight)
   previewTargetScrollTop = Math.max(0, Math.min(targetTop, maxScrollTop))
   startPreviewTween(preview, previewTargetScrollTop)
@@ -630,7 +855,9 @@ const bindScrollEvents = () => {
   }
 
   if (editorScroller && boundEditorScroller !== editorScroller) {
-    editorScroller.addEventListener('scroll', handleEditorScroll, { passive: true })
+    editorScroller.addEventListener('scroll', handleEditorScroll, {
+      passive: true
+    })
     boundEditorScroller = editorScroller
   }
 
@@ -638,10 +865,16 @@ const bindScrollEvents = () => {
   preview?.removeEventListener('click', handlePreviewInteraction)
   preview?.removeEventListener('click', togglePreviewImage)
   preview?.removeEventListener('wheel', handlePreviewInteraction)
-  preview?.addEventListener('scroll', handlePreviewInteraction, { passive: true })
-  preview?.addEventListener('click', handlePreviewInteraction, { passive: true })
+  preview?.addEventListener('scroll', handlePreviewInteraction, {
+    passive: true
+  })
+  preview?.addEventListener('click', handlePreviewInteraction, {
+    passive: true
+  })
   preview?.addEventListener('click', togglePreviewImage)
-  preview?.addEventListener('wheel', handlePreviewInteraction, { passive: true })
+  preview?.addEventListener('wheel', handlePreviewInteraction, {
+    passive: true
+  })
   bindPreviewObservers()
 }
 
@@ -668,9 +901,10 @@ const isPreviewVisible = computed(() => viewMode.value !== 'editor')
 const renderedHtml = computed(() => {
   if (!isPreviewVisible.value) return ''
 
-  const html = viewMode.value === 'html'
-    ? renderMarkdownWithStyles(props.modelValue)
-    : renderMarkdownWithSourceMap(props.modelValue)
+  const html =
+    viewMode.value === 'html'
+      ? renderMarkdownWithStyles(props.modelValue)
+      : renderMarkdownWithSourceMap(props.modelValue)
 
   if (emojiState.emojiMap.size > 0) {
     return html.replace(/:([^:\s]+):/g, (match, key) => {
@@ -697,15 +931,15 @@ const tableOfContents = computed<TocItem[]>(() => {
 
 // 保存文章
 const saveArticle = () => {
-  const content = editorViewRef.value?.state.doc.toString() || '';
+  const content = editorViewRef.value?.state.doc.toString() || ''
 
   if (!content.trim()) {
-    ElMessage.warning('文章内容不能为空');
-    return;
+    ElMessage.warning('文章内容不能为空')
+    return
   }
-  emit('save', content);
+  emit('save', content)
 
-  ElMessage.success('文章保存成功');
+  ElMessage.success('文章保存成功')
 }
 
 // 插入文本到光标位置
@@ -718,7 +952,12 @@ const insertText = (before: string, after = '') => {
   editorViewRef.value.dispatch({
     changes: { from, to, insert: `${before}${text}${after}` },
     // 如果有选中文本，保持选中状态；否则光标定位在中间
-    selection: text ? { anchor: from + before.length, head: from + before.length + text.length } : { anchor: from + before.length, head: from + before.length }
+    selection: text
+      ? {
+          anchor: from + before.length,
+          head: from + before.length + text.length
+        }
+      : { anchor: from + before.length, head: from + before.length }
   })
   editorViewRef.value.focus()
 }
@@ -730,7 +969,9 @@ const insertHeading = (level: string) => insertText(`${'#'.repeat(+level)} `)
 const scrollToHeading = (heading: TocItem) => {
   if (!editorViewRef.value) return
   const lines = editorViewRef.value.state.doc.toString().split('\n')
-  const index = lines.findIndex(line => line.includes(heading.text) && line.startsWith('#'))
+  const index = lines.findIndex(
+    (line) => line.includes(heading.text) && line.startsWith('#')
+  )
 
   if (index !== -1) {
     const pos = editorViewRef.value.state.doc.line(index + 1).from
@@ -745,10 +986,26 @@ const scrollToHeading = (heading: TocItem) => {
 // 工具栏配置
 const toolbarItems: ToolbarItem[] = [
   // 第一组：基本文本格式
-  { icon: 'ri-bold', title: '粗体 (Ctrl+B)', action: () => insertText('**', '**') },
-  { icon: 'ri-underline', title: '下划线', action: () => insertText('++', '++') },
-  { icon: 'ri-italic', title: '斜体 (Ctrl+I)', action: () => insertText('*', '*') },
-  { icon: 'ri-strikethrough', title: '删除线', action: () => insertText('~~', '~~') },
+  {
+    icon: 'ri-bold',
+    title: '粗体 (Ctrl+B)',
+    action: () => insertText('**', '**')
+  },
+  {
+    icon: 'ri-underline',
+    title: '下划线',
+    action: () => insertText('++', '++')
+  },
+  {
+    icon: 'ri-italic',
+    title: '斜体 (Ctrl+I)',
+    action: () => insertText('*', '*')
+  },
+  {
+    icon: 'ri-strikethrough',
+    title: '删除线',
+    action: () => insertText('~~', '~~')
+  },
   { type: 'divider' },
 
   // 第二组：标题
@@ -762,31 +1019,113 @@ const toolbarItems: ToolbarItem[] = [
   { icon: 'ri-subscript', title: '下标', action: () => insertText('~', '~') },
   { icon: 'ri-superscript', title: '上标', action: () => insertText('^', '^') },
   { icon: 'ri-double-quotes-l', title: '引用', action: () => insertText('> ') },
-  { icon: 'ri-list-unordered', title: '无序列表', action: () => insertText('- ') },
-  { icon: 'ri-list-ordered', title: '有序列表', action: () => insertText('1. ') },
-  { icon: 'ri-list-check', title: '任务列表', action: () => insertText('- [ ] ') },
+  {
+    icon: 'ri-list-unordered',
+    title: '无序列表',
+    action: () => insertText('- ')
+  },
+  {
+    icon: 'ri-list-ordered',
+    title: '有序列表',
+    action: () => insertText('1. ')
+  },
+  {
+    icon: 'ri-list-check',
+    title: '任务列表',
+    action: () => insertText('- [ ] ')
+  },
   { type: 'divider' },
 
   // 第三组：代码和插入元素
-  { icon: 'ri-code-line', title: '行内代码', action: () => insertText('`', '`') },
-  { icon: 'ri-code-box-line', title: '块级代码', action: () => insertText('\n```', '\n```\n') },
-  { icon: 'ri-link', title: '链接', action: () => insertText('[', '](https://)') },
-  { icon: 'ri-image-add-line', title: '上传本地图片', action: () => imageInputRef.value?.click() },
-  { icon: 'ri-image-download-line', title: '下载在线图片', action: () => { } },
+  {
+    icon: 'ri-code-line',
+    title: '行内代码',
+    action: () => insertText('`', '`')
+  },
+  {
+    icon: 'ri-code-box-line',
+    title: '块级代码',
+    action: () => insertText('\n```', '\n```\n')
+  },
+  {
+    icon: 'ri-link',
+    title: '链接',
+    action: () => insertText('[', '](https://)')
+  },
+  {
+    icon: 'ri-image-add-line',
+    title: '上传本地图片',
+    action: () => imageInputRef.value?.click()
+  },
+  { icon: 'ri-image-download-line', title: '下载在线图片', action: () => {} },
   { icon: 'ri-emotion-line', title: '表情', action: () => toggleEmojiPicker() },
-  { icon: 'ri-table-2', title: '表格', action: () => insertText('\n| 列1 | 列2 | 列3 |\n|:---:|:---:|:---:|\n|  ', '  |    |    |\n') },
-  { icon: 'ri-mark-pen-line', title: '高亮', action: () => insertText('==', '==') },
-  { icon: 'ri-superscript-2', title: '行内公式', action: () => insertText('$', '$') },
-  { icon: 'ri-functions', title: '块级公式', action: () => insertText('\n$$\n', '\n$$\n') },
+  {
+    icon: 'ri-table-2',
+    title: '表格',
+    action: () =>
+      insertText(
+        '\n| 列1 | 列2 | 列3 |\n|:---:|:---:|:---:|\n|  ',
+        '  |    |    |\n'
+      )
+  },
+  {
+    icon: 'ri-mark-pen-line',
+    title: '高亮',
+    action: () => insertText('==', '==')
+  },
+  {
+    icon: 'ri-superscript-2',
+    title: '行内公式',
+    action: () => insertText('$', '$')
+  },
+  {
+    icon: 'ri-functions',
+    title: '块级公式',
+    action: () => insertText('\n$$\n', '\n$$\n')
+  },
   { type: 'divider' },
 
   // 第四组：自定义块
-  { icon: 'ri-information-line', title: '提示框', action: () => insertText('\n:::note info 提示标题\ninfo/warning/success/error', '\n:::endnote\n') },
-  { icon: 'ri-layout-grid-line', title: '标签页', action: () => insertText('\n:::tabs\n:::tab 标签1\n内容1', '\n:::endtab\n:::tab 标签2\n内容2\n:::endtab\n:::endtabs\n') },
-  { icon: 'ri-increase-decrease-line', title: '折叠面板', action: () => insertText('\n:::fold 点击展开\n', '\n:::endfold\n') },
-  { icon: 'ri-external-link-line', title: '链接卡片', action: () => insertText('\n:::link 标题', ' https://example.com 描述信息 :::\n') },
-  { icon: 'ri-multi-image-line', title: '照片墙', action: () => insertText('\n:::photo\n图片1\n图片2\n:::n\n图片3\n图片4\n:::endphoto\n') },
-  { icon: 'ri-video-line', title: '在线视频', action: () => insertText('\n:::video bilibili ', 'BV号 :::\n') },
+  {
+    icon: 'ri-information-line',
+    title: '提示框',
+    action: () =>
+      insertText(
+        '\n:::note info 提示标题\ninfo/warning/success/error',
+        '\n:::endnote\n'
+      )
+  },
+  {
+    icon: 'ri-layout-grid-line',
+    title: '标签页',
+    action: () =>
+      insertText(
+        '\n:::tabs\n:::tab 标签1\n内容1',
+        '\n:::endtab\n:::tab 标签2\n内容2\n:::endtab\n:::endtabs\n'
+      )
+  },
+  {
+    icon: 'ri-increase-decrease-line',
+    title: '折叠面板',
+    action: () => insertText('\n:::fold 点击展开\n', '\n:::endfold\n')
+  },
+  {
+    icon: 'ri-external-link-line',
+    title: '链接卡片',
+    action: () =>
+      insertText('\n:::link 标题', ' https://example.com 描述信息 :::\n')
+  },
+  {
+    icon: 'ri-multi-image-line',
+    title: '照片墙',
+    action: () =>
+      insertText('\n:::photo\n图片1\n图片2\n:::n\n图片3\n图片4\n:::endphoto\n')
+  },
+  {
+    icon: 'ri-video-line',
+    title: '在线视频',
+    action: () => insertText('\n:::video bilibili ', 'BV号 :::\n')
+  },
 
   // 弹性空间，将后续按钮推到右侧
   { type: 'spacer' },
@@ -795,38 +1134,43 @@ const toolbarItems: ToolbarItem[] = [
   {
     icon: 'ri-fullscreen-line',
     title: '浏览器全屏',
-    action: () => document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen(),
+    action: () =>
+      document.fullscreenElement
+        ? document.exitFullscreen()
+        : document.documentElement.requestFullscreen(),
     isActive: () => isBrowserFullscreen.value
   },
   {
     icon: 'ri-picture-in-picture-2-line',
     title: '页面全屏',
-    action: () => isPageFullscreen.value = !isPageFullscreen.value,
+    action: () => (isPageFullscreen.value = !isPageFullscreen.value),
     isActive: () => isPageFullscreen.value
   },
   {
     icon: 'ri-code-s-slash-line',
     title: 'HTML 代码预览',
-    action: () => viewMode.value = viewMode.value === 'html' ? 'split' : 'html',
+    action: () =>
+      (viewMode.value = viewMode.value === 'html' ? 'split' : 'html'),
     isActive: () => viewMode.value === 'html'
   },
   {
     icon: 'ri-eye-line',
     title: '切换预览',
-    action: () => viewMode.value = viewMode.value === 'preview' ? 'editor' : 'preview',
+    action: () =>
+      (viewMode.value = viewMode.value === 'preview' ? 'editor' : 'preview'),
     isActive: () => viewMode.value === 'preview',
     mobileOnly: true
   },
   {
     icon: 'ri-list-unordered',
     title: '目录',
-    action: () => showToc.value = !showToc.value,
+    action: () => (showToc.value = !showToc.value),
     isActive: () => showToc.value
-  },
+  }
 ]
 
 const uploadArticleImages = async (files: File[], onFinally?: () => void) => {
-  const imageFiles = files.filter(file => {
+  const imageFiles = files.filter((file) => {
     if (!file.type.startsWith('image/')) {
       ElMessage.error(`${file.name} 不是图片格式`)
       return false
@@ -839,10 +1183,17 @@ const uploadArticleImages = async (files: File[], onFinally?: () => void) => {
     return []
   }
 
-  const loading = ElMessage.info({ message: `正在上传 ${imageFiles.length} 张图片...`, duration: 0 })
+  const loading = ElMessage.info({
+    message: `正在上传 ${imageFiles.length} 张图片...`,
+    duration: 0
+  })
   try {
-    const results = await Promise.all(imageFiles.map(file => uploadFile(file, '文章图片')))
-    insertText(results.map(result => `![图片](${result.file_url})`).join('\n'))
+    const results = await Promise.all(
+      imageFiles.map((file) => uploadFile(file, '文章图片'))
+    )
+    insertText(
+      results.map((result) => `![图片](${result.file_url})`).join('\n')
+    )
     ElMessage.success(`成功上传 ${imageFiles.length} 张图片`)
     return results
   } catch (error: any) {
@@ -867,13 +1218,19 @@ const handlePasteImage = async (files: File[]) => {
   await uploadArticleImages(files)
 }
 
-function base64ToFile(base64Data: string, contentType: string, fileName: string): File {
+function base64ToFile(
+  base64Data: string,
+  contentType: string,
+  fileName: string
+): File {
   const byteCharacters = atob(base64Data)
   const byteNumbers = new Array(byteCharacters.length)
   for (let i = 0; i < byteCharacters.length; i++) {
     byteNumbers[i] = byteCharacters.charCodeAt(i)
   }
-  return new File([new Uint8Array(byteNumbers)], fileName, { type: contentType })
+  return new File([new Uint8Array(byteNumbers)], fileName, {
+    type: contentType
+  })
 }
 
 // 处理下载在线图片
@@ -893,7 +1250,11 @@ const handleOnlineImageDownload = async () => {
   try {
     const { downloadImage } = await import('@/api/tools')
     const downloadResult = await downloadImage({ url })
-    const file = base64ToFile(downloadResult.data, downloadResult.content_type, 'image.jpg')
+    const file = base64ToFile(
+      downloadResult.data,
+      downloadResult.content_type,
+      'image.jpg'
+    )
     const [uploadResult] = await uploadArticleImages([file])
 
     if (uploadResult) {
@@ -984,7 +1345,7 @@ const initEditor = () => {
 
           // 如果还有文本，在图片处理完后再处理文本
           if (textItems.length > 0) {
-            textItems.forEach(item => {
+            textItems.forEach((item) => {
               item.getAsString((text) => {
                 // 使用默认的粘贴行为来正确替换选中文本
                 view.dispatch({
@@ -1016,14 +1377,29 @@ const initEditor = () => {
         searchDecorations,
         showPanel.of(createSearchPanel),
         keymap.of([
-          { key: 'Mod-b', run: () => (insertText('**', '**'), true), preventDefault: true },
-          { key: 'Mod-i', run: () => (insertText('*', '*'), true), preventDefault: true },
-          { key: 'Mod-s', run: () => { saveArticle(); return true; }, preventDefault: true },
+          {
+            key: 'Mod-b',
+            run: () => (insertText('**', '**'), true),
+            preventDefault: true
+          },
+          {
+            key: 'Mod-i',
+            run: () => (insertText('*', '*'), true),
+            preventDefault: true
+          },
+          {
+            key: 'Mod-s',
+            run: () => {
+              saveArticle()
+              return true
+            },
+            preventDefault: true
+          },
           { key: 'Mod-f', run: openSearchPanelCustom, preventDefault: true },
           ...defaultKeymap,
           ...historyKeymap
         ]),
-        EditorView.updateListener.of(update => {
+        EditorView.updateListener.of((update) => {
           if (update.docChanged) {
             emit('update:modelValue', update.state.doc.toString())
             invalidateScrollCache()
@@ -1045,15 +1421,25 @@ const initEditor = () => {
 }
 
 // 监听外部内容变化
-watch(() => props.modelValue, (newValue) => {
-  if (editorViewRef.value && newValue !== editorViewRef.value.state.doc.toString()) {
-    editorViewRef.value.dispatch({
-      changes: { from: 0, to: editorViewRef.value.state.doc.length, insert: newValue }
-    })
-    invalidateScrollCache()
-    requestPreviewSync()
+watch(
+  () => props.modelValue,
+  (newValue) => {
+    if (
+      editorViewRef.value &&
+      newValue !== editorViewRef.value.state.doc.toString()
+    ) {
+      editorViewRef.value.dispatch({
+        changes: {
+          from: 0,
+          to: editorViewRef.value.state.doc.length,
+          insert: newValue
+        }
+      })
+      invalidateScrollCache()
+      requestPreviewSync()
+    }
   }
-})
+)
 
 // 监听预览区图片加载完成，使缓存失效
 watch(renderedHtml, async (html) => {
@@ -1066,10 +1452,14 @@ watch(renderedHtml, async (html) => {
   const images = preview.querySelectorAll('img')
   images.forEach((img) => {
     if (img.complete) return
-    img.addEventListener('load', () => {
-      invalidateScrollCache()
-      requestPreviewSync()
-    }, { once: true })
+    img.addEventListener(
+      'load',
+      () => {
+        invalidateScrollCache()
+        requestPreviewSync()
+      },
+      { once: true }
+    )
   })
 
   invalidateScrollCache()
@@ -1078,7 +1468,6 @@ watch(renderedHtml, async (html) => {
   bindPreviewObservers()
   requestPreviewSync()
 })
-
 
 // 监听视图模式变化
 watch(viewMode, (newMode) => {
@@ -1098,7 +1487,8 @@ watch(viewMode, (newMode) => {
 })
 
 // ==================== 生命周期 ====================
-const handleFullscreenChange = () => isBrowserFullscreen.value = !!document.fullscreenElement
+const handleFullscreenChange = () =>
+  (isBrowserFullscreen.value = !!document.fullscreenElement)
 const handleWindowResize = () => {
   invalidateScrollCache()
   requestPreviewSync()
@@ -1106,7 +1496,9 @@ const handleWindowResize = () => {
 
 const togglePreviewImage = (event: MouseEvent) => {
   const target = event.target as HTMLElement | null
-  const image = target?.closest('.preview-collapsible-image') as HTMLImageElement | null
+  const image = target?.closest(
+    '.preview-collapsible-image'
+  ) as HTMLImageElement | null
   if (!image) return
   if (image.closest('.custom-photo-wall')) return
   if (image.classList.contains('emoji-image')) return
@@ -1127,7 +1519,6 @@ const handleEditorPaneMouseDown = (event: MouseEvent) => {
 
   editorViewRef.value.focus()
 }
-
 
 onMounted(() => {
   initMermaid()
@@ -1401,7 +1792,9 @@ onBeforeUnmount(() => {
           max-height: 160px;
           width: auto;
           cursor: zoom-in;
-          transition: max-height 0.2s ease, transform 0.2s ease;
+          transition:
+            max-height 0.2s ease,
+            transform 0.2s ease;
         }
 
         img.preview-collapsible-image.is-expanded {

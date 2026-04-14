@@ -1,16 +1,18 @@
-import request from "@/utils/request";
+import request from '@/utils/request'
 import type {
   NotificationListData,
   NotificationQueryParams
-} from "@/types/notification";
+} from '@/types/notification'
 
 /**
  * 获取管理员通知列表
  * @param params 查询参数
  * @returns Promise<NotificationListData>
  */
-export function getNotifications(params: NotificationQueryParams): Promise<NotificationListData> {
-  return request.get("/admin/notifications", { params });
+export function getNotifications(
+  params: NotificationQueryParams
+): Promise<NotificationListData> {
+  return request.get('/admin/notifications', { params })
 }
 
 /**
@@ -19,7 +21,7 @@ export function getNotifications(params: NotificationQueryParams): Promise<Notif
  * @returns Promise<void>
  */
 export function markAsRead(id: number): Promise<void> {
-  return request.put(`/admin/notifications/${id}/read`);
+  return request.put(`/admin/notifications/${id}/read`)
 }
 
 /**
@@ -27,7 +29,5 @@ export function markAsRead(id: number): Promise<void> {
  * @returns Promise<void>
  */
 export function markAllAsRead(): Promise<void> {
-  return request.put("/admin/notifications/read-all");
+  return request.put('/admin/notifications/read-all')
 }
-
-

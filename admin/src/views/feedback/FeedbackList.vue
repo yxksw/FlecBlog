@@ -1,7 +1,16 @@
 <template>
-  <common-list title="反馈投诉" :data="list" :loading="loading" :total="total" :show-create="false"
-    v-model:page="pagination.page" v-model:page-size="pagination.page_size" @refresh="fetchList"
-    @update:page="fetchList" @update:pageSize="fetchList">
+  <common-list
+    title="反馈投诉"
+    :data="list"
+    :loading="loading"
+    :total="total"
+    :show-create="false"
+    v-model:page="pagination.page"
+    v-model:page-size="pagination.page_size"
+    @refresh="fetchList"
+    @update:page="fetchList"
+    @update:pageSize="fetchList"
+  >
     <el-table-column label="工单号" width="150">
       <template #default="{ row }">
         <span>{{ row.ticket_no }}</span>
@@ -49,7 +58,12 @@
         <el-button type="primary" size="small" text @click="handleView(row.id)">
           查看详情
         </el-button>
-        <el-button type="danger" size="small" text @click="handleDelete(row.id)">
+        <el-button
+          type="danger"
+          size="small"
+          text
+          @click="handleDelete(row.id)"
+        >
           删除
         </el-button>
       </template>
@@ -117,20 +131,20 @@ const handleDelete = async (id: number) => {
 
 const getReportTypeLabel = (reportType: string) => {
   const labels: Record<string, string> = {
-    'copyright': '版权侵权内容投诉',
-    'inappropriate': '不当内容举报投诉',
-    'summary': '文章摘要问题反馈',
-    'suggestion': '功能建议优化反馈'
+    copyright: '版权侵权内容投诉',
+    inappropriate: '不当内容举报投诉',
+    summary: '文章摘要问题反馈',
+    suggestion: '功能建议优化反馈'
   }
   return labels[reportType] || reportType
 }
 
 const getReportTypeTagType = (reportType: string) => {
   const types: Record<string, any> = {
-    'copyright': 'warning',
-    'inappropriate': 'danger',
-    'summary': 'info',
-    'suggestion': 'success'
+    copyright: 'warning',
+    inappropriate: 'danger',
+    summary: 'info',
+    suggestion: 'success'
   }
   return types[reportType] || 'info'
 }

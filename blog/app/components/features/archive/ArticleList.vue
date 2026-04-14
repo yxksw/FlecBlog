@@ -1,39 +1,39 @@
 <script lang="ts" setup>
-import type { Article } from "@@/types/article";
+import type { Article } from '@@/types/article'
 
 interface Props {
-  articles: Article[];
-  groupByYear?: boolean; // 是否按年份分组
-  title?: string; // 页面标题
-  total?: number; // 总文章数（分页时使用）
+  articles: Article[]
+  groupByYear?: boolean // 是否按年份分组
+  title?: string // 页面标题
+  total?: number // 总文章数（分页时使用）
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  groupByYear: false,
-});
+  groupByYear: false
+})
 
 // 显示的文章数量：优先使用 total，否则使用 articles.length
 const displayTotal = computed(() => {
-  return props.total ?? props.articles.length;
-});
+  return props.total ?? props.articles.length
+})
 
 // 按年份对文章进行分组
 const groupedArticles = computed(() => {
   if (!props.groupByYear) {
-    return null;
+    return null
   }
 
-  const groups = new Map<string, Article[]>();
+  const groups = new Map<string, Article[]>()
 
   props.articles.forEach((article) => {
     if (article.publish_time) {
-      const year = new Date(article.publish_time).getFullYear().toString();
+      const year = new Date(article.publish_time).getFullYear().toString()
       if (!groups.has(year)) {
-        groups.set(year, []);
+        groups.set(year, [])
       }
-      groups.get(year)!.push(article);
+      groups.get(year)!.push(article)
     }
-  });
+  })
 
   // 转换为按年份排序的数组
   return Array.from(groups.entries())
@@ -41,12 +41,12 @@ const groupedArticles = computed(() => {
     .map(([year, articles]) => ({
       year,
       articles: articles.sort((a, b) => {
-        const bTime = b.publish_time ? new Date(b.publish_time).getTime() : 0;
-        const aTime = a.publish_time ? new Date(a.publish_time).getTime() : 0;
-        return bTime - aTime;
-      }),
-    }));
-});
+        const bTime = b.publish_time ? new Date(b.publish_time).getTime() : 0
+        const aTime = a.publish_time ? new Date(a.publish_time).getTime() : 0
+        return bTime - aTime
+      })
+    }))
+})
 </script>
 
 <template>
@@ -74,14 +74,16 @@ const groupedArticles = computed(() => {
             :to="article.url"
             class="article-sort-item-img"
           >
-            <NuxtImg :src="article.cover" :alt="article.title" loading="lazy"  />
+            <NuxtImg :src="article.cover" :alt="article.title" loading="lazy" />
           </NuxtLink>
           <div class="article-sort-item-info">
             <div class="article-sort-item-time">
               <i class="ri-calendar-2-fill"></i>
               <span>{{ formatDate(article.publish_time) }}</span>
             </div>
-            <NuxtLink :to="article.url" class="article-sort-item-title">{{ article.title }}</NuxtLink>
+            <NuxtLink :to="article.url" class="article-sort-item-title">{{
+              article.title
+            }}</NuxtLink>
           </div>
         </div>
       </template>
@@ -99,14 +101,16 @@ const groupedArticles = computed(() => {
           :to="article.url"
           class="article-sort-item-img"
         >
-          <NuxtImg :src="article.cover" :alt="article.title" loading="lazy"  />
+          <NuxtImg :src="article.cover" :alt="article.title" loading="lazy" />
         </NuxtLink>
         <div class="article-sort-item-info">
           <div class="article-sort-item-time">
             <i class="ri-calendar-2-fill"></i>
             <span>{{ formatDate(article.publish_time) }}</span>
           </div>
-          <NuxtLink :to="article.url" class="article-sort-item-title">{{ article.title }}</NuxtLink>
+          <NuxtLink :to="article.url" class="article-sort-item-title">{{
+            article.title
+          }}</NuxtLink>
         </div>
       </div>
     </template>
@@ -227,5 +231,3 @@ const groupedArticles = computed(() => {
   }
 }
 </style>
-
-
