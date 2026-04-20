@@ -1,0 +1,41 @@
+name: 💡 改进建议
+description: 对现有功能的优化建议
+labels: ["improvement"]
+body:
+  - type: dropdown
+    id: project
+    attributes:
+      label: 所属项目
+      options:
+        - 默认
+        - server
+        - admin
+        - blog
+    validations:
+      required: true
+
+  - type: dropdown
+    id: type
+    attributes:
+      label: 改进类型
+      options:
+        - 性能优化
+        - UI/UX 改进
+        - 代码重构
+        - 可访问性
+        - 其他
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: 改进描述
+      placeholder: 描述现有情况及期望的改进
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: 补充信息

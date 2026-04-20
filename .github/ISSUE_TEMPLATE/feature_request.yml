@@ -1,0 +1,28 @@
+name: ✨ 功能请求
+description: 提出一个新功能建议
+labels: ["enhancement"]
+body:
+  - type: dropdown
+    id: project
+    attributes:
+      label: 所属项目
+      options:
+        - 默认
+        - server
+        - admin
+        - blog
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: 功能描述
+      placeholder: 描述你希望添加的功能
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: 补充信息

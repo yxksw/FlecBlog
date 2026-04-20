@@ -1,0 +1,31 @@
+name: 🐛 错误报告
+description: 报告一个 Bug
+labels: ["bug"]
+body:
+  - type: dropdown
+    id: project
+    attributes:
+      label: 所属项目
+      options:
+        - 默认
+        - server
+        - admin
+        - blog
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: 问题描述
+      placeholder: |
+        描述遇到的问题、粘贴错误信息、上传问题截图，提供的信息越详细越好
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: 补充信息
+      placeholder: |
+        浏览器版本、发行版版本、其他相关信息
