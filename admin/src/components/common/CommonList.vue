@@ -1,17 +1,30 @@
 <template>
   <div class="common-list">
-    <el-card>
+    <el-card shadow="never">
       <!-- 工具栏 -->
       <div class="toolbar">
         <h2>{{ title }}</h2>
         <div class="actions">
           <!-- 前工具栏 -->
           <slot name="toolbar-before" />
-          <el-button v-if="showCreate" type="primary" @click="$emit('create')">
-            {{ createText }}
+          <el-button v-if="showCreate" type="primary" class="create-btn" @click="$emit('create')">
+            <el-icon class="create-icon"><Plus /></el-icon
+            ><span class="create-text">{{ createText }}</span>
           </el-button>
           <!-- 后工具栏 -->
           <slot name="toolbar-after" />
+          <el-badge
+            v-if="showFilter"
+            :value="filterCount"
+            :hidden="filterCount === 0"
+            class="filter-badge"
+          >
+            <el-button :type="filterActive ? 'success' : 'default'" @click="$emit('filter')">
+              <el-icon>
+                <Filter />
+              </el-icon>
+            </el-button>
+          </el-badge>
           <el-button class="refresh-btn" @click="$emit('refresh')">
             <el-icon>
               <Refresh />
@@ -53,7 +66,7 @@
 </template>
 
 <script setup lang="ts">
-import { Refresh } from '@element-plus/icons-vue';
+import { Refresh, Filter, Plus } from '@element-plus/icons-vue';
 
 withDefaults(
   defineProps<{
@@ -66,6 +79,9 @@ withDefaults(
     showPagination?: boolean;
     showCreate?: boolean;
     createText?: string;
+    showFilter?: boolean;
+    filterActive?: boolean;
+    filterCount?: number;
   }>(),
   {
     loading: false,
@@ -75,12 +91,16 @@ withDefaults(
     showPagination: true,
     showCreate: true,
     createText: '新增',
+    showFilter: true,
+    filterActive: false,
+    filterCount: 0,
   }
 );
 
 defineEmits<{
   create: [];
   refresh: [];
+  filter: [];
   'update:page': [page: number];
   'update:pageSize': [size: number];
 }>();
@@ -122,23 +142,49 @@ defineEmits<{
       :deep(.el-button + .el-button) {
         margin-left: 0;
       }
+
+      // 筛选按钮hover时显示绿色，与active状态保持一致
+      :deep(.el-button--default:hover) {
+        color: var(--el-color-success);
+        border-color: var(--el-color-success-light-5);
+        background-color: var(--el-color-success-light-9);
+      }
     }
 
-    @media (max-width: 767px) {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 12px;
-
+    @media (max-width: 769px) {
       h2 {
-        font-size: 18px;
+        font-size: 16px;
       }
 
       .actions {
-        width: 100%;
-        flex-wrap: wrap;
+        flex-wrap: nowrap;
+        gap: 8px;
 
         .refresh-btn {
           display: none;
+        }
+      }
+    }
+
+    // 默认显示文字
+    .create-btn {
+      .create-icon {
+        display: none;
+      }
+      // 覆盖 Element Plus 默认样式，消除图标隐藏后的左边距
+      .create-text {
+        margin-left: 0;
+      }
+    }
+
+    // 移动端（≤500px）显示图标，隐藏文字
+    @media (max-width: 500px) {
+      .create-btn {
+        .create-text {
+          display: none;
+        }
+        .create-icon {
+          display: inline-flex;
         }
       }
     }
@@ -158,8 +204,52 @@ defineEmits<{
     justify-content: flex-end;
     padding-top: 12px;
 
-    @media (max-width: 767px) {
-      justify-content: center;
+    @media (max-width: 769px) {
+      :deep(.el-pagination .el-select) {
+        width: 110px;
+      }
+    }
+  }
+
+  @media (max-width: 1200px) {
+    .actions :deep(.quick-filter-1200) {
+      display: none !important;
+    }
+  }
+
+  @media (max-width: 1080px) {
+    .actions :deep(.quick-filter-1080) {
+      display: none !important;
+    }
+  }
+
+  @media (max-width: 960px) {
+    .actions :deep(.quick-filter-960) {
+      display: none !important;
+    }
+  }
+
+  @media (max-width: 900px) {
+    .actions :deep(.quick-filter-900) {
+      display: none !important;
+    }
+  }
+
+  @media (max-width: 840px) {
+    .actions :deep(.quick-filter-840) {
+      display: none !important;
+    }
+  }
+
+  @media (max-width: 800px) {
+    .actions :deep(.quick-filter-800) {
+      display: none !important;
+    }
+  }
+
+  @media (max-width: 769px) {
+    .actions :deep(.quick-filter-769) {
+      display: none !important;
     }
   }
 }

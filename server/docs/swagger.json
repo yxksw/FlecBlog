@@ -2,9 +2,9 @@
     "swagger": "2.0",
     "info": {
         "description": "一个基于 Go 语言的现代化博客后端服务",
-        "title": "Flec-Server",
+        "title": "FlecBlog",
         "contact": {
-            "name": "M.Talen",
+            "name": "Talen",
             "email": "talen2004@163.com"
         },
         "license": {
@@ -280,7 +280,7 @@
                         "BearerAuth": []
                     }
                 ],
-                "description": "获取包含草稿的所有文章",
+                "description": "获取包含草稿的所有文章，支持多种筛选条件",
                 "consumes": [
                     "application/json"
                 ],
@@ -302,6 +302,64 @@
                         "type": "integer",
                         "description": "每页数量（不传则返回全部）",
                         "name": "page_size",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "搜索关键词（标题/内容）",
+                        "name": "keyword",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "分类ID",
+                        "name": "category_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        },
+                        "collectionFormat": "csv",
+                        "description": "标签ID列表",
+                        "name": "tag_ids",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "是否发布",
+                        "name": "is_publish",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "是否置顶",
+                        "name": "is_top",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "是否精选",
+                        "name": "is_essence",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "是否过时",
+                        "name": "is_outdated",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "发布开始时间（格式：2006-01-02）",
+                        "name": "start_time",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "发布结束时间（格式：2006-01-02）",
+                        "name": "end_time",
                         "in": "query"
                     }
                 ],
@@ -1156,7 +1214,7 @@
                         "BearerAuth": []
                     }
                 ],
-                "description": "获取所有评论，支持按状态筛选",
+                "description": "获取所有评论，支持多种筛选条件",
                 "consumes": [
                     "application/json"
                 ],
@@ -1181,9 +1239,39 @@
                         "in": "query"
                     },
                     {
+                        "type": "string",
+                        "description": "搜索关键词（评论内容）",
+                        "name": "keyword",
+                        "in": "query"
+                    },
+                    {
                         "type": "integer",
                         "description": "状态筛选 0:隐藏 1:显示",
                         "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "是否已删除",
+                        "name": "is_deleted",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "是否子评论（true:子评论, false:父评论）",
+                        "name": "is_sub",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "评论开始时间（格式：2006-01-02）",
+                        "name": "start_time",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "评论结束时间（格式：2006-01-02）",
+                        "name": "end_time",
                         "in": "query"
                     }
                 ],
@@ -1584,6 +1672,54 @@
                 "summary": "文件列表",
                 "parameters": [
                     {
+                        "type": "string",
+                        "description": "关键词搜索（文件名）",
+                        "name": "keyword",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "文件类型（image/video/audio/document等）",
+                        "name": "file_type",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "状态（0=未使用 1=使用中）",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "上传类型/用途",
+                        "name": "upload_type",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "最小文件大小（字节）",
+                        "name": "min_size",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "最大文件大小（字节）",
+                        "name": "max_size",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "开始时间",
+                        "name": "start_time",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "结束时间",
+                        "name": "end_time",
+                        "in": "query"
+                    },
+                    {
                         "type": "integer",
                         "default": 1,
                         "description": "页码",
@@ -1595,12 +1731,6 @@
                         "default": 20,
                         "description": "每页数量",
                         "name": "page_size",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "文件类型筛选",
-                        "name": "type",
                         "in": "query"
                     }
                 ],
@@ -1841,6 +1971,48 @@
                         "type": "integer",
                         "description": "每页数量（不传则返回全部）",
                         "name": "page_size",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "关键词搜索（名称、链接、描述）",
+                        "name": "keyword",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "友链类型ID",
+                        "name": "type_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "是否失效",
+                        "name": "is_invalid",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "是否待审核",
+                        "name": "is_pending",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "可访问性状态: normal=正常, abnormal=异常, ignored=忽略检查",
+                        "name": "accessible_status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "RSS状态: no_rss=无订阅, normal=正常订阅, warning=三个月未更新, danger=六个月未更新",
+                        "name": "rss_status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "是否包含截图",
+                        "name": "has_screenshot",
                         "in": "query"
                     }
                 ],
@@ -2652,7 +2824,7 @@
                         "BearerAuth": []
                     }
                 ],
-                "description": "获取所有动态",
+                "description": "获取所有动态，支持筛选",
                 "consumes": [
                     "application/json"
                 ],
@@ -2674,6 +2846,66 @@
                         "type": "integer",
                         "description": "每页数量（不传则返回全部）",
                         "name": "page_size",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "搜索关键词（文本内容）",
+                        "name": "keyword",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "标签",
+                        "name": "tags",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "发布地点",
+                        "name": "location",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "是否发布",
+                        "name": "is_publish",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "是否有图片",
+                        "name": "has_images",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "是否有视频",
+                        "name": "has_video",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "是否有音乐",
+                        "name": "has_music",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "是否有链接",
+                        "name": "has_link",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "发布开始时间",
+                        "name": "start_time",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "发布结束时间",
+                        "name": "end_time",
                         "in": "query"
                     }
                 ],
@@ -3016,6 +3248,36 @@
                         "type": "integer",
                         "description": "每页数量",
                         "name": "page_size",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "搜索关键词",
+                        "name": "keyword",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "友链ID筛选",
+                        "name": "friend_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "已读状态筛选",
+                        "name": "is_read",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "发布开始时间（格式：2006-01-02）",
+                        "name": "start_time",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "发布结束时间（格式：2006-01-02）",
+                        "name": "end_time",
                         "in": "query"
                     }
                 ],
@@ -3589,7 +3851,7 @@
                         "BearerAuth": []
                     }
                 ],
-                "description": "获取访问日志列表，支持分页查询",
+                "description": "获取访问日志列表，支持分页和多种筛选条件",
                 "consumes": [
                     "application/json"
                 ],
@@ -3616,6 +3878,54 @@
                         "default": 20,
                         "description": "每页数量",
                         "name": "page_size",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "搜索关键词（页面URL）",
+                        "name": "keyword",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "访客ID",
+                        "name": "visitor_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "IP地址",
+                        "name": "ip",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "地理位置",
+                        "name": "location",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "浏览器",
+                        "name": "browser",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "操作系统",
+                        "name": "os",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "开始时间（格式：2006-01-02）",
+                        "name": "start_time",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "结束时间（格式：2006-01-02）",
+                        "name": "end_time",
                         "in": "query"
                     }
                 ],
@@ -4049,7 +4359,7 @@
                         "BearerAuth": []
                     }
                 ],
-                "description": "获取所有用户",
+                "description": "获取所有用户，支持多种筛选条件",
                 "consumes": [
                     "application/json"
                 ],
@@ -4073,6 +4383,60 @@
                         "default": 10,
                         "description": "每页数量",
                         "name": "page_size",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "搜索关键词（邮箱、昵称）",
+                        "name": "keyword",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "角色筛选（super_admin/admin/user/guest）",
+                        "name": "role",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "状态筛选（true:启用 false:禁用）",
+                        "name": "is_enabled",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "是否已删除（true:已删除 false:未删除）",
+                        "name": "is_deleted",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "登录方式筛选（password/github/google/qq/microsoft）",
+                        "name": "login_method",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "最后登录开始时间（格式：2006-01-02）",
+                        "name": "last_login_start",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "最后登录结束时间（格式：2006-01-02）",
+                        "name": "last_login_end",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "注册开始时间（格式：2006-01-02）",
+                        "name": "start_time",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "注册结束时间（格式：2006-01-02）",
+                        "name": "end_time",
                         "in": "query"
                     }
                 ],
@@ -4390,6 +4754,36 @@
                         "name": "page_size",
                         "in": "query",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "搜索关键词（工单号、投诉地址）",
+                        "name": "keyword",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "反馈类型筛选（copyright/inappropriate/summary/suggestion）",
+                        "name": "report_type",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "状态筛选（pending/resolved/closed）",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "反馈开始时间（格式：2006-01-02）",
+                        "name": "start_time",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "反馈结束时间（格式：2006-01-02）",
+                        "name": "end_time",
+                        "in": "query"
                     }
                 ],
                 "responses": {

@@ -4,6 +4,7 @@
     :data="menuTree"
     :loading="loading"
     :show-pagination="false"
+    :show-filter="false"
     create-text="新增菜单"
     @create="handleCreate"
     @refresh="fetchMenuTree"
@@ -13,7 +14,19 @@
   >
     <!-- 菜单类型切换器 -->
     <template #toolbar-before>
-      <el-segmented v-model="selectedType" :options="menuTypeOptions" @change="handleTypeChange" />
+      <el-segmented
+        v-model="selectedType"
+        :options="menuTypeOptions"
+        class="menu-type-segmented"
+        @change="handleTypeChange"
+      >
+        <template #default="{ item }">
+          <div class="segmented-item">
+            <el-icon class="segmented-icon"><component :is="item.icon" /></el-icon
+            ><span class="segmented-text">{{ item.label }}</span>
+          </div>
+        </template>
+      </el-segmented>
     </template>
 
     <!-- 表格列 -->
@@ -70,6 +83,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
+import { Grid, Compass, Reading } from '@element-plus/icons-vue';
 import CommonList from '@/components/common/CommonList.vue';
 import type { MenuTreeNode } from '@/types/menu';
 import { getMenuTree, deleteMenu } from '@/api/menu';
@@ -84,9 +98,9 @@ const parentMenu = ref<MenuTreeNode | null>(null);
 
 // 菜单类型选项
 const menuTypeOptions = [
-  { label: '聚合菜单', value: 'aggregate' },
-  { label: '导航菜单', value: 'navigation' },
-  { label: '页脚菜单', value: 'footer' },
+  { label: '聚合菜单', value: 'aggregate', icon: Grid },
+  { label: '导航菜单', value: 'navigation', icon: Compass },
+  { label: '页脚菜单', value: 'footer', icon: Reading },
 ];
 
 // 判断是否是 RemixIcon 图标类名
@@ -260,6 +274,33 @@ onMounted(() => {
             align-items: center;
           }
         }
+      }
+    }
+  }
+}
+
+// 菜单类型切换器样式
+.menu-type-segmented {
+  .segmented-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+
+    .segmented-icon {
+      display: none;
+    }
+  }
+}
+
+// 移动端显示图标，隐藏文字
+@media (max-width: 500px) {
+  .menu-type-segmented {
+    .segmented-item {
+      .segmented-icon {
+        display: inline-flex;
+      }
+      .segmented-text {
+        display: none;
       }
     }
   }
